@@ -5,3 +5,117 @@ body { background: #f5f7fa; }
 .progress { height: 0.9rem; }
 .form-label { font-weight: 500; }
 .required-note { color: #dc3545; }
+/* ===== Thanh menu ===== */
+.app-navbar {
+    background: linear-gradient(90deg, #0d47a1 0%, #1565c0 55%, #1e88e5 100%);
+    box-shadow: 0 4px 14px rgba(13, 71, 161, .25);
+    padding-top: .6rem;
+    padding-bottom: .6rem;
+}
+
+    .app-navbar .navbar-brand {
+        font-weight: 700;
+        font-size: 1.2rem;
+        letter-spacing: .3px;
+    }
+
+.brand-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+}
+
+.app-navbar .nav-link {
+    color: rgba(255, 255, 255, .85);
+    font-weight: 500;
+    padding: .45rem .8rem;
+    border-radius: 999px;
+    transition: background .15s, color .15s;
+}
+
+    .app-navbar .nav-link i {
+        margin-right: .3rem;
+    }
+
+    .app-navbar .nav-link:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, .14);
+    }
+
+    .app-navbar .nav-link.active {
+        color: #0d47a1;
+        background: #fff;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+    }
+
+/* Khu vực người dùng */
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    background: rgba(255, 255, 255, .14);
+    padding: .25rem .8rem .25rem .3rem;
+    border-radius: 999px;
+    color: #fff;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    color: #0d47a1;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: .88rem;
+}
+
+.user-role {
+    font-size: .72rem;
+    opacity: .8;
+}
+
+.btn-nav-outline {
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .55);
+    border-radius: 999px;
+    padding: .35rem .85rem;
+}
+
+    .btn-nav-outline:hover {
+        background: rgba(255, 255, 255, .15);
+        color: #fff;
+        border-color: #fff;
+    }
+
+.btn-nav-solid {
+    background: #fff;
+    color: #0d47a1;
+    font-weight: 600;
+    border: 0;
+    border-radius: 999px;
+    padding: .35rem .95rem;
+}
+
+    .btn-nav-solid:hover {
+        background: #e3f0ff;
+        color: #0d47a1;
+    }

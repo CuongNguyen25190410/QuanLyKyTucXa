@@ -5,38 +5,177 @@
 *@
 @model LoginVM
 @{
+    Layout = null; // Trang đăng nhập dùng giao diện riêng, không dùng _Layout
     ViewData["Title"] = "Đăng nhập";
 }
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="mb-3">Đăng nhập</h3>
-                <form asp-action="Login" method="post">
-                    <input type="hidden" asp-for="ReturnUrl" />
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-                    <div class="mb-3">
-                        <label asp-for="TenDangNhap" class="form-label"></label>
-                        <input asp-for="TenDangNhap" class="form-control" autofocus />
-                        <span asp-validation-for="TenDangNhap" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="MatKhau" class="form-label"></label>
-                        <input asp-for="MatKhau" class="form-control" />
-                        <span asp-validation-for="MatKhau" class="text-danger"></span>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
-                </form>
-            </div>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản lý KTX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+            :root {
+                --blue-900: #0a2e6e;
+                --blue-700: #0d47a1;
+                --blue-600: #1565c0;
+                --blue-500: #1e88e5;
+                --blue-100: #e3f0ff;
+            }
+            html, body { height: 100%; }
+            body {
+                margin: 0;
+                font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+                background: linear-gradient(135deg, var(--blue-100) 0%, #ffffff 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1rem;
+            }
+
+            .login-wrap {
+                width: 100%;
+                max-width: 920px;
+                background: #fff;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 20px 50px rgba(13, 71, 161, .18);
+                display: flex;
+            }
+
+            /* ===== Cột trái: thương hiệu ===== */
+            .brand-side {
+                flex: 1 1 45%;
+                color: #fff;
+                padding: 3rem 2.5rem;
+                background:
+                    radial-gradient(circle at 20% 10%, rgba(255,255,255,.18) 0, transparent 40%),
+                    radial-gradient(circle at 90% 90%, rgba(255,255,255,.12) 0, transparent 45%),
+                    linear-gradient(160deg, var(--blue-500) 0%, var(--blue-700) 60%, var(--blue-900) 100%);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .brand-icon {
+                width: 72px; height: 72px;
+                border-radius: 18px;
+                background: rgba(255,255,255,.18);
+                display: flex; align-items: center; justify-content: center;
+                font-size: 2.2rem;
+                margin-bottom: 1.5rem;
+            }
+            .brand-side h1 { font-size: 1.9rem; font-weight: 700; line-height: 1.3; margin-bottom: .75rem; }
+            .brand-side p { color: rgba(255,255,255,.85); margin: 0; }
+
+            /* ===== Cột phải: form ===== */
+            .form-side { flex: 1 1 55%; padding: 3rem 2.5rem; }
+            .form-side h2 { color: var(--blue-700); font-weight: 700; margin-bottom: .25rem; }
+            .form-side .sub { color: #6b7a90; margin-bottom: 1.75rem; }
+
+            .form-label { font-weight: 600; color: #26364f; font-size: .9rem; }
+            .input-group-text {
+                background: var(--blue-100);
+                border-color: #cfe0f5;
+                color: var(--blue-600);
+            }
+            .form-control {
+                border-color: #cfe0f5;
+                padding: .65rem .85rem;
+            }
+            .form-control:focus {
+                border-color: var(--blue-500);
+                box-shadow: 0 0 0 .2rem rgba(30, 136, 229, .18);
+            }
+            .btn-toggle-pw {
+                border: 1px solid #cfe0f5;
+                border-left: 0;
+                background: #fff;
+                color: var(--blue-600);
+            }
+            .btn-toggle-pw:hover { background: var(--blue-100); color: var(--blue-700); }
+
+            .btn-login {
+                background: linear-gradient(90deg, var(--blue-600), var(--blue-500));
+                border: 0;
+                color: #fff;
+                font-weight: 600;
+                padding: .75rem;
+                border-radius: 10px;
+                transition: transform .15s, box-shadow .15s;
+            }
+            .btn-login:hover {
+                color: #fff;
+                transform: translateY(-1px);
+                box-shadow: 0 8px 18px rgba(21, 101, 192, .35);
+            }
+
+            /* Ẩn khung lỗi rỗng của validation summary */
+            .validation-summary-valid { display: none; }
+            .validation-summary-errors ul { margin: 0; padding-left: 1.1rem; }
+
+            @@media (max-width: 767.98px) {
+                .brand-side { display: none; }
+                .form-side { padding: 2rem 1.5rem; }
+            }
+    </style>
+</head>
+<body>
+    <div class="login-wrap">
+        <div class="brand-side">
+            <div class="brand-icon"><i class="bi bi-building"></i></div>
+            <h1>Ký túc xá UNETI</h1>
+            <p>Hệ thống quản lý ký túc xá và phân phòng sinh viên.</p>
         </div>
-        <div class="card shadow-sm mt-3">
-            <div class="card-body small text-muted">
-                <strong>Tài khoản kiểm thử (dữ liệu mẫu):</strong><br />
-                Admin: <code>admin</code> / <code>Admin@123</code><br />
-                Sinh viên: <code>22103100001</code> ... <code>22103100029</code> / <code>Sv@123456</code><br />
-                Tài khoản bị khóa: <code>22103100030</code>
-            </div>
+
+        <div class="form-side">
+            <h2>Đăng nhập</h2>
+            <p class="sub">Vui lòng đăng nhập để tiếp tục.</p>
+
+            <form asp-action="Login" method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                <div class="mb-3">
+                    <label asp-for="TenDangNhap" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                        <input asp-for="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập" autofocus />
+                    </div>
+                    <span asp-validation-for="TenDangNhap" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="MatKhau" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu" />
+                        <button type="button" class="btn btn-toggle-pw" id="btnTogglePw" tabindex="-1" aria-label="Hiện/ẩn mật khẩu">
+                            <i class="bi bi-eye" id="iconTogglePw"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="MatKhau" class="text-danger small"></span>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập
+                </button>
+            </form>
         </div>
     </div>
-</div>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+            // Hiện/ẩn mật khẩu
+            document.getElementById('btnTogglePw').addEventListener('click', function () {
+                var input = document.getElementById('MatKhau');
+                var icon = document.getElementById('iconTogglePw');
+                var an = input.type === 'password';
+                input.type = an ? 'text' : 'password';
+                icon.className = an ? 'bi bi-eye-slash' : 'bi bi-eye';
+            });
+    </script>
+</body>
+</html>

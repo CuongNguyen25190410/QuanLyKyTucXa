@@ -1,0 +1,62 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV3]
+    Mã sinh viên: [ĐIỀN MÃ SV3]
+    Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+*@
+@model SinhVienFormVM
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+<input type="hidden" asp-for="LaSua" />
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <label asp-for="MaSinhVien" class="form-label"></label>
+        <input asp-for="MaSinhVien" class="form-control" readonly="@Model.LaSua" />
+        <span asp-validation-for="MaSinhVien" class="text-danger"></span>
+    </div>
+    <div class="col-md-8 mb-3"><label asp-for="HoTen" class="form-label"></label><input asp-for="HoTen" class="form-control" /><span asp-validation-for="HoTen" class="text-danger"></span></div>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-3"><label asp-for="NgaySinh" class="form-label"></label><input asp-for="NgaySinh" type="date" class="form-control" /><span asp-validation-for="NgaySinh" class="text-danger"></span></div>
+    <div class="col-md-4 mb-3">
+        <label asp-for="GioiTinh" class="form-label d-block"></label>
+        @foreach (var g in GioiTinh.TatCa)
+        {
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" asp-for="GioiTinh" value="@g" />
+                <label class="form-check-label">@g</label>
+            </div>
+        }
+        <span asp-validation-for="GioiTinh" class="text-danger d-block"></span>
+    </div>
+    <div class="col-md-4 mb-3">
+        <label asp-for="TrangThai" class="form-label"></label>
+        <select asp-for="TrangThai" class="form-select">
+            <option value="@TrangThaiSinhVien.HoatDong">@TrangThaiSinhVien.HoatDong</option>
+            <option value="@TrangThaiSinhVien.NgungHoatDong">@TrangThaiSinhVien.NgungHoatDong</option>
+        </select>
+        <span asp-validation-for="TrangThai" class="text-danger"></span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3"><label asp-for="Lop" class="form-label"></label><input asp-for="Lop" class="form-control" /><span asp-validation-for="Lop" class="text-danger"></span></div>
+    <div class="col-md-6 mb-3"><label asp-for="Khoa" class="form-label"></label><input asp-for="Khoa" class="form-control" /><span asp-validation-for="Khoa" class="text-danger"></span></div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3"><label asp-for="SoDienThoai" class="form-label"></label><input asp-for="SoDienThoai" type="tel" class="form-control" /><span asp-validation-for="SoDienThoai" class="text-danger"></span></div>
+    <div class="col-md-6 mb-3"><label asp-for="Email" class="form-label"></label><input asp-for="Email" type="email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
+</div>
+<div class="mb-3"><label asp-for="DiaChi" class="form-label"></label><textarea asp-for="DiaChi" rows="2" class="form-control"></textarea><span asp-validation-for="DiaChi" class="text-danger"></span></div>
+
+<hr />
+<h6>Tài khoản đăng nhập</h6>
+@if (Model.LaSua)
+{
+    <div class="mb-3"><label asp-for="TenDangNhap" class="form-label"></label><input asp-for="TenDangNhap" class="form-control" readonly /></div>
+    <p class="text-muted small">Đổi mật khẩu hoặc khóa/mở khóa tài khoản ở mục Tài khoản. Chuyển trạng thái sinh viên sang "Ngừng hoạt động" sẽ tự khóa tài khoản (lịch sử vẫn được giữ).</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6 mb-3"><label asp-for="TenDangNhap" class="form-label"></label><input asp-for="TenDangNhap" class="form-control" /><span asp-validation-for="TenDangNhap" class="text-danger"></span></div>
+        <div class="col-md-6 mb-3"><label asp-for="MatKhau" class="form-label"></label><input asp-for="MatKhau" class="form-control" /><span asp-validation-for="MatKhau" class="text-danger"></span></div>
+    </div>
+}

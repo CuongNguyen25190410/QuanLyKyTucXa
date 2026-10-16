@@ -1,0 +1,31 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV4]
+    Mã sinh viên: [ĐIỀN MÃ SV4]
+    Nội dung thực hiện: Module 4 - Quản lý đăng ký, phân phòng, chuyển phòng, trả phòng, Dashboard, thống kê
+*@
+@model TraPhongVM
+@{
+    ViewData["Title"] = "Trả phòng";
+    var h = Model.HienTai;
+}
+<h2>Trả phòng</h2>
+<div class="card shadow-sm mb-3"><div class="card-body">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Sinh viên</dt><dd class="col-sm-9">@h.DangKyKTX.SinhVien.HoTen (@h.DangKyKTX.MaSinhVien)</dd>
+        <dt class="col-sm-3">Phòng</dt><dd class="col-sm-9">@h.PhongKTX.TenPhong (Tòa @h.PhongKTX.ToaNha, tầng @h.PhongKTX.Tang)</dd>
+        <dt class="col-sm-3">Vào phòng từ</dt><dd class="col-sm-9">@Fmt.Ngay(h.NgayVao)</dd>
+    </dl>
+</div></div>
+<form asp-action="Tra" method="post" class="card shadow-sm"><div class="card-body">
+    <input type="hidden" asp-for="MaPhanPhong" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="mb-3" style="max-width:260px">
+        <label asp-for="NgayRa" class="form-label"></label>
+        <input asp-for="NgayRa" type="date" class="form-control" />
+        <span asp-validation-for="NgayRa" class="text-danger"></span>
+    </div>
+    <p class="text-muted small">Sau khi trả phòng, bản ghi phân phòng và đăng ký chuyển sang "Đã trả phòng"; chỗ của sinh viên trở thành chỗ trống.</p>
+    <button type="submit" class="btn btn-danger">Xác nhận trả phòng</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+</div></form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,64 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV2]
+    Mã sinh viên: [ĐIỀN MÃ SV2]
+    Nội dung thực hiện: Module 2 - Quản lý phòng KTX, tìm kiếm, lọc, sắp xếp, phân trang
+*@
+@model PhongDetailsVM
+@{
+    ViewData["Title"] = "Chi tiết phòng " + Model.Phong.TenPhong;
+    var p = Model.Phong;
+    var tyLe = p.SucChua == 0 ? 0 : p.SoDangO * 100 / p.SucChua;
+}
+<h2>Phòng @p.TenPhong</h2>
+<div class="row g-3">
+    <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-5">Loại phòng</dt><dd class="col-sm-7">@p.TenLoaiPhong</dd>
+            <dt class="col-sm-5">Đơn giá/tháng</dt><dd class="col-sm-7">@Fmt.Tien(p.DonGiaThang)</dd>
+            <dt class="col-sm-5">Tòa nhà / Tầng</dt><dd class="col-sm-7">Tòa @p.ToaNha - Tầng @p.Tang</dd>
+            <dt class="col-sm-5">Giới tính phòng</dt><dd class="col-sm-7">@p.GioiTinhPhong</dd>
+            <dt class="col-sm-5">Trạng thái</dt><dd class="col-sm-7"><span class="badge @Fmt.Badge(p.TrangThai)">@p.TrangThai</span></dd>
+            <dt class="col-sm-5">Mô tả</dt><dd class="col-sm-7">@Model.MoTa</dd>
+        </dl>
+    </div></div></div>
+    <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+        <h5>Sức chứa</h5>
+        <p class="mb-1">Sức chứa: <strong>@p.SucChua</strong> &middot; Đang ở: <strong>@p.SoDangO</strong> &middot; Còn: <strong>@p.SoChoCon</strong></p>
+        <div class="progress mb-2"><div class="progress-bar @(p.SoChoCon <= 0 ? "bg-danger" : "bg-success")" style="width:@(tyLe)%"></div></div>
+        <p class="text-muted small mb-0">Số chỗ còn = Sức chứa − Số sinh viên đang ở (tính từ dữ liệu phân phòng).</p>
+    </div></div></div>
+</div>
+
+@if (Model.LaAdmin)
+{
+    <h5 class="mt-4">Sinh viên đang ở</h5>
+    @if (!Model.NguoiDangO.Any())
+    {
+        <div class="alert alert-secondary">Chưa có sinh viên nào đang ở phòng này.</div>
+    }
+    else
+    {
+        <div class="card shadow-sm"><div class="table-responsive"><table class="table mb-0 align-middle">
+            <thead class="table-light"><tr><th>Mã SV</th><th>Họ tên</th><th>Giới tính</th><th>Ngày vào</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var pp in Model.NguoiDangO)
+            {
+                <tr>
+                    <td>@pp.DangKyKTX.MaSinhVien</td><td>@pp.DangKyKTX.SinhVien.HoTen</td><td>@pp.DangKyKTX.SinhVien.GioiTinh</td><td>@Fmt.Ngay(pp.NgayVao)</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="PhanPhong" asp-action="Chuyen" asp-route-id="@pp.MaPhanPhong">Chuyển phòng</a>
+                        <a class="btn btn-sm btn-outline-danger" asp-controller="PhanPhong" asp-action="Tra" asp-route-id="@pp.MaPhanPhong">Trả phòng</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table></div></div>
+    }
+}
+<div class="mt-3">
+    <a class="btn btn-outline-secondary" asp-action="Index">Quay lại danh sách</a>
+    @if (!Model.LaAdmin && p.SoChoCon > 0)
+    {
+        <a class="btn btn-success" asp-controller="DangKyKTX" asp-action="Create" asp-route-maLoaiPhong="@p.MaLoaiPhong">Đăng ký ở loại phòng này</a>
+    }
+</div>

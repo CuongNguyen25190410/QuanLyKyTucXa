@@ -1,0 +1,73 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV3]
+    Mã sinh viên: [ĐIỀN MÃ SV3]
+    Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+*@
+@model SinhVienDetailsVM
+@{
+    ViewData["Title"] = "Chi tiết sinh viên";
+    var s = Model.SinhVien;
+}
+<h2>@s.HoTen <small class="text-muted">(@s.MaSinhVien)</small></h2>
+<div class="row g-3 mb-3">
+    <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+        <h5>Hồ sơ</h5>
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Ngày sinh</dt><dd class="col-sm-8">@Fmt.Ngay(s.NgaySinh)</dd>
+            <dt class="col-sm-4">Giới tính</dt><dd class="col-sm-8">@s.GioiTinh</dd>
+            <dt class="col-sm-4">Lớp / Khoa</dt><dd class="col-sm-8">@s.Lop - @s.Khoa</dd>
+            <dt class="col-sm-4">SĐT</dt><dd class="col-sm-8">@s.SoDienThoai</dd>
+            <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@s.Email</dd>
+            <dt class="col-sm-4">Địa chỉ</dt><dd class="col-sm-8">@s.DiaChi</dd>
+            <dt class="col-sm-4">Trạng thái</dt><dd class="col-sm-8"><span class="badge @Fmt.Badge(s.TrangThai)">@s.TrangThai</span></dd>
+        </dl>
+    </div></div></div>
+    <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+        <h5>Tài khoản &amp; thống kê</h5>
+        <dl class="row mb-0">
+            <dt class="col-sm-5">Tên đăng nhập</dt><dd class="col-sm-7">@Model.TaiKhoan?.TenDangNhap</dd>
+            <dt class="col-sm-5">Trạng thái TK</dt><dd class="col-sm-7"><span class="badge @Fmt.Badge(Model.TaiKhoan?.TrangThai)">@Model.TaiKhoan?.TrangThai</span></dd>
+            <dt class="col-sm-5">Số lần đăng ký</dt><dd class="col-sm-7">@Model.DangKys.Count</dd>
+            <dt class="col-sm-5">Số lần chuyển phòng</dt><dd class="col-sm-7">@Model.SoLanChuyenPhong</dd>
+        </dl>
+    </div></div></div>
+</div>
+
+<h5>Lịch sử ở KTX</h5>
+@if (!Model.LichSuPhanPhong.Any())
+{
+    <div class="alert alert-secondary">Sinh viên chưa từng được phân phòng.</div>
+}
+else
+{
+    <div class="card shadow-sm mb-3"><div class="table-responsive"><table class="table mb-0">
+        <thead class="table-light"><tr><th>Phòng</th><th>Loại phòng</th><th>Ngày vào</th><th>Ngày ra</th><th>Trạng thái</th></tr></thead>
+        <tbody>
+        @foreach (var pp in Model.LichSuPhanPhong)
+        {
+            <tr><td>@pp.PhongKTX.TenPhong (Tòa @pp.PhongKTX.ToaNha)</td><td>@pp.PhongKTX.LoaiPhong.TenLoaiPhong</td><td>@Fmt.Ngay(pp.NgayVao)</td><td>@Fmt.Ngay(pp.NgayRa)</td><td><span class="badge @Fmt.Badge(pp.TrangThai)">@pp.TrangThai</span></td></tr>
+        }
+        </tbody>
+    </table></div></div>
+}
+
+<h5>Các đăng ký KTX</h5>
+@if (!Model.DangKys.Any())
+{
+    <div class="alert alert-secondary">Chưa có đăng ký nào.</div>
+}
+else
+{
+    <div class="card shadow-sm"><div class="table-responsive"><table class="table mb-0">
+        <thead class="table-light"><tr><th>Mã ĐK</th><th>Ngày đăng ký</th><th>Bắt đầu</th><th>Kết thúc dự kiến</th><th>Nguyện vọng</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var d in Model.DangKys)
+        {
+            <tr><td>@d.MaDangKy</td><td>@Fmt.Ngay(d.NgayDangKy)</td><td>@Fmt.Ngay(d.NgayBatDau)</td><td>@Fmt.Ngay(d.NgayKetThucDuKien)</td><td>@(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—")</td>
+                <td><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></td>
+                <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-controller="DangKyKTX" asp-action="Details" asp-route-id="@d.MaDangKy">Chi tiết</a></td></tr>
+        }
+        </tbody>
+    </table></div></div>
+}
+<div class="mt-3"><a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a> <a class="btn btn-primary" asp-action="Edit" asp-route-id="@s.MaSinhVien">Sửa hồ sơ</a></div>

@@ -1,0 +1,98 @@
+@{
+    // Thông tin người dùng lấy từ Session (được ghi khi đăng nhập thành công)
+    var dangNhap = Context.Session.GetInt32("MaTaiKhoan") != null;
+    var vaiTro = Context.Session.GetString("VaiTro");
+    var hoTen = Context.Session.GetString("HoTen");
+    var laAdmin = dangNhap && vaiTro == VaiTro.Admin;
+    var laSinhVien = dangNhap && vaiTro == VaiTro.SinhVien;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản lý KTX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">KTX UNETI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuChinh" aria-controls="menuChinh" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuChinh">
+                <ul class="navbar-nav me-auto">
+                    @if (laAdmin)
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="ThongKe" asp-action="Index">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="ThongKe" asp-action="ChiTiet">Thống kê</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="LoaiPhong" asp-action="Index">Loại phòng</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="PhongKTX" asp-action="Index">Phòng</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="SinhVien" asp-action="Index">Sinh viên</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="DangKyKTX" asp-action="Index">Đăng ký</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="PhanPhong" asp-action="Index">Phân phòng</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="TaiKhoan" asp-action="Index">Tài khoản</a></li>
+                    }
+                    else if (laSinhVien)
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="PhongKTX" asp-action="Index">Danh sách phòng</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="DangKyKTX" asp-action="CuaToi">Đăng ký của tôi</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="CaNhan" asp-action="Index">Thông tin cá nhân</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="CaNhan" asp-action="LichSu">Lịch sử ở</a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    }
+                </ul>
+                <ul class="navbar-nav align-items-lg-center">
+                    @if (dangNhap)
+                    {
+                        <li class="nav-item"><span class="navbar-text me-3">Xin chào, <strong>@hoTen</strong> <span class="badge bg-light text-primary">@vaiTro</span></span></li>
+                        <li class="nav-item me-2"><a class="btn btn-sm btn-outline-light" asp-controller="TaiKhoan" asp-action="DoiMatKhau">Đổi mật khẩu</a></li>
+                        <li class="nav-item">
+                            <form asp-controller="TaiKhoan" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-light">Đăng xuất</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a class="btn btn-sm btn-light" asp-controller="TaiKhoan" asp-action="Login">Đăng nhập</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        @if (TempData["ThanhCong"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["ThanhCong"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+            </div>
+        }
+        @if (TempData["Loi"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["Loi"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="border-top text-center text-muted py-3 small">
+        Hệ thống quản lý ký túc xá và phân phòng sinh viên &middot; ASP.NET Core 10 MVC &middot; EF Core 10 &middot; SQL Server
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

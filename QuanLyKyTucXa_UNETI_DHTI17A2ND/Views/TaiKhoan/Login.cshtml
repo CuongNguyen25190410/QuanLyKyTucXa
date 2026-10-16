@@ -1,0 +1,42 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV1]
+    Mã sinh viên: [ĐIỀN MÃ SV1]
+    Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
+*@
+@model LoginVM
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="mb-3">Đăng nhập</h3>
+                <form asp-action="Login" method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="TenDangNhap" class="form-label"></label>
+                        <input asp-for="TenDangNhap" class="form-control" autofocus />
+                        <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="MatKhau" class="form-label"></label>
+                        <input asp-for="MatKhau" class="form-control" />
+                        <span asp-validation-for="MatKhau" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-3">
+            <div class="card-body small text-muted">
+                <strong>Tài khoản kiểm thử (dữ liệu mẫu):</strong><br />
+                Admin: <code>admin</code> / <code>Admin@123</code><br />
+                Sinh viên: <code>22103100001</code> ... <code>22103100029</code> / <code>Sv@123456</code><br />
+                Tài khoản bị khóa: <code>22103100030</code>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

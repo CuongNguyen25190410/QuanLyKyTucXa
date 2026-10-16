@@ -1,0 +1,68 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV1]
+    Mã sinh viên: [ĐIỀN MÃ SV1]
+    Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
+*@
+@model PagedResult<TaiKhoan>
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Quản lý tài khoản</h2>
+    <a class="btn btn-primary" asp-action="Create">+ Thêm tài khoản Admin</a>
+</div>
+
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-4"><input name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tên đăng nhập, họ tên, email..." /></div>
+    <div class="col-md-3">
+        <select name="vaiTro" class="form-select">
+            <option value="">-- Mọi vai trò --</option>
+            <option value="@VaiTro.Admin" selected="@(ViewBag.VaiTro == VaiTro.Admin)">@VaiTro.Admin</option>
+            <option value="@VaiTro.SinhVien" selected="@(ViewBag.VaiTro == VaiTro.SinhVien)">@VaiTro.SinhVien</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="trangThai" class="form-select">
+            <option value="">-- Mọi trạng thái --</option>
+            <option value="@TrangThaiTaiKhoan.HoatDong" selected="@(ViewBag.TrangThai == TrangThaiTaiKhoan.HoatDong)">@TrangThaiTaiKhoan.HoatDong</option>
+            <option value="@TrangThaiTaiKhoan.Khoa" selected="@(ViewBag.TrangThai == TrangThaiTaiKhoan.Khoa)">@TrangThaiTaiKhoan.Khoa</option>
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100">Tìm</button></div>
+</form>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">Không tìm thấy tài khoản nào phù hợp.</div>
+}
+else
+{
+    <div class="card shadow-sm"><div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light"><tr><th>Tên đăng nhập</th><th>Họ tên</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th>Hồ sơ SV</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var t in Model.Items)
+            {
+                <tr>
+                    <td>@t.TenDangNhap</td>
+                    <td>@t.HoTen</td>
+                    <td>@t.Email</td>
+                    <td>@t.VaiTro</td>
+                    <td><span class="badge @Fmt.Badge(t.TrangThai)">@t.TrangThai</span></td>
+                    <td>@(t.SinhVien != null ? t.SinhVien.MaSinhVien : "—")</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@t.MaTaiKhoan">Sửa</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="DatLaiMatKhau" asp-route-id="@t.MaTaiKhoan">Đặt lại MK</a>
+                        <form asp-action="DoiTrangThai" asp-route-id="@t.MaTaiKhoan" method="post" class="d-inline">
+                            <button class="btn btn-sm @(t.TrangThai == TrangThaiTaiKhoan.HoatDong ? "btn-outline-danger" : "btn-outline-success")">
+                                @(t.TrangThai == TrangThaiTaiKhoan.HoatDong ? "Khóa" : "Mở khóa")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div></div>
+}
+<partial name="_Pager" model="Model" />

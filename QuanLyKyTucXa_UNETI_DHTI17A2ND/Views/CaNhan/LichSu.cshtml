@@ -1,0 +1,29 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV3]
+    Mã sinh viên: [ĐIỀN MÃ SV3]
+    Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+*@
+@model List<PhanPhong>
+@{
+    ViewData["Title"] = "Lịch sử ở KTX";
+}
+<h2 class="mb-3">Lịch sử ở ký túc xá</h2>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Bạn chưa có lịch sử ở KTX.</div>
+}
+else
+{
+    <div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+        <thead class="table-light"><tr><th>Phòng</th><th>Loại phòng</th><th>Tòa / Tầng</th><th>Ngày vào</th><th>Ngày ra</th><th>Trạng thái</th></tr></thead>
+        <tbody>
+        @foreach (var pp in Model)
+        {
+            <tr>
+                <td>@pp.PhongKTX.TenPhong</td><td>@pp.PhongKTX.LoaiPhong.TenLoaiPhong</td><td>Tòa @pp.PhongKTX.ToaNha - Tầng @pp.PhongKTX.Tang</td>
+                <td>@Fmt.Ngay(pp.NgayVao)</td><td>@Fmt.Ngay(pp.NgayRa)</td><td><span class="badge @Fmt.Badge(pp.TrangThai)">@pp.TrangThai</span></td>
+            </tr>
+        }
+        </tbody>
+    </table></div></div>
+}

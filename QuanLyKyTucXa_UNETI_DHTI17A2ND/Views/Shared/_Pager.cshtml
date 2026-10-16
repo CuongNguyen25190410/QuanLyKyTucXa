@@ -1,0 +1,55 @@
+@* Thanh phân trang dùng chung. Khi chuyển trang, TOÀN BỘ tham số tìm kiếm/lọc/sắp xếp trên query string
+   được giữ nguyên (chỉ thay giá trị "page"). *@
+@model PagedResultBase
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+
+    string Link(int p)
+    {
+        var rv = new RouteValueDictionary();
+        foreach (var kv in Context.Request.Query)
+        {
+            if (!string.Equals(kv.Key, "page", StringComparison.OrdinalIgnoreCase))
+            {
+                rv[kv.Key] = kv.Value.ToString();
+            }
+        }
+        rv["page"] = p;
+        return Url.Action(action, controller, rv);
+    }
+
+    var tu = Math.Max(1, Model.Page - 2);
+    var den = Math.Min(Model.TotalPages, Model.Page + 2);
+}
+@if (Model.TotalItems > 0)
+{
+    <div class="d-flex flex-column align-items-center mt-3">
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Phân trang">
+                <ul class="pagination pagination-sm mb-1">
+                    <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Link(1)">&laquo; Đầu</a>
+                    </li>
+                    <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Link(Math.Max(1, Model.Page - 1))">&lsaquo; Trước</a>
+                    </li>
+                    @for (var i = tu; i <= den; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link" href="@Link(i)">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Link(Math.Min(Model.TotalPages, Model.Page + 1))">Sau &rsaquo;</a>
+                    </li>
+                    <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Link(Model.TotalPages)">Cuối &raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+        <div class="text-muted small">Trang @Model.Page / @Model.TotalPages &middot; Tổng @Model.TotalItems kết quả</div>
+    </div>
+}

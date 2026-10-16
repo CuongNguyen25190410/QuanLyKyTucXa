@@ -1,0 +1,76 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV4]
+    Mã sinh viên: [ĐIỀN MÃ SV4]
+    Nội dung thực hiện: Module 4 - Quản lý đăng ký, phân phòng, chuyển phòng, trả phòng, Dashboard, thống kê
+*@
+@model ThongKeVM
+@{
+    ViewData["Title"] = "Thống kê";
+    int maxThang = Model.SinhVienVaoTheoThang.Any() ? Model.SinhVienVaoTheoThang.Max(x => x.SoSinhVien) : 1;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Thống kê chi tiết</h2>
+    <a class="btn btn-outline-primary" asp-action="Index">Về Dashboard</a>
+</div>
+<p>Tỷ lệ sử dụng chỗ chung: <strong>@Model.TyLeSuDungChung%</strong></p>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body">
+        <h6>Số phòng theo loại</h6>
+        <table class="table table-sm mb-0"><tbody>@foreach (var x in Model.PhongTheoLoai) { <tr><td>@x.Nhan</td><td class="text-end">@x.GiaTri</td></tr> }</tbody></table>
+    </div></div></div>
+    <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body">
+        <h6>Sinh viên đang ở theo tòa</h6>
+        @if (!Model.SinhVienTheoToa.Any()) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
+        else { <table class="table table-sm mb-0"><tbody>@foreach (var x in Model.SinhVienTheoToa) { <tr><td>Tòa @x.Nhan</td><td class="text-end">@x.GiaTri</td></tr> }</tbody></table> }
+    </div></div></div>
+    <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body">
+        <h6>Sinh viên đang ở theo loại phòng</h6>
+        @if (!Model.SinhVienTheoLoaiPhong.Any()) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
+        else { <table class="table table-sm mb-0"><tbody>@foreach (var x in Model.SinhVienTheoLoaiPhong) { <tr><td>@x.Nhan</td><td class="text-end">@x.GiaTri</td></tr> }</tbody></table> }
+    </div></div></div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body">
+        <h6>Số đăng ký theo trạng thái</h6>
+        <table class="table table-sm mb-0"><tbody>@foreach (var x in Model.DangKyTheoTrangThai) { <tr><td><span class="badge @Fmt.Badge(x.Nhan)">@x.Nhan</span></td><td class="text-end">@x.GiaTri</td></tr> }</tbody></table>
+    </div></div></div>
+    <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body">
+        <h6>Phòng có nhiều sinh viên đang ở nhất</h6>
+        @if (!Model.PhongDongNhat.Any()) { <p class="text-muted mb-0">Chưa có sinh viên nào đang ở.</p> }
+        else { <ul class="mb-0">@foreach (var p in Model.PhongDongNhat) { <li><strong>@p.TenPhong</strong> - @p.SoDangO/@p.SucChua người (Tòa @p.ToaNha)</li> }</ul> }
+    </div></div></div>
+    <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body">
+        <h6>Sinh viên vào KTX theo tháng</h6>
+        @if (!Model.SinhVienVaoTheoThang.Any()) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
+        else
+        {
+            foreach (var t in Model.SinhVienVaoTheoThang)
+            {
+                <div class="d-flex align-items-center mb-1">
+                    <span class="me-2" style="width:70px">@t.Thang.ToString("00")/@t.Nam</span>
+                    <div class="progress flex-fill"><div class="progress-bar" style="width:@(t.SoSinhVien * 100 / maxThang)%"></div></div>
+                    <span class="ms-2">@t.SoSinhVien</span>
+                </div>
+            }
+        }
+    </div></div></div>
+</div>
+
+<h5>Số sinh viên đang ở, chỗ còn và tỷ lệ sử dụng của từng phòng</h5>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-sm align-middle mb-0">
+    <thead class="table-light"><tr><th>Phòng</th><th>Loại phòng</th><th>Tòa</th><th>Trạng thái</th><th class="text-center">Đang ở</th><th class="text-center">Sức chứa</th><th class="text-center">Chỗ còn</th><th style="width:20%">Tỷ lệ sử dụng</th></tr></thead>
+    <tbody>
+    @foreach (var p in Model.SinhVienTheoPhong)
+    {
+        var tyLe = p.SucChua == 0 ? 0 : p.SoDangO * 100 / p.SucChua;
+        <tr>
+            <td class="fw-semibold">@p.TenPhong</td><td>@p.TenLoaiPhong</td><td>@p.ToaNha</td>
+            <td><span class="badge @Fmt.Badge(p.TrangThai)">@p.TrangThai</span></td>
+            <td class="text-center">@p.SoDangO</td><td class="text-center">@p.SucChua</td><td class="text-center">@p.SoChoCon</td>
+            <td><div class="progress"><div class="progress-bar @(tyLe >= 100 ? "bg-danger" : "bg-success")" style="width:@(tyLe)%">@(tyLe)%</div></div></td>
+        </tr>
+    }
+    </tbody>
+</table></div></div>

@@ -1,0 +1,15 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV3]
+    Mã sinh viên: [ĐIỀN MÃ SV3]
+    Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+*@
+@model DangKyKTX
+@{
+    ViewData["Title"] = "Xóa đăng ký";
+}
+<h2>Xóa đăng ký</h2>
+<div class="alert alert-warning">Bạn có chắc muốn xóa đăng ký #@Model.MaDangKy của <strong>@Model.SinhVien.HoTen</strong> (trạng thái: @Model.TrangThai)? Đăng ký đã phân phòng hoặc có lịch sử ở không thể xóa.</div>
+<form asp-action="Delete" asp-route-id="@Model.MaDangKy" method="post">
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+</form>

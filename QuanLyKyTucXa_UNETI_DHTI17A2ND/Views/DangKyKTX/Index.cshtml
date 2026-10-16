@@ -1,0 +1,56 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV3]
+    Mã sinh viên: [ĐIỀN MÃ SV3]
+    Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+*@
+@model DangKyIndexVM
+@{
+    ViewData["Title"] = "Quản lý đăng ký KTX";
+}
+<h2 class="mb-3">Quản lý đăng ký KTX</h2>
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-5"><input name="tuKhoa" value="@Model.TuKhoa" class="form-control" placeholder="Mã SV hoặc họ tên..." /></div>
+    <div class="col-md-3">
+        <select name="trangThai" class="form-select">
+            <option value="">-- Mọi trạng thái --</option>
+            @foreach (var t in TrangThaiDangKy.TatCa) { <option value="@t" selected="@(Model.TrangThai == t)">@t</option> }
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100">Lọc</button></div>
+</form>
+
+@if (!Model.KetQua.Items.Any())
+{
+    <div class="alert alert-info">Không có đăng ký nào phù hợp.</div>
+}
+else
+{
+    <div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+        <thead class="table-light"><tr><th>Mã ĐK</th><th>Sinh viên</th><th>Giới tính</th><th>Ngày đăng ký</th><th>Thời gian ở</th><th>Nguyện vọng</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var d in Model.KetQua.Items)
+        {
+            <tr>
+                <td>@d.MaDangKy</td><td>@d.SinhVien.HoTen<br /><span class="text-muted small">@d.MaSinhVien</span></td><td>@d.SinhVien.GioiTinh</td>
+                <td>@Fmt.Ngay(d.NgayDangKy)</td><td>@Fmt.Ngay(d.NgayBatDau) &rarr; @Fmt.Ngay(d.NgayKetThucDuKien)</td><td>@(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—")</td>
+                <td><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@d.MaDangKy">Chi tiết</a>
+                    @if (d.TrangThai == TrangThaiDangKy.ChoDuyet)
+                    {
+                        <a class="btn btn-sm btn-success" asp-controller="PhanPhong" asp-action="Create" asp-route-maDangKy="@d.MaDangKy">Phân phòng</a>
+                        <form asp-action="Huy" asp-route-id="@d.MaDangKy" method="post" class="d-inline" onsubmit="return confirm('Hủy đăng ký này?');">
+                            <button class="btn btn-sm btn-outline-warning">Hủy</button>
+                        </form>
+                    }
+                    @if (d.TrangThai == TrangThaiDangKy.ChoDuyet || d.TrangThai == TrangThaiDangKy.DaHuy)
+                    {
+                        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@d.MaDangKy">Xóa</a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table></div></div>
+}
+<partial name="_Pager" model="Model.KetQua" />

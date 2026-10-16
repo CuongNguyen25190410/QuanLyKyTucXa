@@ -1,0 +1,23 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV1]
+    Mã sinh viên: [ĐIỀN MÃ SV1]
+    Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
+*@
+@model TaiKhoanFormVM
+@{
+    ViewData["Title"] = "Thêm tài khoản Admin";
+}
+<h2>Thêm tài khoản Admin</h2>
+<div class="row"><div class="col-md-6"><div class="card shadow-sm"><div class="card-body">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div class="mb-3"><label asp-for="TenDangNhap" class="form-label"></label><input asp-for="TenDangNhap" class="form-control" /><span asp-validation-for="TenDangNhap" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="HoTen" class="form-label"></label><input asp-for="HoTen" class="form-control" /><span asp-validation-for="HoTen" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="Email" class="form-label"></label><input asp-for="Email" type="email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="MatKhau" class="form-label"></label><input asp-for="MatKhau" class="form-control" /><span asp-validation-for="MatKhau" class="text-danger"></span></div>
+        <p class="text-muted small">Vai trò của tài khoản được hệ thống đặt là Admin. Tài khoản sinh viên được tạo cùng hồ sơ ở mục Sinh viên.</p>
+        <button type="submit" class="btn btn-primary">Lưu</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+    </form>
+</div></div></div></div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

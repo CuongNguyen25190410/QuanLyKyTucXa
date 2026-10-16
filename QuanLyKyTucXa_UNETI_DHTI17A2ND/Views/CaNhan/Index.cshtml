@@ -1,0 +1,70 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV3]
+    Mã sinh viên: [ĐIỀN MÃ SV3]
+    Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+*@
+@model CaNhanVM
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+<h2 class="mb-3">Thông tin cá nhân</h2>
+@if (Model.SinhVien == null)
+{
+    <div class="alert alert-warning">Tài khoản của bạn chưa được gắn với hồ sơ sinh viên. Vui lòng liên hệ quản trị viên.</div>
+}
+else
+{
+    var s = Model.SinhVien;
+    <div class="row g-3">
+        <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+            <h5>Hồ sơ sinh viên</h5>
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Mã sinh viên</dt><dd class="col-sm-8">@s.MaSinhVien</dd>
+                <dt class="col-sm-4">Họ tên</dt><dd class="col-sm-8">@s.HoTen</dd>
+                <dt class="col-sm-4">Ngày sinh</dt><dd class="col-sm-8">@Fmt.Ngay(s.NgaySinh)</dd>
+                <dt class="col-sm-4">Giới tính</dt><dd class="col-sm-8">@s.GioiTinh</dd>
+                <dt class="col-sm-4">Lớp / Khoa</dt><dd class="col-sm-8">@s.Lop - @s.Khoa</dd>
+                <dt class="col-sm-4">SĐT / Email</dt><dd class="col-sm-8">@s.SoDienThoai / @s.Email</dd>
+                <dt class="col-sm-4">Địa chỉ</dt><dd class="col-sm-8">@s.DiaChi</dd>
+                <dt class="col-sm-4">Tài khoản</dt><dd class="col-sm-8">@Model.TaiKhoan?.TenDangNhap (<span class="badge @Fmt.Badge(Model.TaiKhoan?.TrangThai)">@Model.TaiKhoan?.TrangThai</span>)</dd>
+            </dl>
+        </div></div></div>
+
+        <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+            <h5>Phòng đang ở</h5>
+            @if (Model.PhongHienTai == null)
+            {
+                <p class="text-muted">Bạn chưa được phân phòng.</p>
+            }
+            else
+            {
+                var pp = Model.PhongHienTai;
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Phòng</dt><dd class="col-sm-7"><strong>@pp.PhongKTX.TenPhong</strong></dd>
+                    <dt class="col-sm-5">Loại phòng</dt><dd class="col-sm-7">@pp.PhongKTX.LoaiPhong.TenLoaiPhong (@Fmt.Tien(pp.PhongKTX.LoaiPhong.DonGiaThang)/tháng)</dd>
+                    <dt class="col-sm-5">Tòa nhà / Tầng</dt><dd class="col-sm-7">Tòa @pp.PhongKTX.ToaNha - Tầng @pp.PhongKTX.Tang</dd>
+                    <dt class="col-sm-5">Ngày bắt đầu ở</dt><dd class="col-sm-7">@Fmt.Ngay(pp.NgayVao)</dd>
+                    <dt class="col-sm-5">Dự kiến kết thúc</dt><dd class="col-sm-7">@Fmt.Ngay(pp.DangKyKTX.NgayKetThucDuKien)</dd>
+                </dl>
+            }
+        </div></div></div>
+
+        <div class="col-12"><div class="card shadow-sm"><div class="card-body">
+            <h5>Đăng ký hiện tại</h5>
+            @if (Model.DangKyChoDuyet != null)
+            {
+                <p class="mb-1"><span class="badge @Fmt.Badge(Model.DangKyChoDuyet.TrangThai)">@Model.DangKyChoDuyet.TrangThai</span> Đăng ký #@Model.DangKyChoDuyet.MaDangKy gửi ngày @Fmt.Ngay(Model.DangKyChoDuyet.NgayDangKy), muốn ở từ @Fmt.Ngay(Model.DangKyChoDuyet.NgayBatDau).</p>
+                <a asp-controller="DangKyKTX" asp-action="CuaToi">Xem / hủy đăng ký</a>
+            }
+            else if (Model.DangKyHienTai != null)
+            {
+                <p class="mb-0"><span class="badge @Fmt.Badge(Model.DangKyHienTai.TrangThai)">@Model.DangKyHienTai.TrangThai</span> Đăng ký #@Model.DangKyHienTai.MaDangKy đã được xếp phòng.</p>
+            }
+            else
+            {
+                <p class="mb-1 text-muted">Bạn chưa có đăng ký nào đang xử lý. Tổng số đăng ký từ trước đến nay: @Model.SoLanDangKy.</p>
+                <a class="btn btn-sm btn-primary" asp-controller="DangKyKTX" asp-action="Create">Đăng ký ở KTX</a>
+            }
+        </div></div></div>
+    </div>
+}

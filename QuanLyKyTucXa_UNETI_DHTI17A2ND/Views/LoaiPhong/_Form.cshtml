@@ -1,0 +1,14 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV1]
+    Mã sinh viên: [ĐIỀN MÃ SV1]
+    Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
+*@
+@model LoaiPhong
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+<div class="mb-3"><label asp-for="TenLoaiPhong" class="form-label"></label><input asp-for="TenLoaiPhong" class="form-control" /><span asp-validation-for="TenLoaiPhong" class="text-danger"></span></div>
+<div class="row">
+    <div class="col-md-6 mb-3"><label asp-for="SoNguoiToiDa" class="form-label"></label><input asp-for="SoNguoiToiDa" type="number" min="1" class="form-control" /><span asp-validation-for="SoNguoiToiDa" class="text-danger"></span></div>
+    <div class="col-md-6 mb-3"><label asp-for="DonGiaThang" class="form-label"></label><input asp-for="DonGiaThang" type="number" min="1" step="1000" class="form-control" /><span asp-validation-for="DonGiaThang" class="text-danger"></span></div>
+</div>
+<div class="mb-3"><label asp-for="MoTa" class="form-label"></label><textarea asp-for="MoTa" rows="3" class="form-control"></textarea><span asp-validation-for="MoTa" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="TrangThai" class="form-label"></label><select asp-for="TrangThai" asp-items="@((List<SelectListItem>)ViewBag.TrangThais)" class="form-select"></select><span asp-validation-for="TrangThai" class="text-danger"></span></div>

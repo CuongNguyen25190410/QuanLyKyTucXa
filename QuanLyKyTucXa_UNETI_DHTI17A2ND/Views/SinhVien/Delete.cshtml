@@ -1,0 +1,20 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV3]
+    Mã sinh viên: [ĐIỀN MÃ SV3]
+    Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+*@
+@model SinhVien
+@{
+    ViewData["Title"] = "Xóa sinh viên";
+}
+<h2>Xóa sinh viên</h2>
+<div class="alert alert-warning">Bạn có chắc muốn xóa sinh viên <strong>@Model.HoTen</strong> (@Model.MaSinhVien)?
+    @if ((int)ViewBag.SoDangKy > 0)
+    {
+        <div class="mt-2"><strong>Lưu ý:</strong> sinh viên đã có @ViewBag.SoDangKy đăng ký KTX nên hệ thống sẽ không cho xóa, nhằm giữ lịch sử. Hãy chuyển sang "Ngừng hoạt động".</div>
+    }
+</div>
+<form asp-action="Delete" asp-route-id="@Model.MaSinhVien" method="post">
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+</form>

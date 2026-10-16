@@ -1,0 +1,24 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV1]
+    Mã sinh viên: [ĐIỀN MÃ SV1]
+    Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
+*@
+@model LoaiPhong
+@{
+    ViewData["Title"] = "Chi tiết loại phòng";
+}
+<h2>Chi tiết loại phòng</h2>
+<div class="card shadow-sm" style="max-width:640px"><div class="card-body">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Tên loại phòng</dt><dd class="col-sm-8">@Model.TenLoaiPhong</dd>
+        <dt class="col-sm-4">Số người tối đa</dt><dd class="col-sm-8">@Model.SoNguoiToiDa</dd>
+        <dt class="col-sm-4">Đơn giá/tháng</dt><dd class="col-sm-8">@Fmt.Tien(Model.DonGiaThang)</dd>
+        <dt class="col-sm-4">Trạng thái</dt><dd class="col-sm-8">@Model.TrangThai</dd>
+        <dt class="col-sm-4">Số phòng thuộc loại</dt><dd class="col-sm-8">@ViewBag.SoPhong</dd>
+        <dt class="col-sm-4">Mô tả</dt><dd class="col-sm-8">@Model.MoTa</dd>
+    </dl>
+</div></div>
+<div class="mt-3">
+    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.MaLoaiPhong">Sửa</a>
+    <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+</div>

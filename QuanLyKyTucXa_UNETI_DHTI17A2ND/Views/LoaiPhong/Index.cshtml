@@ -1,0 +1,57 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV1]
+    Mã sinh viên: [ĐIỀN MÃ SV1]
+    Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
+*@
+@model PagedResult<LoaiPhong>
+@{
+    ViewData["Title"] = "Quản lý loại phòng";
+    var soPhong = (Dictionary<int, int>)ViewBag.SoPhong;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Quản lý loại phòng</h2>
+    <a class="btn btn-primary" asp-action="Create">+ Thêm loại phòng</a>
+</div>
+
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-5"><input name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo tên loại phòng..." /></div>
+    <div class="col-md-3">
+        <select name="trangThai" class="form-select">
+            <option value="">-- Mọi trạng thái --</option>
+            <option value="@TrangThaiLoaiPhong.HoatDong" selected="@(ViewBag.TrangThai == TrangThaiLoaiPhong.HoatDong)">@TrangThaiLoaiPhong.HoatDong</option>
+            <option value="@TrangThaiLoaiPhong.NgungSuDung" selected="@(ViewBag.TrangThai == TrangThaiLoaiPhong.NgungSuDung)">@TrangThaiLoaiPhong.NgungSuDung</option>
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100">Tìm</button></div>
+</form>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">Không có loại phòng nào phù hợp.</div>
+}
+else
+{
+    <div class="card shadow-sm"><div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light"><tr><th>Tên loại phòng</th><th class="text-end">Số người tối đa</th><th class="text-end">Đơn giá/tháng</th><th class="text-end">Số phòng</th><th>Trạng thái</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var l in Model.Items)
+            {
+                <tr>
+                    <td>@l.TenLoaiPhong</td>
+                    <td class="text-end">@l.SoNguoiToiDa</td>
+                    <td class="text-end">@Fmt.Tien(l.DonGiaThang)</td>
+                    <td class="text-end">@(soPhong.ContainsKey(l.MaLoaiPhong) ? soPhong[l.MaLoaiPhong] : 0)</td>
+                    <td><span class="badge @Fmt.Badge(l.TrangThai == TrangThaiLoaiPhong.HoatDong ? TrangThaiTaiKhoan.HoatDong : TrangThaiSinhVien.NgungHoatDong)">@l.TrangThai</span></td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@l.MaLoaiPhong">Chi tiết</a>
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@l.MaLoaiPhong">Sửa</a>
+                        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@l.MaLoaiPhong">Xóa</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div></div>
+}
+<partial name="_Pager" model="Model" />

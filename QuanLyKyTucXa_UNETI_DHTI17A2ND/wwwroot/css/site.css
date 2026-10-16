@@ -1,0 +1,7 @@
+body { background: #f5f7fa; }
+.card { border: 0; }
+.table thead th { white-space: nowrap; }
+.stat-card .display-6 { font-weight: 700; }
+.progress { height: 0.9rem; }
+.form-label { font-weight: 500; }
+.required-note { color: #dc3545; }

@@ -1,0 +1,33 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV4]
+    Mã sinh viên: [ĐIỀN MÃ SV4]
+    Nội dung thực hiện: Module 4 - Quản lý đăng ký, phân phòng, chuyển phòng, trả phòng, Dashboard, thống kê
+*@
+@model DashboardVM
+@{
+    ViewData["Title"] = "Dashboard";
+    var mau = Model.TyLeSuDung >= 90 ? "bg-danger" : (Model.TyLeSuDung >= 60 ? "bg-warning" : "bg-success");
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Dashboard</h2>
+    <a class="btn btn-outline-primary" asp-action="ChiTiet">Xem thống kê chi tiết</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số phòng</div><div class="display-6">@Model.TongSoPhong</div></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số sinh viên</div><div class="display-6">@Model.TongSoSinhVien</div></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số đăng ký</div><div class="display-6">@Model.TongSoDangKy</div></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card border-warning"><div class="card-body"><div class="text-muted small">Đăng ký chờ duyệt</div><div class="display-6 text-warning">@Model.SoDangKyChoDuyet</div>
+        <a class="small" asp-controller="DangKyKTX" asp-action="Index" asp-route-trangThai="@TrangThaiDangKy.ChoDuyet">Duyệt ngay</a></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Sinh viên đang ở KTX</div><div class="display-6">@Model.SoSinhVienDangO</div></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số chỗ</div><div class="display-6">@Model.TongSoCho</div><div class="text-muted small">(phòng đang sử dụng)</div></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Chỗ đang sử dụng</div><div class="display-6">@Model.TongSoChoDangSuDung</div></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Chỗ còn trống</div><div class="display-6 text-success">@Model.TongSoChoConTrong</div></div></div></div>
+    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Phòng đã đủ người</div><div class="display-6 text-danger">@Model.SoPhongDaDayNguoi</div></div></div></div>
+</div>
+
+<div class="card shadow-sm"><div class="card-body">
+    <h5>Tỷ lệ sử dụng chỗ</h5>
+    <div class="progress mb-2"><div class="progress-bar @mau" style="width:@(Model.TyLeSuDung.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture))%">@Model.TyLeSuDung%</div></div>
+    <p class="text-muted small mb-0">Tỷ lệ = chỗ đang sử dụng / tổng số chỗ × 100%. Các con số đều được truy vấn trực tiếp từ Database bằng LINQ mỗi lần mở trang.</p>
+</div></div>

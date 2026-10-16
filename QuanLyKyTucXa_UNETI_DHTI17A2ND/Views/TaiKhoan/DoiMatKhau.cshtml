@@ -1,0 +1,21 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV1]
+    Mã sinh viên: [ĐIỀN MÃ SV1]
+    Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
+*@
+@model DoiMatKhauVM
+@{
+    ViewData["Title"] = "Đổi mật khẩu";
+}
+<div class="row justify-content-center"><div class="col-md-6"><div class="card shadow-sm"><div class="card-body p-4">
+    <h3 class="mb-3">Đổi mật khẩu</h3>
+    <form asp-action="DoiMatKhau" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div class="mb-3"><label asp-for="MatKhauCu" class="form-label"></label><input asp-for="MatKhauCu" class="form-control" /><span asp-validation-for="MatKhauCu" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="MatKhauMoi" class="form-label"></label><input asp-for="MatKhauMoi" class="form-control" /><span asp-validation-for="MatKhauMoi" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="XacNhanMatKhau" class="form-label"></label><input asp-for="XacNhanMatKhau" class="form-control" /><span asp-validation-for="XacNhanMatKhau" class="text-danger"></span></div>
+        <button type="submit" class="btn btn-primary">Lưu mật khẩu mới</button>
+        <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Hủy</a>
+    </form>
+</div></div></div></div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

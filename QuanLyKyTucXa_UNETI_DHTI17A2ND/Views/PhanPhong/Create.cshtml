@@ -1,0 +1,60 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV4]
+    Mã sinh viên: [ĐIỀN MÃ SV4]
+    Nội dung thực hiện: Module 4 - Quản lý đăng ký, phân phòng, chuyển phòng, trả phòng, Dashboard, thống kê
+*@
+@model PhanPhongCreateVM
+@{
+    ViewData["Title"] = "Phân phòng";
+    var d = Model.DangKy;
+}
+<h2>Phân phòng cho đăng ký #@d.MaDangKy</h2>
+<div class="card shadow-sm mb-3"><div class="card-body">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Sinh viên</dt><dd class="col-sm-9">@d.SinhVien.HoTen (@d.MaSinhVien) - <strong>@d.SinhVien.GioiTinh</strong></dd>
+        <dt class="col-sm-3">Thời gian ở</dt><dd class="col-sm-9">@Fmt.Ngay(d.NgayBatDau) &rarr; @Fmt.Ngay(d.NgayKetThucDuKien)</dd>
+        <dt class="col-sm-3">Nguyện vọng</dt><dd class="col-sm-9">@(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—") <span class="text-muted small">(chỉ để tham khảo)</span></dd>
+        <dt class="col-sm-3">Ghi chú</dt><dd class="col-sm-9">@d.GhiChu</dd>
+    </dl>
+</div></div>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="MaDangKy" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <h5>Chọn phòng</h5>
+    <p class="text-muted small">Chỉ hiển thị phòng đang sử dụng và còn chỗ. Phòng đúng giới tính được xếp lên trước.</p>
+    @if (!Model.PhongCoTheChon.Any())
+    {
+        <div class="alert alert-warning">Hiện không có phòng nào còn chỗ để phân.</div>
+    }
+    else
+    {
+        <div class="card shadow-sm mb-2"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+            <thead class="table-light"><tr><th></th><th>Phòng</th><th>Loại phòng</th><th>Tòa</th><th>Tầng</th><th>Giới tính</th><th class="text-center">Sức chứa</th><th class="text-center">Chỗ còn</th></tr></thead>
+            <tbody>
+            @foreach (var p in Model.PhongCoTheChon)
+            {
+                var hopGioiTinh = p.GioiTinhPhong == d.SinhVien.GioiTinh;
+                <tr class="@(hopGioiTinh ? "" : "table-light text-muted")">
+                    <td><input class="form-check-input" type="radio" name="MaPhong" value="@p.MaPhong" checked="@(Model.MaPhong == p.MaPhong)" /></td>
+                    <td class="fw-semibold">@p.TenPhong</td><td>@p.TenLoaiPhong</td><td>@p.ToaNha</td><td>@p.Tang</td>
+                    <td>@p.GioiTinhPhong @if (!hopGioiTinh) { <span class="badge bg-warning text-dark">Khác giới tính</span> }</td>
+                    <td class="text-center">@p.SucChua</td><td class="text-center"><span class="badge bg-success">@p.SoChoCon</span></td>
+                </tr>
+            }
+            </tbody>
+        </table></div></div>
+        <span asp-validation-for="MaPhong" class="text-danger d-block mb-2"></span>
+    }
+
+    <div class="row mt-3"><div class="col-md-4 mb-3">
+        <label asp-for="NgayVao" class="form-label"></label>
+        <input asp-for="NgayVao" type="date" class="form-control" />
+        <span asp-validation-for="NgayVao" class="text-danger"></span>
+    </div></div>
+
+    <button type="submit" class="btn btn-success" disabled="@(!Model.PhongCoTheChon.Any())">Xác nhận phân phòng</button>
+    <a class="btn btn-outline-secondary" asp-controller="DangKyKTX" asp-action="Index">Quay lại</a>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

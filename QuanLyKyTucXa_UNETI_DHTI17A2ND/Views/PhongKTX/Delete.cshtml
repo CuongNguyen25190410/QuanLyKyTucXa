@@ -1,0 +1,20 @@
+@*
+    Họ và tên: [ĐIỀN HỌ TÊN SV2]
+    Mã sinh viên: [ĐIỀN MÃ SV2]
+    Nội dung thực hiện: Module 2 - Quản lý phòng KTX, tìm kiếm, lọc, sắp xếp, phân trang
+*@
+@model PhongItemVM
+@{
+    ViewData["Title"] = "Xóa phòng";
+}
+<h2>Xóa phòng</h2>
+<div class="alert alert-warning">Bạn có chắc muốn xóa phòng <strong>@Model.TenPhong</strong> (Tòa @Model.ToaNha, tầng @Model.Tang)?
+    @if ((int)ViewBag.SoLanPhanPhong > 0)
+    {
+        <div class="mt-2"><strong>Lưu ý:</strong> phòng đã có @ViewBag.SoLanPhanPhong bản ghi lịch sử phân phòng nên hệ thống sẽ không cho xóa. Hãy dùng "Tạm ngừng".</div>
+    }
+</div>
+<form asp-action="Delete" asp-route-id="@Model.MaPhong" method="post">
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+</form>

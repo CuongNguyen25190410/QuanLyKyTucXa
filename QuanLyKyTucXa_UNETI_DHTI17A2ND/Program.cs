@@ -53,19 +53,19 @@ builder.Services.AddScoped<PhanPhongService>();
 
 var app = builder.Build();
 
-// Tạo CSDL từ Migration (nếu đã có Migration) và nạp dữ liệu mẫu lần đầu
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<TaiKhoan>>();
+//Tạo CSDL từ Migration (nếu đã có Migration) và nạp dữ liệu mẫu lần đầu
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<TaiKhoan>>();
 
-//    if (db.Database.GetMigrations().Any())
-//        await db.Database.MigrateAsync();          // cách chuẩn: Code First + Migration
-//    else
-//        await db.Database.EnsureCreatedAsync();    // dự phòng khi chưa tạo Migration (xem README)
+    if (db.Database.GetMigrations().Any())
+        await db.Database.MigrateAsync();          // cách chuẩn: Code First + Migration
+    else
+        await db.Database.EnsureCreatedAsync();    // dự phòng khi chưa tạo Migration (xem README)
 
-//    await DbSeeder.SeedAsync(db, hasher);
-//}
+    await DbSeeder.SeedAsync(db, hasher);
+}
 
 if (!app.Environment.IsDevelopment())
 {

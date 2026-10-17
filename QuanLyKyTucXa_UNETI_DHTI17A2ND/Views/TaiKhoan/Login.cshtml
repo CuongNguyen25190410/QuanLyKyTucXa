@@ -14,167 +14,577 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Quản lý KTX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
     <style>
             :root {
-                --blue-900: #0a2e6e;
+                --navy: #071f4d;
                 --blue-700: #0d47a1;
                 --blue-600: #1565c0;
                 --blue-500: #1e88e5;
-                --blue-100: #e3f0ff;
+                --sky: #4fc3f7;
+                --amber: #ffb703;
+                --ink: #1b2a41;
+                --muted: #6b7a90;
+                --line: #d9e6f7;
             }
-            html, body { height: 100%; }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html, body {
+                min-height: 100%;
+            }
+
             body {
                 margin: 0;
-                font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-                background: linear-gradient(135deg, var(--blue-100) 0%, #ffffff 100%);
+                font-family: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+                color: var(--ink);
+                min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 1rem;
+                padding: 1.25rem;
+                position: relative;
+                overflow-x: hidden;
+                background: linear-gradient(135deg, #061a40 0%, #0d47a1 55%, #1e88e5 100%);
             }
 
+            /* ===== Hình nền động ===== */
+            .bg-blob {
+                position: fixed;
+                border-radius: 50%;
+                filter: blur(70px);
+                opacity: .45;
+                z-index: 0;
+                animation: floaty 12s ease-in-out infinite;
+            }
+
+                .bg-blob.b1 {
+                    width: 380px;
+                    height: 380px;
+                    background: var(--sky);
+                    top: -110px;
+                    left: -90px;
+                }
+
+                .bg-blob.b2 {
+                    width: 320px;
+                    height: 320px;
+                    background: var(--amber);
+                    bottom: -120px;
+                    right: -80px;
+                    opacity: .3;
+                    animation-delay: -4s;
+                }
+
+                .bg-blob.b3 {
+                    width: 240px;
+                    height: 240px;
+                    background: #7c4dff;
+                    top: 45%;
+                    left: 55%;
+                    opacity: .25;
+                    animation-delay: -8s;
+                }
+
+            @@keyframes floaty {
+                0%, 100% {
+                    transform: translate(0, 0) scale(1);
+                }
+
+                50% {
+                    transform: translate(30px, -30px) scale(1.08);
+                }
+            }
+
+            /* ===== Khung chính ===== */
             .login-wrap {
+                position: relative;
+                z-index: 1;
                 width: 100%;
-                max-width: 920px;
-                background: #fff;
-                border-radius: 20px;
-                overflow: hidden;
-                box-shadow: 0 20px 50px rgba(13, 71, 161, .18);
+                max-width: 1000px;
                 display: flex;
+                background: #fff;
+                border-radius: 26px;
+                overflow: hidden;
+                box-shadow: 0 30px 70px rgba(3, 15, 45, .45);
+                animation: rise .7s cubic-bezier(.2, .8, .2, 1) both;
             }
 
-            /* ===== Cột trái: thương hiệu ===== */
+            @@keyframes rise {
+                from {
+                    opacity: 0;
+                    transform: translateY(24px) scale(.98);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+
+            /* ===== Cột trái ===== */
             .brand-side {
-                flex: 1 1 45%;
+                flex: 1 1 52%;
+                position: relative;
                 color: #fff;
-                padding: 3rem 2.5rem;
-                background:
-                    radial-gradient(circle at 20% 10%, rgba(255,255,255,.18) 0, transparent 40%),
-                    radial-gradient(circle at 90% 90%, rgba(255,255,255,.12) 0, transparent 45%),
-                    linear-gradient(160deg, var(--blue-500) 0%, var(--blue-700) 60%, var(--blue-900) 100%);
+                padding: 2.75rem 2.6rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+                background: radial-gradient(circle at 15% 0%, rgba(255,255,255,.22) 0, transparent 42%), linear-gradient(165deg, #1e88e5 0%, #0d47a1 55%, #071f4d 100%);
+            }
+
+                .brand-side::before,
+                .brand-side::after {
+                    content: "";
+                    position: absolute;
+                    border-radius: 50%;
+                    border: 2px solid rgba(255,255,255,.14);
+                }
+
+                .brand-side::before {
+                    width: 340px;
+                    height: 340px;
+                    right: -130px;
+                    bottom: -120px;
+                }
+
+                .brand-side::after {
+                    width: 200px;
+                    height: 200px;
+                    right: -50px;
+                    bottom: -40px;
+                    background: rgba(255,255,255,.06);
+                }
+
+            .brand-top {
+                display: flex;
+                align-items: center;
+                gap: .8rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .brand-logo {
+                width: 54px;
+                height: 54px;
+                border-radius: 16px;
+                background: rgba(255,255,255,.2);
+                backdrop-filter: blur(6px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.7rem;
+            }
+
+            .brand-name {
+                font-weight: 800;
+                letter-spacing: .5px;
+                font-size: 1.15rem;
+                line-height: 1.1;
+            }
+
+                .brand-name small {
+                    display: block;
+                    font-weight: 500;
+                    font-size: .72rem;
+                    opacity: .8;
+                    letter-spacing: 1.5px;
+                }
+
+            .hero {
+                position: relative;
+                z-index: 1;
+                margin: 2rem 0;
+            }
+
+                .hero .tag {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: .4rem;
+                    background: rgba(255,183,3,.18);
+                    color: #ffd166;
+                    border: 1px solid rgba(255,183,3,.45);
+                    padding: .3rem .8rem;
+                    border-radius: 999px;
+                    font-size: .78rem;
+                    font-weight: 600;
+                    margin-bottom: 1rem;
+                }
+
+                .hero h1 {
+                    font-size: 2.15rem;
+                    font-weight: 800;
+                    line-height: 1.25;
+                    margin: 0 0 .8rem;
+                }
+
+                    .hero h1 span {
+                        color: #ffd166;
+                    }
+
+                .hero p {
+                    color: rgba(255,255,255,.85);
+                    margin: 0;
+                    line-height: 1.6;
+                }
+
+            .features {
+                list-style: none;
+                padding: 0;
+                margin: 1.6rem 0 0;
+                display: grid;
+                gap: .75rem;
+            }
+
+                .features li {
+                    display: flex;
+                    align-items: center;
+                    gap: .85rem;
+                    background: rgba(255,255,255,.1);
+                    border: 1px solid rgba(255,255,255,.16);
+                    border-radius: 14px;
+                    padding: .7rem .9rem;
+                    font-size: .92rem;
+                    transition: transform .2s, background .2s;
+                }
+
+                    .features li:hover {
+                        transform: translateX(6px);
+                        background: rgba(255,255,255,.18);
+                    }
+
+                .features .ico {
+                    flex: 0 0 38px;
+                    height: 38px;
+                    border-radius: 11px;
+                    background: rgba(255,255,255,.2);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.1rem;
+                }
+
+                .features b {
+                    display: block;
+                    font-weight: 600;
+                }
+
+                .features span.d {
+                    opacity: .8;
+                    font-size: .8rem;
+                }
+
+            .brand-foot {
+                position: relative;
+                z-index: 1;
+                font-size: .8rem;
+                opacity: .75;
+            }
+
+            /* ===== Cột phải ===== */
+            .form-side {
+                flex: 1 1 48%;
+                padding: 3rem 2.6rem;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
             }
-            .brand-icon {
-                width: 72px; height: 72px;
-                border-radius: 18px;
-                background: rgba(255,255,255,.18);
-                display: flex; align-items: center; justify-content: center;
-                font-size: 2.2rem;
-                margin-bottom: 1.5rem;
-            }
-            .brand-side h1 { font-size: 1.9rem; font-weight: 700; line-height: 1.3; margin-bottom: .75rem; }
-            .brand-side p { color: rgba(255,255,255,.85); margin: 0; }
 
-            /* ===== Cột phải: form ===== */
-            .form-side { flex: 1 1 55%; padding: 3rem 2.5rem; }
-            .form-side h2 { color: var(--blue-700); font-weight: 700; margin-bottom: .25rem; }
-            .form-side .sub { color: #6b7a90; margin-bottom: 1.75rem; }
+            .hello {
+                font-size: 2rem;
+                margin-bottom: .2rem;
+            }
 
-            .form-label { font-weight: 600; color: #26364f; font-size: .9rem; }
-            .input-group-text {
-                background: var(--blue-100);
-                border-color: #cfe0f5;
-                color: var(--blue-600);
+            .form-side h2 {
+                font-weight: 800;
+                color: var(--navy);
+                margin: 0 0 .3rem;
+                font-size: 1.65rem;
             }
-            .form-control {
-                border-color: #cfe0f5;
-                padding: .65rem .85rem;
+
+            .form-side .sub {
+                color: var(--muted);
+                margin-bottom: 1.8rem;
+                font-size: .95rem;
             }
-            .form-control:focus {
-                border-color: var(--blue-500);
-                box-shadow: 0 0 0 .2rem rgba(30, 136, 229, .18);
+
+            .form-label {
+                font-weight: 600;
+                color: #26364f;
+                font-size: .86rem;
+                margin-bottom: .35rem;
             }
+
+            .field {
+                display: flex;
+                align-items: center;
+                border: 1.5px solid var(--line);
+                background: #f7faff;
+                border-radius: 12px;
+                transition: border-color .2s, box-shadow .2s, background .2s;
+            }
+
+                .field:focus-within {
+                    border-color: var(--blue-500);
+                    background: #fff;
+                    box-shadow: 0 0 0 4px rgba(30, 136, 229, .14);
+                }
+
+                .field .lead {
+                    padding: 0 .3rem 0 1rem;
+                    color: var(--blue-600);
+                    font-size: 1.1rem;
+                    display: flex;
+                }
+
+                .field .form-control {
+                    border: 0;
+                    background: transparent;
+                    box-shadow: none !important;
+                    padding: .8rem .8rem;
+                    font-size: .97rem;
+                }
+
             .btn-toggle-pw {
-                border: 1px solid #cfe0f5;
-                border-left: 0;
-                background: #fff;
-                color: var(--blue-600);
+                border: 0;
+                background: transparent;
+                color: var(--muted);
+                padding: 0 1rem;
+                font-size: 1.1rem;
             }
-            .btn-toggle-pw:hover { background: var(--blue-100); color: var(--blue-700); }
+
+                .btn-toggle-pw:hover {
+                    color: var(--blue-700);
+                }
+
+            .caps-warn {
+                display: none;
+                color: #b26a00;
+                font-size: .8rem;
+                margin-top: .35rem;
+            }
+
+                .caps-warn.show {
+                    display: block;
+                }
 
             .btn-login {
-                background: linear-gradient(90deg, var(--blue-600), var(--blue-500));
+                position: relative;
+                width: 100%;
                 border: 0;
                 color: #fff;
-                font-weight: 600;
-                padding: .75rem;
-                border-radius: 10px;
-                transition: transform .15s, box-shadow .15s;
+                font-weight: 700;
+                font-size: 1rem;
+                padding: .9rem;
+                border-radius: 12px;
+                background: linear-gradient(90deg, #0d47a1, #1e88e5);
+                box-shadow: 0 10px 22px rgba(21, 101, 192, .35);
+                transition: transform .15s, box-shadow .15s, filter .15s;
             }
-            .btn-login:hover {
-                color: #fff;
-                transform: translateY(-1px);
-                box-shadow: 0 8px 18px rgba(21, 101, 192, .35);
+
+                .btn-login:hover {
+                    color: #fff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 14px 28px rgba(21, 101, 192, .45);
+                    filter: brightness(1.05);
+                }
+
+                .btn-login:active {
+                    transform: translateY(0);
+                }
+
+                .btn-login:disabled {
+                    opacity: .8;
+                    cursor: wait;
+                    transform: none;
+                }
+
+            .help-note {
+                margin-top: 1.4rem;
+                padding: .75rem .9rem;
+                border-radius: 12px;
+                background: #fff8e1;
+                border: 1px solid #ffe29a;
+                color: #7a5a00;
+                font-size: .83rem;
+                display: flex;
+                gap: .6rem;
+                align-items: flex-start;
             }
+
+                .help-note i {
+                    margin-top: .1rem;
+                }
 
             /* Ẩn khung lỗi rỗng của validation summary */
-            .validation-summary-valid { display: none; }
-            .validation-summary-errors ul { margin: 0; padding-left: 1.1rem; }
+            .validation-summary-valid {
+                display: none;
+            }
+
+            .validation-summary-errors ul {
+                margin: 0;
+                padding-left: 1.1rem;
+            }
+
+            @@media (max-width: 860px) {
+                .brand-side {
+                    flex-basis: 45%;
+                    padding: 2rem 1.6rem;
+                }
+
+                .hero h1 {
+                    font-size: 1.7rem;
+                }
+            }
 
             @@media (max-width: 767.98px) {
-                .brand-side { display: none; }
-                .form-side { padding: 2rem 1.5rem; }
+                .login-wrap {
+                    flex-direction: column;
+                    max-width: 460px;
+                }
+
+                .brand-side {
+                    padding: 1.5rem 1.5rem 1.7rem;
+                }
+
+                .hero, .features, .brand-foot {
+                    display: none;
+                }
+
+                .brand-side::before, .brand-side::after {
+                    display: none;
+                }
+
+                .form-side {
+                    padding: 1.8rem 1.5rem 2rem;
+                }
+            }
+
+            @@media (prefers-reduced-motion: reduce) {
+                *, *::before, *::after {
+                    animation: none !important;
+                    transition: none !important;
+                }
             }
     </style>
 </head>
 <body>
+    <div class="bg-blob b1"></div>
+    <div class="bg-blob b2"></div>
+    <div class="bg-blob b3"></div>
+
     <div class="login-wrap">
+        <!-- ===== Cột trái: giới thiệu ===== -->
         <div class="brand-side">
-            <div class="brand-icon"><i class="bi bi-building"></i></div>
-            <h1>Ký túc xá UNETI</h1>
-            <p>Hệ thống quản lý ký túc xá và phân phòng sinh viên.</p>
+            <div class="brand-top">
+                <div class="brand-logo"><i class="bi bi-building"></i></div>
+                <div class="brand-name">KTX UNETI<small>KÝ TÚC XÁ SINH VIÊN</small></div>
+            </div>
+
+            <div class="hero">
+                <div class="tag"><i class="bi bi-stars"></i> Cổng thông tin sinh viên</div>
+                <h1>Một nơi ở ổn định,<br /><span>một hành trình học tập trọn vẹn.</span></h1>
+                <p>Đăng ký chỗ ở, theo dõi phòng và xem lịch sử lưu trú của bạn, tất cả trên một hệ thống.</p>
+
+                <ul class="features">
+                    <li>
+                        <span class="ico"><i class="bi bi-journal-check"></i></span>
+                        <div><b>Đăng ký trực tuyến</b><span class="d">Nộp nguyện vọng ở KTX chỉ vài thao tác</span></div>
+                    </li>
+                    <li>
+                        <span class="ico"><i class="bi bi-door-open"></i></span>
+                        <div><b>Xem phòng, loại phòng</b><span class="d">Thông tin phòng và số chỗ còn trống</span></div>
+                    </li>
+                    <li>
+                        <span class="ico"><i class="bi bi-clock-history"></i></span>
+                        <div><b>Theo dõi lịch sử ở</b><span class="d">Mọi thông tin phân phòng của bạn</span></div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="brand-foot">© @DateTime.Now.Year Trường Đại học Kinh tế - Kỹ thuật Công nghiệp</div>
         </div>
 
+        <!-- ===== Cột phải: form ===== -->
         <div class="form-side">
-            <h2>Đăng nhập</h2>
-            <p class="sub">Vui lòng đăng nhập để tiếp tục.</p>
+            <div class="hello">👋</div>
+            <h2>Chào mừng trở lại!</h2>
+            <p class="sub">Đăng nhập để quản lý chỗ ở ký túc xá của bạn.</p>
 
-            <form asp-action="Login" method="post">
+            <form asp-action="Login" method="post" id="frmLogin" novalidate>
                 <input type="hidden" asp-for="ReturnUrl" />
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
 
                 <div class="mb-3">
                     <label asp-for="TenDangNhap" class="form-label"></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                        <input asp-for="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập" autofocus />
+                    <div class="field">
+                        <span class="lead"><i class="bi bi-person-fill"></i></span>
+                        <input asp-for="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập" autocomplete="username" autofocus />
                     </div>
                     <span asp-validation-for="TenDangNhap" class="text-danger small"></span>
                 </div>
 
                 <div class="mb-4">
                     <label asp-for="MatKhau" class="form-label"></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                        <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu" />
-                        <button type="button" class="btn btn-toggle-pw" id="btnTogglePw" tabindex="-1" aria-label="Hiện/ẩn mật khẩu">
+                    <div class="field">
+                        <span class="lead"><i class="bi bi-lock-fill"></i></span>
+                        <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu" autocomplete="current-password" />
+                        <button type="button" class="btn-toggle-pw" id="btnTogglePw" tabindex="-1" aria-label="Hiện/ẩn mật khẩu">
                             <i class="bi bi-eye" id="iconTogglePw"></i>
                         </button>
                     </div>
+                    <div class="caps-warn" id="capsWarn"><i class="bi bi-exclamation-triangle-fill"></i> Caps Lock đang bật</div>
                     <span asp-validation-for="MatKhau" class="text-danger small"></span>
                 </div>
 
-                <button type="submit" class="btn btn-login w-100">
-                    <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập
+                <button type="submit" class="btn btn-login" id="btnLogin">
+                    <span id="loginText"><i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập</span>
+                    <span id="loginLoading" class="d-none"><span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập...</span>
                 </button>
             </form>
+
+            <div class="help-note">
+                <i class="bi bi-info-circle-fill"></i>
+                <div>Quên mật khẩu hoặc chưa có tài khoản? Vui lòng liên hệ Ban quản lý KTX để được hỗ trợ.</div>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
     <script>
+            var pw = document.getElementById('MatKhau');
+
             // Hiện/ẩn mật khẩu
             document.getElementById('btnTogglePw').addEventListener('click', function () {
-                var input = document.getElementById('MatKhau');
                 var icon = document.getElementById('iconTogglePw');
-                var an = input.type === 'password';
-                input.type = an ? 'text' : 'password';
+                var an = pw.type === 'password';
+                pw.type = an ? 'text' : 'password';
                 icon.className = an ? 'bi bi-eye-slash' : 'bi bi-eye';
+            });
+
+            // Cảnh báo Caps Lock
+            pw.addEventListener('keyup', function (e) {
+                document.getElementById('capsWarn').classList.toggle('show', e.getModifierState && e.getModifierState('CapsLock'));
+            });
+            pw.addEventListener('blur', function () {
+                document.getElementById('capsWarn').classList.remove('show');
+            });
+
+            // Hiệu ứng "đang đăng nhập" (chỉ khi form hợp lệ)
+            $('#frmLogin').on('submit', function () {
+                if (!$(this).valid()) return;
+                $('#btnLogin').prop('disabled', true);
+                $('#loginText').addClass('d-none');
+                $('#loginLoading').removeClass('d-none');
             });
     </script>
 </body>

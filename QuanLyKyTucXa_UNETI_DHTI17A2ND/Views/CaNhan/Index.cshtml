@@ -7,7 +7,6 @@
 @{
     ViewData["Title"] = "Thông tin cá nhân";
 }
-<h2 class="mb-3">Thông tin cá nhân</h2>
 @if (Model.SinhVien == null)
 {
     <div class="alert alert-warning">Tài khoản của bạn chưa được gắn với hồ sơ sinh viên. Vui lòng liên hệ quản trị viên.</div>
@@ -15,56 +14,186 @@
 else
 {
     var s = Model.SinhVien;
-    <div class="row g-3">
-        <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
-            <h5>Hồ sơ sinh viên</h5>
-            <dl class="row mb-0">
-                <dt class="col-sm-4">Mã sinh viên</dt><dd class="col-sm-8">@s.MaSinhVien</dd>
-                <dt class="col-sm-4">Họ tên</dt><dd class="col-sm-8">@s.HoTen</dd>
-                <dt class="col-sm-4">Ngày sinh</dt><dd class="col-sm-8">@Fmt.Ngay(s.NgaySinh)</dd>
-                <dt class="col-sm-4">Giới tính</dt><dd class="col-sm-8">@s.GioiTinh</dd>
-                <dt class="col-sm-4">Lớp / Khoa</dt><dd class="col-sm-8">@s.Lop - @s.Khoa</dd>
-                <dt class="col-sm-4">SĐT / Email</dt><dd class="col-sm-8">@s.SoDienThoai / @s.Email</dd>
-                <dt class="col-sm-4">Địa chỉ</dt><dd class="col-sm-8">@s.DiaChi</dd>
-                <dt class="col-sm-4">Tài khoản</dt><dd class="col-sm-8">@Model.TaiKhoan?.TenDangNhap (<span class="badge @Fmt.Badge(Model.TaiKhoan?.TrangThai)">@Model.TaiKhoan?.TrangThai</span>)</dd>
-            </dl>
-        </div></div></div>
+    var chuCai = string.IsNullOrWhiteSpace(s.HoTen) ? "?" : s.HoTen.Trim().Split(' ').Last()[0].ToString().ToUpper();
+    var iconGioiTinh = s.GioiTinh == "Nữ" ? "bi-gender-female" : "bi-gender-male";
 
-        <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
-            <h5>Phòng đang ở</h5>
-            @if (Model.PhongHienTai == null)
-            {
-                <p class="text-muted">Bạn chưa được phân phòng.</p>
-            }
-            else
-            {
-                var pp = Model.PhongHienTai;
-                <dl class="row mb-0">
-                    <dt class="col-sm-5">Phòng</dt><dd class="col-sm-7"><strong>@pp.PhongKTX.TenPhong</strong></dd>
-                    <dt class="col-sm-5">Loại phòng</dt><dd class="col-sm-7">@pp.PhongKTX.LoaiPhong.TenLoaiPhong (@Fmt.Tien(pp.PhongKTX.LoaiPhong.DonGiaThang)/tháng)</dd>
-                    <dt class="col-sm-5">Tòa nhà / Tầng</dt><dd class="col-sm-7">Tòa @pp.PhongKTX.ToaNha - Tầng @pp.PhongKTX.Tang</dd>
-                    <dt class="col-sm-5">Ngày bắt đầu ở</dt><dd class="col-sm-7">@Fmt.Ngay(pp.NgayVao)</dd>
-                    <dt class="col-sm-5">Dự kiến kết thúc</dt><dd class="col-sm-7">@Fmt.Ngay(pp.DangKyKTX.NgayKetThucDuKien)</dd>
-                </dl>
-            }
-        </div></div></div>
+    <!-- ===== Thẻ hồ sơ (hero) ===== -->
+    <div class="profile-hero mb-4">
+        <div class="profile-hero-avatar">@chuCai</div>
+        <div class="profile-hero-main">
+            <h2 class="profile-hero-name">@s.HoTen</h2>
+            <div class="profile-hero-chips">
+                <span class="hero-chip"><i class="bi bi-person-badge"></i> @s.MaSinhVien</span>
+                @if (!string.IsNullOrWhiteSpace(s.Lop))
+                {
+                    <span class="hero-chip"><i class="bi bi-mortarboard"></i> @s.Lop</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(s.Khoa))
+                {
+                    <span class="hero-chip"><i class="bi bi-book"></i> @s.Khoa</span>
+                }
+            </div>
+        </div>
+        <div class="profile-hero-status">
+            <span class="small text-white-50 d-block mb-1">Tài khoản</span>
+            <span class="badge rounded-pill fs-6 @Fmt.Badge(Model.TaiKhoan?.TrangThai)">
+                <i class="bi bi-circle-fill me-1" style="font-size:.5rem;vertical-align:middle"></i>@Model.TaiKhoan?.TrangThai
+            </span>
+        </div>
+    </div>
 
-        <div class="col-12"><div class="card shadow-sm"><div class="card-body">
-            <h5>Đăng ký hiện tại</h5>
+    <div class="row g-4">
+        <!-- ===== Thông tin sinh viên ===== -->
+        <div class="col-lg-7">
+            <div class="card info-card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="info-card-title"><i class="bi bi-person-lines-fill"></i> Thông tin sinh viên</h5>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="info-item">
+                                <span class="info-icon"><i class="bi bi-cake2"></i></span>
+                                <div><div class="info-label">Ngày sinh</div><div class="info-value">@Fmt.Ngay(s.NgaySinh)</div></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-item">
+                                <span class="info-icon"><i class="bi @iconGioiTinh"></i></span>
+                                <div><div class="info-label">Giới tính</div><div class="info-value">@s.GioiTinh</div></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-item">
+                                <span class="info-icon"><i class="bi bi-telephone"></i></span>
+                                <div><div class="info-label">Số điện thoại</div><div class="info-value">@s.SoDienThoai</div></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-item">
+                                <span class="info-icon"><i class="bi bi-person-circle"></i></span>
+                                <div><div class="info-label">Tên đăng nhập</div><div class="info-value">@Model.TaiKhoan?.TenDangNhap</div></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-item">
+                                <span class="info-icon"><i class="bi bi-envelope"></i></span>
+                                <div class="min-w-0"><div class="info-label">Email</div><div class="info-value text-break">@s.Email</div></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-item">
+                                <span class="info-icon"><i class="bi bi-geo-alt"></i></span>
+                                <div><div class="info-label">Địa chỉ</div><div class="info-value">@s.DiaChi</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Phòng đang ở ===== -->
+        <div class="col-lg-5">
+            <div class="card info-card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="info-card-title"><i class="bi bi-door-open"></i> Phòng đang ở</h5>
+                    @if (Model.PhongHienTai == null)
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-house-slash"></i>
+                            <p class="mb-0">Bạn chưa được phân phòng.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        var pp = Model.PhongHienTai;
+                        var ketThuc = pp.DangKyKTX.NgayKetThucDuKien;
+                        var tongNgay = Math.Max((ketThuc.Date - pp.NgayVao.Date).TotalDays, 1);
+                        var daO = (DateTime.Today - pp.NgayVao.Date).TotalDays;
+                        var phanTram = (int)Math.Round(Math.Clamp(daO / tongNgay * 100, 0, 100));
+                        var conLai = (int)Math.Max((ketThuc.Date - DateTime.Today).TotalDays, 0);
+
+                        <div class="room-tile">
+                            <div class="room-tile-code">@pp.PhongKTX.TenPhong</div>
+                            <div class="room-tile-meta">
+                                <div class="fw-semibold">Tòa @pp.PhongKTX.ToaNha &middot; Tầng @pp.PhongKTX.Tang</div>
+                                <div class="small opacity-75">@pp.PhongKTX.LoaiPhong.TenLoaiPhong</div>
+                            </div>
+                        </div>
+
+                        <div class="room-price">
+                            <span class="text-muted small">Giá phòng</span>
+                            <span class="room-price-value">@Fmt.Tien(pp.PhongKTX.LoaiPhong.DonGiaThang)<small>/tháng</small></span>
+                        </div>
+
+                        <div class="stay-dates">
+                            <div>
+                                <div class="info-label">Bắt đầu ở</div>
+                                <div class="info-value">@Fmt.Ngay(pp.NgayVao)</div>
+                            </div>
+                            <i class="bi bi-arrow-right text-muted"></i>
+                            <div class="text-end">
+                                <div class="info-label">Dự kiến kết thúc</div>
+                                <div class="info-value">@Fmt.Ngay(ketThuc)</div>
+                            </div>
+                        </div>
+                        <div class="progress stay-progress" role="progressbar" aria-valuenow="@phanTram" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width:@phanTram%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mt-1">
+                            <span>Đã ở @phanTram%</span>
+                            <span>@(conLai > 0 ? $"Còn {conLai} ngày" : "Đã đến hạn")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Đăng ký hiện tại ===== -->
+        <div class="col-12">
             @if (Model.DangKyChoDuyet != null)
             {
-                <p class="mb-1"><span class="badge @Fmt.Badge(Model.DangKyChoDuyet.TrangThai)">@Model.DangKyChoDuyet.TrangThai</span> Đăng ký #@Model.DangKyChoDuyet.MaDangKy gửi ngày @Fmt.Ngay(Model.DangKyChoDuyet.NgayDangKy), muốn ở từ @Fmt.Ngay(Model.DangKyChoDuyet.NgayBatDau).</p>
-                <a asp-controller="DangKyKTX" asp-action="CuaToi">Xem / hủy đăng ký</a>
+                <div class="card reg-card reg-warning shadow-sm">
+                    <div class="card-body p-4 d-flex flex-wrap align-items-center gap-3">
+                        <span class="reg-icon"><i class="bi bi-hourglass-split"></i></span>
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h5 class="mb-0">Đăng ký hiện tại</h5>
+                                <span class="badge @Fmt.Badge(Model.DangKyChoDuyet.TrangThai)">@Model.DangKyChoDuyet.TrangThai</span>
+                            </div>
+                            <div class="text-muted">Đăng ký #@Model.DangKyChoDuyet.MaDangKy gửi ngày @Fmt.Ngay(Model.DangKyChoDuyet.NgayDangKy), muốn ở từ @Fmt.Ngay(Model.DangKyChoDuyet.NgayBatDau).</div>
+                        </div>
+                        <a class="btn btn-outline-primary" asp-controller="DangKyKTX" asp-action="CuaToi">Xem / hủy đăng ký <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
             }
             else if (Model.DangKyHienTai != null)
             {
-                <p class="mb-0"><span class="badge @Fmt.Badge(Model.DangKyHienTai.TrangThai)">@Model.DangKyHienTai.TrangThai</span> Đăng ký #@Model.DangKyHienTai.MaDangKy đã được xếp phòng.</p>
+                <div class="card reg-card reg-success shadow-sm">
+                    <div class="card-body p-4 d-flex flex-wrap align-items-center gap-3">
+                        <span class="reg-icon"><i class="bi bi-check-circle"></i></span>
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h5 class="mb-0">Đăng ký hiện tại</h5>
+                                <span class="badge @Fmt.Badge(Model.DangKyHienTai.TrangThai)">@Model.DangKyHienTai.TrangThai</span>
+                            </div>
+                            <div class="text-muted">Đăng ký #@Model.DangKyHienTai.MaDangKy đã được xếp phòng.</div>
+                        </div>
+                        <a class="btn btn-outline-primary" asp-controller="CaNhan" asp-action="LichSu">Xem lịch sử ở <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
             }
             else
             {
-                <p class="mb-1 text-muted">Bạn chưa có đăng ký nào đang xử lý. Tổng số đăng ký từ trước đến nay: @Model.SoLanDangKy.</p>
-                <a class="btn btn-sm btn-primary" asp-controller="DangKyKTX" asp-action="Create">Đăng ký ở KTX</a>
+                <div class="card reg-card reg-muted shadow-sm">
+                    <div class="card-body p-4 d-flex flex-wrap align-items-center gap-3">
+                        <span class="reg-icon"><i class="bi bi-journal-plus"></i></span>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">Đăng ký hiện tại</h5>
+                            <div class="text-muted">Bạn chưa có đăng ký nào đang xử lý. Tổng số đăng ký từ trước đến nay: @Model.SoLanDangKy.</div>
+                        </div>
+                        <a class="btn btn-primary" asp-controller="DangKyKTX" asp-action="Create"><i class="bi bi-plus-lg"></i> Đăng ký ở KTX</a>
+                    </div>
+                </div>
             }
-        </div></div></div>
+        </div>
     </div>
 }

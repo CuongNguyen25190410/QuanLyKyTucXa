@@ -119,3 +119,261 @@ body { background: #f5f7fa; }
         background: #e3f0ff;
         color: #0d47a1;
     }
+/* ===== Trang Thông tin cá nhân (CaNhan/Index) ===== */
+.profile-hero {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 1.75rem 2rem;
+    border-radius: 1.25rem;
+    color: #fff;
+    background: linear-gradient(120deg, #0d47a1 0%, #1565c0 50%, #29b6f6 120%);
+    box-shadow: 0 10px 28px rgba(13, 71, 161, .25);
+    position: relative;
+    overflow: hidden;
+}
+
+    .profile-hero::after {
+        content: "";
+        position: absolute;
+        right: -60px;
+        top: -80px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .08);
+    }
+
+.profile-hero-avatar {
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #0d47a1;
+    font-size: 2.4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, .3);
+}
+
+.profile-hero-main {
+    flex: 1 1 260px;
+    z-index: 1;
+}
+
+.profile-hero-name {
+    font-weight: 700;
+    margin: 0 0 .6rem;
+}
+
+.profile-hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.hero-chip {
+    background: rgba(255, 255, 255, .18);
+    border-radius: 999px;
+    padding: .25rem .8rem;
+    font-size: .85rem;
+    font-weight: 500;
+}
+
+    .hero-chip i {
+        margin-right: .3rem;
+    }
+
+.profile-hero-status {
+    z-index: 1;
+    text-align: right;
+}
+
+/* Thẻ thông tin */
+.info-card {
+    border-radius: 1.1rem;
+}
+
+.info-card-title {
+    font-weight: 700;
+    color: #0d47a1;
+    margin-bottom: 1.25rem;
+    padding-bottom: .75rem;
+    border-bottom: 2px solid #e3f0ff;
+}
+
+    .info-card-title i {
+        margin-right: .4rem;
+    }
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    padding: .75rem .9rem;
+    background: #f7faff;
+    border: 1px solid #e6eefb;
+    border-radius: .85rem;
+    height: 100%;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+
+    .info-item:hover {
+        transform: translateY(-2px);
+        border-color: #bcd6fb;
+        box-shadow: 0 6px 14px rgba(21, 101, 192, .1);
+    }
+
+.min-w-0 {
+    min-width: 0;
+}
+
+.info-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: .7rem;
+    background: #e3f0ff;
+    color: #1565c0;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-label {
+    font-size: .75rem;
+    color: #6c7a8d;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #1f2d3d;
+}
+
+/* Thẻ phòng */
+.room-tile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #1565c0, #42a5f5);
+    box-shadow: 0 6px 16px rgba(21, 101, 192, .25);
+}
+
+.room-tile-code {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+    padding-right: 1rem;
+    border-right: 2px solid rgba(255, 255, 255, .35);
+}
+
+.room-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 1rem 0;
+    padding: .7rem 1rem;
+    background: #f7faff;
+    border: 1px dashed #bcd6fb;
+    border-radius: .8rem;
+}
+
+.room-price-value {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #0d47a1;
+}
+
+    .room-price-value small {
+        font-weight: 500;
+        color: #6c7a8d;
+        font-size: .8rem;
+        margin-left: .15rem;
+    }
+
+.stay-dates {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .6rem;
+}
+
+.stay-progress {
+    height: .6rem;
+    border-radius: 999px;
+    background: #e3f0ff;
+}
+
+    .stay-progress .progress-bar {
+        border-radius: 999px;
+        background: linear-gradient(90deg, #1565c0, #29b6f6);
+    }
+
+.empty-state {
+    text-align: center;
+    color: #8a97a8;
+    padding: 2.5rem 1rem;
+}
+
+    .empty-state i {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: .5rem;
+    }
+
+/* Thẻ đăng ký */
+.reg-card {
+    border-radius: 1.1rem;
+    border-left: 6px solid #adb5bd;
+}
+
+.reg-warning {
+    border-left-color: #ffc107;
+}
+
+.reg-success {
+    border-left-color: #198754;
+}
+
+.reg-muted {
+    border-left-color: #1565c0;
+}
+
+.reg-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2f7;
+    color: #495057;
+}
+
+.reg-warning .reg-icon {
+    background: #fff4d6;
+    color: #b58105;
+}
+
+.reg-success .reg-icon {
+    background: #d9f2e4;
+    color: #198754;
+}
+
+.reg-muted .reg-icon {
+    background: #e3f0ff;
+    color: #1565c0;
+}

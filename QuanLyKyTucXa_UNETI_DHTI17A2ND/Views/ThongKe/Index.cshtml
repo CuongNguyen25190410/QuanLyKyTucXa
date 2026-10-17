@@ -6,28 +6,279 @@
 @model DashboardVM
 @{
     ViewData["Title"] = "Dashboard";
-    var mau = Model.TyLeSuDung >= 90 ? "bg-danger" : (Model.TyLeSuDung >= 60 ? "bg-warning" : "bg-success");
+
+    var pct = Model.TyLeSuDung.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+
+    // Màu và nhận xét theo mức sử dụng (giữ nguyên ngưỡng 60% / 90% như bản cũ)
+    string mauHex, nhanXet, badge;
+    if (Model.TyLeSuDung >= 90) { mauHex = "#dc3545"; nhanXet = "Gần hết chỗ"; badge = "bg-danger"; }
+    else if (Model.TyLeSuDung >= 60) { mauHex = "#f59f00"; nhanXet = "Khá đầy"; badge = "bg-warning text-dark"; }
+    else { mauHex = "#1e88e5"; nhanXet = "Còn nhiều chỗ"; badge = "bg-primary"; }
 }
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Dashboard</h2>
-    <a class="btn btn-outline-primary" asp-action="ChiTiet">Xem thống kê chi tiết</a>
+
+<style>
+    .tk-title {
+        color: #0d47a1;
+        font-weight: 700;
+    }
+
+    /* ===== Thẻ số liệu ===== */
+    .tk-kpi {
+        background: #fff;
+        border-radius: 16px;
+        padding: 1.1rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 14px rgba(13, 71, 161, .08);
+        height: 100%;
+        transition: transform .15s, box-shadow .15s;
+    }
+
+        .tk-kpi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 71, 161, .15);
+        }
+
+    .tk-ico {
+        flex: 0 0 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #fff;
+    }
+
+    .ico-blue {
+        background: linear-gradient(135deg, #42a5f5, #1565c0);
+    }
+
+    .ico-cyan {
+        background: linear-gradient(135deg, #4dd0e1, #0097a7);
+    }
+
+    .ico-indigo {
+        background: linear-gradient(135deg, #7986cb, #3949ab);
+    }
+
+    .ico-amber {
+        background: linear-gradient(135deg, #ffca28, #f57c00);
+    }
+
+    .ico-green {
+        background: linear-gradient(135deg, #66bb6a, #2e7d32);
+    }
+
+    .ico-red {
+        background: linear-gradient(135deg, #ef5350, #c62828);
+    }
+
+    .tk-lbl {
+        color: #6b7a90;
+        font-size: .85rem;
+    }
+
+    .tk-val {
+        font-size: 1.9rem;
+        font-weight: 700;
+        line-height: 1.15;
+        color: #1b2a41;
+    }
+
+    .tk-kpi.warn {
+        border: 2px solid #ffca28;
+        background: #fffdf3;
+    }
+
+        .tk-kpi.warn .tk-val {
+            color: #e65100;
+        }
+
+    .tk-link {
+        font-size: .82rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    /* ===== Thẻ tỷ lệ sử dụng ===== */
+    .tk-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 14px rgba(13, 71, 161, .08);
+        height: 100%;
+    }
+
+        .tk-card h5 {
+            color: #0d47a1;
+            font-weight: 700;
+        }
+
+    .tk-donut {
+        --size: 190px;
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        background: conic-gradient(var(--col) calc(var(--pct) * 1%), #e3f0ff 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+        .tk-donut::before {
+            content: "";
+            position: absolute;
+            inset: 20px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+    .tk-donut-text {
+        position: relative;
+        text-align: center;
+    }
+
+        .tk-donut-text .big {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1b2a41;
+            line-height: 1;
+        }
+
+        .tk-donut-text .sm {
+            color: #6b7a90;
+            font-size: .8rem;
+        }
+
+    .tk-legend {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+        .tk-legend li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .65rem 0;
+            border-bottom: 1px dashed #dbe6f5;
+        }
+
+            .tk-legend li:last-child {
+                border-bottom: 0;
+            }
+
+    .tk-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: .6rem;
+    }
+
+    .tk-legend .v {
+        font-weight: 700;
+        color: #1b2a41;
+    }
+
+    @@media (max-width: 575.98px) {
+        .tk-donut {
+            --size: 160px;
+        }
+
+        .tk-val {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+
+<!-- ===== Tiêu đề ===== -->
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+        <h2 class="tk-title mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+        <div class="text-muted">Tổng quan tình hình ký túc xá</div>
+    </div>
+    <a class="btn btn-primary rounded-pill px-4" asp-action="ChiTiet"><i class="bi bi-bar-chart-line me-1"></i> Xem thống kê chi tiết</a>
 </div>
 
+<!-- ===== Thẻ số liệu chính ===== -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số phòng</div><div class="display-6">@Model.TongSoPhong</div></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số sinh viên</div><div class="display-6">@Model.TongSoSinhVien</div></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số đăng ký</div><div class="display-6">@Model.TongSoDangKy</div></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card border-warning"><div class="card-body"><div class="text-muted small">Đăng ký chờ duyệt</div><div class="display-6 text-warning">@Model.SoDangKyChoDuyet</div>
-        <a class="small" asp-controller="DangKyKTX" asp-action="Index" asp-route-trangThai="@TrangThaiDangKy.ChoDuyet">Duyệt ngay</a></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Sinh viên đang ở KTX</div><div class="display-6">@Model.SoSinhVienDangO</div></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Tổng số chỗ</div><div class="display-6">@Model.TongSoCho</div><div class="text-muted small">(phòng đang sử dụng)</div></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Chỗ đang sử dụng</div><div class="display-6">@Model.TongSoChoDangSuDung</div></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Chỗ còn trống</div><div class="display-6 text-success">@Model.TongSoChoConTrong</div></div></div></div>
-    <div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm stat-card"><div class="card-body"><div class="text-muted small">Phòng đã đủ người</div><div class="display-6 text-danger">@Model.SoPhongDaDayNguoi</div></div></div></div>
+    <div class="col-6 col-lg-3">
+        <div class="tk-kpi">
+            <div class="tk-ico ico-blue"><i class="bi bi-door-open-fill"></i></div>
+            <div><div class="tk-lbl">Tổng số phòng</div><div class="tk-val">@Model.TongSoPhong</div></div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="tk-kpi">
+            <div class="tk-ico ico-cyan"><i class="bi bi-people-fill"></i></div>
+            <div><div class="tk-lbl">Tổng số sinh viên</div><div class="tk-val">@Model.TongSoSinhVien</div></div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="tk-kpi">
+            <div class="tk-ico ico-indigo"><i class="bi bi-journal-text"></i></div>
+            <div><div class="tk-lbl">Tổng số đăng ký</div><div class="tk-val">@Model.TongSoDangKy</div></div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="tk-kpi warn">
+            <div class="tk-ico ico-amber"><i class="bi bi-hourglass-split"></i></div>
+            <div>
+                <div class="tk-lbl">Đăng ký chờ duyệt</div>
+                <div class="tk-val">@Model.SoDangKyChoDuyet</div>
+                <a class="tk-link" asp-controller="DangKyKTX" asp-action="Index" asp-route-trangThai="@TrangThaiDangKy.ChoDuyet">Duyệt ngay <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="card shadow-sm"><div class="card-body">
-    <h5>Tỷ lệ sử dụng chỗ</h5>
-    <div class="progress mb-2"><div class="progress-bar @mau" style="width:@(Model.TyLeSuDung.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture))%">@Model.TyLeSuDung%</div></div>
-    <p class="text-muted small mb-0">Tỷ lệ = chỗ đang sử dụng / tổng số chỗ × 100%. Các con số đều được truy vấn trực tiếp từ Database bằng LINQ mỗi lần mở trang.</p>
-</div></div>
+<!-- ===== Tỷ lệ sử dụng + số liệu phụ ===== -->
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="tk-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="mb-0">Tỷ lệ sử dụng chỗ</h5>
+                <span class="badge rounded-pill @badge">@nhanXet</span>
+            </div>
+
+            <div class="row align-items-center g-4">
+                <div class="col-md-5 d-flex justify-content-center">
+                    <div class="tk-donut" style="--pct:@pct;--col:@mauHex">
+                        <div class="tk-donut-text">
+                            <div class="big">@pct%</div>
+                            <div class="sm">đã sử dụng</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <ul class="tk-legend">
+                        <li><span><span class="tk-dot" style="background:#90a4ae"></span>Tổng số chỗ <small class="text-muted">(phòng đang sử dụng)</small></span><span class="v">@Model.TongSoCho</span></li>
+                        <li><span><span class="tk-dot" style="background:@mauHex"></span>Chỗ đang sử dụng</span><span class="v">@Model.TongSoChoDangSuDung</span></li>
+                        <li><span><span class="tk-dot" style="background:#2e7d32"></span>Chỗ còn trống</span><span class="v text-success">@Model.TongSoChoConTrong</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="text-muted small mb-0 mt-4">Tỷ lệ = chỗ đang sử dụng / tổng số chỗ × 100%. Các con số đều được truy vấn trực tiếp từ Database bằng LINQ mỗi lần mở trang.</p>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="d-flex flex-column gap-3 h-100">
+            <div class="tk-kpi flex-fill">
+                <div class="tk-ico ico-green"><i class="bi bi-house-heart-fill"></i></div>
+                <div><div class="tk-lbl">Sinh viên đang ở KTX</div><div class="tk-val">@Model.SoSinhVienDangO</div></div>
+            </div>
+            <div class="tk-kpi flex-fill">
+                <div class="tk-ico ico-red"><i class="bi bi-person-fill-lock"></i></div>
+                <div><div class="tk-lbl">Phòng đã đủ người</div><div class="tk-val">@Model.SoPhongDaDayNguoi</div></div>
+            </div>
+        </div>
+    </div>
+</div>

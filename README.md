@@ -23,12 +23,15 @@ ASP.NET Core 10 MVC · Entity Framework Core 10 (Code First + Migration) · SQL 
 
 Khi ứng dụng khởi động, `Program.cs` tự gọi `Database.MigrateAsync()` (nếu đã có Migration) và nạp dữ liệu mẫu nếu
 Database chưa có tài khoản nào (`Data/DbSeeder.cs`).
+   ```bash
 
 > ⚠️ Hãy tạo Migration (bước 2) **trước lần chạy đầu tiên**. Nếu chạy khi chưa có Migration, ứng dụng dùng
 > `EnsureCreated` để dự phòng; lúc đó muốn chuyển sang Migration phải xóa Database cũ (`dotnet ef database drop`) rồi làm lại bước 2.
 >
 > Khi sau này thay đổi Entity: tạo Migration **mới** có tên thể hiện nội dung (ví dụ `ThemCotGhiChuPhanPhong`),
 > không xóa lịch sử Migration (đề mục 10.1).
+   ```
+
 4. **Thao tác trên git:( nhập lệnh trên cmd or terminal trong thư mục muốn lưu)**
    ```bash
       >>>tải code về : 

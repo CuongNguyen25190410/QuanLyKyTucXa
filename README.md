@@ -29,14 +29,19 @@ Database chưa có tài khoản nào (`Data/DbSeeder.cs`).
 >
 > Khi sau này thay đổi Entity: tạo Migration **mới** có tên thể hiện nội dung (ví dụ `ThemCotGhiChuPhanPhong`),
 > không xóa lịch sử Migration (đề mục 10.1).
-4. Thao tác trên git:( nhập lệnh trên cmd or terminal trong thư mục muốn lưu)
->tải code về : git clone https://github.com/CuongNguyen25190410/QuanLyKyTucXa.git
-cập nhất code mới nhất từ git về máy : git pull origin main
-cập nhật từ máy lên git : 
+4. **Thao tác trên git:( nhập lệnh trên cmd or terminal trong thư mục muốn lưu)**
+   ```bash
+      >>>tải code về : 
+                          git clone https://github.com/CuongNguyen25190410/QuanLyKyTucXa.git
+      >>>cập nhất code mới nhất từ git về máy : 
+                          git pull origin main
+      >>>cập nhật từ máy lên git : 
                           git add .
                           git commit -m "nội dung cập nhật "
                           git pull --rebase origin main
                           git push origin main
+   ```
+ 
                         
 
 ## 3. Tài khoản kiểm thử (dữ liệu mẫu)

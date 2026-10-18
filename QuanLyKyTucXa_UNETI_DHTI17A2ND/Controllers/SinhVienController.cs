@@ -178,7 +178,12 @@ public class SinhVienController : AppControllerBase
         if (vm.TrangThai == TrangThaiSinhVien.NgungHoatDong
             && await _db.PhanPhongs.AnyAsync(pp => pp.TrangThai == TrangThaiPhanPhong.DangO && pp.DangKyKTX.MaSinhVien == id))
             ModelState.AddModelError(nameof(vm.TrangThai), "Sinh viên đang ở phòng KTX, hãy trả phòng trước khi chuyển sang Ngừng hoạt động.");
-
+        // Không cho đổi giới tính khi sinh viên đang ở phòng có giới tính khác
+        if (vm.GioiTinh != sv.GioiTinh
+            && await _db.PhanPhongs.AnyAsync(pp => pp.TrangThai == TrangThaiPhanPhong.DangO
+                                                   && pp.DangKyKTX.MaSinhVien == id))
+            ModelState.AddModelError(nameof(vm.GioiTinh),
+                "Sinh viên đang ở phòng KTX, hãy trả phòng trước khi đổi giới tính.");
         if (!ModelState.IsValid) return View(vm);
 
         sv.HoTen = vm.HoTen.Trim();

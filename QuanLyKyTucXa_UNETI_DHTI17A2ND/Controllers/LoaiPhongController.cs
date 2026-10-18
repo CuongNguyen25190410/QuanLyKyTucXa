@@ -174,4 +174,9 @@ public class LoaiPhongController : AppControllerBase
         TempData["ThanhCong"] = "Đã xóa loại phòng.";
         return RedirectToAction(nameof(Index));
     }
+    private void KiemTraTrangThai(LoaiPhong lp)
+    {
+        if (lp.TrangThai != TrangThaiLoaiPhong.HoatDong && lp.TrangThai != TrangThaiLoaiPhong.NgungSuDung)
+            ModelState.AddModelError(nameof(lp.TrangThai), "Trạng thái không hợp lệ.");
+    }
 }

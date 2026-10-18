@@ -210,6 +210,12 @@ public class TaiKhoanController : AppControllerBase
 
         tk.HoTen = vm.HoTen.Trim();
         tk.Email = vm.Email.Trim();
+        // Đồng bộ sang hồ sơ sinh viên (nếu là tài khoản sinh viên)
+        if (tk.SinhVien != null)
+        {
+            tk.SinhVien.HoTen = tk.HoTen;
+            tk.SinhVien.Email = tk.Email;
+        }
         if (!string.IsNullOrWhiteSpace(vm.MatKhau))
             tk.MatKhau = _hasher.HashPassword(tk, vm.MatKhau);
 

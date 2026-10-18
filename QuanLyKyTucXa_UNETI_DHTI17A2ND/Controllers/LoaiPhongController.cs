@@ -76,7 +76,7 @@ public class LoaiPhongController : AppControllerBase
         if (!string.IsNullOrWhiteSpace(lp.TenLoaiPhong)
             && await _db.LoaiPhongs.AnyAsync(l => l.TenLoaiPhong == lp.TenLoaiPhong.Trim()))
             ModelState.AddModelError(nameof(lp.TenLoaiPhong), "Tên loại phòng đã tồn tại.");
-
+        KiemTraTrangThai(lp);
         if (!ModelState.IsValid)
         {
             ViewBag.TrangThais = DanhSachTrangThai();
@@ -111,7 +111,7 @@ public class LoaiPhongController : AppControllerBase
         if (!string.IsNullOrWhiteSpace(lp.TenLoaiPhong)
             && await _db.LoaiPhongs.AnyAsync(l => l.TenLoaiPhong == lp.TenLoaiPhong.Trim() && l.MaLoaiPhong != id))
             ModelState.AddModelError(nameof(lp.TenLoaiPhong), "Tên loại phòng đã tồn tại.");
-
+        KiemTraTrangThai(lp);
         // Không giảm sức chứa xuống thấp hơn số người đang thực tế ở (tránh SoChoCon < 0)
         if (ModelState.IsValid)
         {

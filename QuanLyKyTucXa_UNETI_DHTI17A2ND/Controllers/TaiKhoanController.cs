@@ -198,7 +198,7 @@ public class TaiKhoanController : AppControllerBase
     public async Task<IActionResult> Edit(int id, TaiKhoanFormVM vm)
     {
         if (id != vm.MaTaiKhoan) return NotFound();
-        var tk = await _db.TaiKhoans.FindAsync(id);
+        var tk = await _db.TaiKhoans.Include(t => t.SinhVien).FirstOrDefaultAsync(t => t.MaTaiKhoan == id);
         if (tk == null) return NotFound();
 
         // Tên đăng nhập và vai trò không đổi khi sửa -> bỏ qua kiểm tra các trường này

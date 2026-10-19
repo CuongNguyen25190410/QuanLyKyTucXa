@@ -893,3 +893,82 @@ body { background: #f5f7fa; }
         max-width: 100%;
     }
 }
+
+/* ==========================================
+   NEN TRANG KTX UNETI - ANH NEN LAM MO
+   ========================================== */
+
+/* Mau nen du phong khi anh chua tai duoc */
+html {
+    min-height: 100%;
+    background-color: #f5f7fa;
+}
+
+body {
+    min-height: 100vh;
+    position: relative;
+    background: transparent !important;
+}
+
+    /* Lop anh nen doc lap voi noi dung giao dien */
+    body::before {
+        content: "";
+        position: fixed;
+        top: -8px;
+        left: -8px;
+        right: -8px;
+        bottom: -8px;
+        /* Duong dan anh nen trong wwwroot/images */
+        background-image: url('/images/nentruong.png');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        /* Lam mo anh nen */
+        filter: blur(5px);
+        opacity: 0.22;
+        /* Khong cho lop nen che noi dung */
+        pointer-events: none;
+        z-index: -1;
+        /* Phong anh nhe de khong lo vien mo */
+        transform: scale(1.02);
+    }
+
+/* Nen trang, bang du lieu va bieu mau */
+.card {
+    background-color: rgba(255, 255, 255, 0.94);
+    border: 0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Nen bang du lieu */
+.table {
+    --bs-table-bg: transparent;
+    background-color: rgba(255, 255, 255, 0.88);
+}
+
+/* Nen cac khu vuc chua form */
+form .card,
+.form-container,
+.content-card {
+    background-color: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Dam bao chu van ro rang */
+body,
+.card,
+.table,
+.form-label {
+    color: #243247;
+}
+
+/* Toi uu tren dien thoai */
+@media (max-width: 768px) {
+    body::before {
+        background-position: center center;
+        filter: blur(1px);
+        opacity: 0.50;
+    }
+}

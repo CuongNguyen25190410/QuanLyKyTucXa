@@ -8,23 +8,34 @@
     ViewData["Title"] = "Đăng ký ở KTX";
 }
 <h2>Đăng ký ở ký túc xá</h2>
-<div class="row"><div class="col-md-7"><div class="card shadow-sm"><div class="card-body">
-    <form asp-action="Create" method="post">
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-        <div class="row">
-            <div class="col-md-6 mb-3"><label asp-for="NgayBatDau" class="form-label"></label><input asp-for="NgayBatDau" type="date" class="form-control" /><span asp-validation-for="NgayBatDau" class="text-danger"></span></div>
-            <div class="col-md-6 mb-3"><label asp-for="NgayKetThucDuKien" class="form-label"></label><input asp-for="NgayKetThucDuKien" type="date" class="form-control" /><span asp-validation-for="NgayKetThucDuKien" class="text-danger"></span></div>
+<a class="btn btn-outline-primary btn-sm mb-3" asp-controller="PhongKTX" asp-action="SoDo">
+    <i class="bi bi-grid-3x3-gap"></i> Xem sơ đồ phòng để chọn loại phòng
+</a>
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label asp-for="NgayBatDau" class="form-label"></label><input asp-for="NgayBatDau" type="date" class="form-control" /><span asp-validation-for="NgayBatDau" class="text-danger"></span></div>
+                        <div class="col-md-6 mb-3"><label asp-for="NgayKetThucDuKien" class="form-label"></label><input asp-for="NgayKetThucDuKien" type="date" class="form-control" /><span asp-validation-for="NgayKetThucDuKien" class="text-danger"></span></div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NguyenVongLoaiPhong" class="form-label"></label>
+                        <select asp-for="NguyenVongLoaiPhong" asp-items="Model.LoaiPhongs" class="form-select"><option value="">-- Không có nguyện vọng --</option></select>
+                        <div class="form-text">Chỉ là thông tin tham khảo. Quản trị viên sẽ xếp phòng thực tế còn chỗ và phù hợp.</div>
+                        <span asp-validation-for="NguyenVongLoaiPhong" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3"><label asp-for="GhiChu" class="form-label"></label><textarea asp-for="GhiChu" rows="3" class="form-control"></textarea><span asp-validation-for="GhiChu" class="text-danger"></span></div>
+                    <p class="text-muted small">Ngày đăng ký và trạng thái do hệ thống tự xác định.</p>
+                    <button type="submit" class="btn btn-primary">Gửi đăng ký</button>
+                    <a class="btn btn-outline-secondary" asp-action="CuaToi">Quay lại</a>
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <label asp-for="NguyenVongLoaiPhong" class="form-label"></label>
-            <select asp-for="NguyenVongLoaiPhong" asp-items="Model.LoaiPhongs" class="form-select"><option value="">-- Không có nguyện vọng --</option></select>
-            <div class="form-text">Chỉ là thông tin tham khảo. Quản trị viên sẽ xếp phòng thực tế còn chỗ và phù hợp.</div>
-            <span asp-validation-for="NguyenVongLoaiPhong" class="text-danger"></span>
-        </div>
-        <div class="mb-3"><label asp-for="GhiChu" class="form-label"></label><textarea asp-for="GhiChu" rows="3" class="form-control"></textarea><span asp-validation-for="GhiChu" class="text-danger"></span></div>
-        <p class="text-muted small">Ngày đăng ký và trạng thái do hệ thống tự xác định.</p>
-        <button type="submit" class="btn btn-primary">Gửi đăng ký</button>
-        <a class="btn btn-outline-secondary" asp-action="CuaToi">Quay lại</a>
-    </form>
-</div></div></div></div>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

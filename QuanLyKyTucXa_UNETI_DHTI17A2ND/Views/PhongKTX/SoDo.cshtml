@@ -1,0 +1,520 @@
+﻿@model SoDoPhongVM
+@{
+    ViewData["Title"] = "Sơ đồ phòng";
+
+    var toaMacDinh = Model.Toas
+        .FirstOrDefault(t => t.Tangs.Any(tg => tg.Phongs.Any(p => p.MaPhong == Model.MaPhongCuaToi)))?.TenToa
+        ?? Model.Toas.FirstOrDefault()?.TenToa;
+}
+
+<style>
+    .sodo-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        font-size: .85rem;
+    }
+
+        .sodo-legend .lg {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sodo-legend .sw {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px 5px 2px 2px;
+            display: inline-block;
+        }
+
+    .sodo-wrap {
+        overflow-x: auto;
+        padding: 8px 4px 4px;
+    }
+
+    .floor {
+        display: flex;
+        align-items: stretch;
+        gap: 8px;
+        margin-bottom: 10px;
+        min-width: max-content;
+    }
+
+    .floor-label {
+        width: 62px;
+        flex: none;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        font-size: .85rem;
+        color: #5b6b82;
+    }
+
+    .wing {
+        display: flex;
+        gap: 6px;
+    }
+
+    .stairs {
+        width: 46px;
+        flex: none;
+        margin: 0 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-left: 2px dashed #c3cbd8;
+        border-right: 2px dashed #c3cbd8;
+        color: #9aa6b8;
+        font-size: .65rem;
+        text-align: center;
+        line-height: 1.1;
+    }
+
+        .stairs i {
+            font-size: 1rem;
+        }
+
+    .room {
+        width: 56px;
+        height: 60px;
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: 10px 10px 4px 4px;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        position: relative;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: .8rem;
+        transition: transform .12s, box-shadow .12s, opacity .15s;
+    }
+
+        .room:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,.25);
+        }
+
+        .room.active {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 14px rgba(0,0,0,.3);
+            outline: 3px solid #243247;
+            outline-offset: 1px;
+        }
+
+        .room.faded {
+            opacity: .15;
+        }
+
+        .room.pulse {
+            animation: pulse .9s ease-in-out 2;
+        }
+
+    @@keyframes pulse {
+        50% {
+            transform: scale(1.18);
+        }
+    }
+
+    .room .dots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        justify-content: center;
+        max-width: 40px;
+        min-height: 7px;
+    }
+
+    .room .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.4);
+    }
+
+        .room .dot.on {
+            background: #fff;
+        }
+
+    .room .pin {
+        position: absolute;
+        top: -9px;
+        right: -7px;
+        font-size: 1rem;
+        color: #0d6efd;
+        text-shadow: 0 0 3px #fff, 0 0 3px #fff;
+    }
+
+    .room.mine {
+        box-shadow: 0 0 0 3px #0d6efd;
+    }
+
+    .s-con {
+        background: #2f9e63;
+    }
+
+    .s-it {
+        background: #e8a317;
+    }
+
+    .s-het {
+        background: #d64550;
+    }
+
+    .s-tamngung {
+        background: #8b95a5;
+    }
+
+    .s-khacgioi {
+        background: repeating-linear-gradient(45deg, #e9edf3, #e9edf3 6px, #f6f8fb 6px, #f6f8fb 12px);
+        color: #8a97ab;
+        border-color: #d5dce7;
+    }
+
+        .s-khacgioi .dot {
+            background: #c9d1de;
+        }
+
+            .s-khacgioi .dot.on {
+                background: #8a97ab;
+            }
+
+    .lg .sw.s-khacgioi {
+        border: 1px solid #d5dce7;
+    }
+
+    .lg .sw.mine {
+        background: #fff;
+        border: 3px solid #0d6efd;
+    }
+
+    .building-base {
+        margin: 6px auto 0;
+        max-width: 360px;
+        text-align: center;
+        font-size: .75rem;
+        letter-spacing: .15em;
+        font-weight: 700;
+        color: #fff;
+        background: #5b6b82;
+        border-radius: 4px 4px 14px 14px;
+        padding: 5px 10px;
+    }
+
+    .info-bar {
+        position: sticky;
+        bottom: 12px;
+        z-index: 20;
+        border-left: 6px solid #5b6b82;
+    }
+
+        .info-bar.st-con {
+            border-left-color: #2f9e63;
+        }
+
+        .info-bar.st-it {
+            border-left-color: #e8a317;
+        }
+
+        .info-bar.st-het {
+            border-left-color: #d64550;
+        }
+
+        .info-bar.st-tamngung {
+            border-left-color: #8b95a5;
+        }
+
+        .info-bar.st-khacgioi {
+            border-left-color: #b9c3d3;
+        }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 4px 18px;
+        font-size: .88rem;
+    }
+
+        .info-grid .k {
+            color: #6b7a90;
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            display: block;
+        }
+</style>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0"><i class="bi bi-building"></i> Sơ đồ phòng ký túc xá</h2>
+    <a class="btn btn-outline-secondary btn-sm" asp-action="Index"><i class="bi bi-list-ul"></i> Xem dạng danh sách</a>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Tìm nhanh phòng (VD: A101)</label>
+                <div class="input-group">
+                    <input id="f-tim" class="form-control" placeholder="Nhập tên phòng" maxlength="10" />
+                    <button id="btn-tim" type="button" class="btn btn-primary"><i class="bi bi-search"></i></button>
+                </div>
+                <div id="tim-loi" class="text-danger small d-none">Không tìm thấy phòng này.</div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Loại phòng</label>
+                <select id="f-loai" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    @foreach (var x in Model.LoaiPhongs)
+                    {
+                        <option value="@x.Value">@x.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6 d-flex flex-wrap gap-3 pb-1">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="f-con" />
+                    <label class="form-check-label" for="f-con">Chỉ phòng còn chỗ</label>
+                </div>
+                @if (!Model.LaAdmin)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="f-khac" />
+                        <label class="form-check-label" for="f-khac">Ẩn phòng không phù hợp giới tính (@Model.GioiTinhSinhVien)</label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <hr class="my-3" />
+        <div class="sodo-legend">
+            <span class="lg"><span class="sw s-con"></span> Còn chỗ</span>
+            <span class="lg"><span class="sw s-it"></span> Sắp đầy (còn ≤ 25%)</span>
+            <span class="lg"><span class="sw s-het"></span> Hết chỗ</span>
+            <span class="lg"><span class="sw s-tamngung"></span> Tạm ngừng</span>
+            @if (!Model.LaAdmin)
+            {
+                <span class="lg"><span class="sw s-khacgioi"></span> Không phù hợp giới tính</span>
+                <span class="lg"><span class="sw mine"></span> Phòng của bạn</span>
+            }
+            <span class="lg text-muted"><i class="bi bi-circle-fill small"></i> Mỗi chấm = 1 chỗ (chấm đặc = đã có người)</span>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Toas.Any())
+{
+    <div class="alert alert-info">Chưa có phòng nào trong hệ thống.</div>
+}
+else
+{
+    <ul class="nav nav-pills mb-3 gap-2 justify-content-center" role="tablist">
+        @foreach (var toa in Model.Toas)
+        {
+            var act = toa.TenToa == toaMacDinh;
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(act ? "active" : "") border" type="button" role="tab"
+                        data-bs-toggle="pill" data-bs-target="#toa-@toa.TenToa">
+                    <i class="bi bi-building"></i> Tòa @toa.TenToa
+                    <span class="badge bg-light text-dark ms-1">@toa.GioiTinh</span>
+                    <span class="badge bg-success ms-1">@toa.PhongConCho phòng còn chỗ</span>
+                </button>
+            </li>
+        }
+    </ul>
+
+    <div class="tab-content">
+        @foreach (var toa in Model.Toas)
+        {
+            var act = toa.TenToa == toaMacDinh;
+            <div class="tab-pane @(act ? "show active" : "")" id="toa-@toa.TenToa" role="tabpanel">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between mb-2">
+                            <h5 class="mb-0">Tòa @toa.TenToa</h5>
+                            <span class="text-muted small">@toa.TongPhong phòng · còn <strong>@toa.TongChoTrong</strong> chỗ trống</span>
+                        </div>
+
+                        <div class="sodo-wrap">
+                            @foreach (var tang in toa.Tangs)
+                            {
+                                var nua = (tang.Phongs.Count + 1) / 2;
+                                var trai = tang.Phongs.Take(nua).ToList();
+                                var phai = tang.Phongs.Skip(nua).ToList();
+
+                                <div class="floor">
+                                    <div class="floor-label">Tầng @tang.Tang</div>
+
+                                    @for (int c = 0; c < 2; c++)
+                                    {
+                                        var nhom = c == 0 ? trai : phai;
+                                        if (c == 1)
+                                        {
+                                            <div class="stairs" title="Cầu thang / hành lang"><i class="bi bi-arrow-down-up"></i><span>Thang</span></div>
+                                        }
+                                        <div class="wing">
+                                            @foreach (var p in nhom)
+                                            {
+                                                var st = Model.LayTrangThai(p);
+                                                var laPhongCuaToi = Model.MaPhongCuaToi == p.MaPhong;
+                                                var cls = "room s-" + st + (laPhongCuaToi ? " mine" : "");
+                                                <button type="button" class="@cls" title="@p.TenPhong - @p.TenLoaiPhong"
+                                                        data-id="@p.MaPhong" data-ten="@p.TenPhong" data-loai="@p.TenLoaiPhong" data-loaiid="@p.MaLoaiPhong"
+                                                        data-gia="@Fmt.Tien(p.DonGiaThang)" data-toa="@p.ToaNha" data-tang="@p.Tang" data-gt="@p.GioiTinhPhong"
+                                                        data-dango="@p.SoDangO" data-succhua="@p.SucChua" data-chocon="@p.SoChoCon"
+                                                        data-st="@st" data-mine="@(laPhongCuaToi ? "1" : "0")">
+                                                    @if (laPhongCuaToi)
+                                                    {
+                                                        <i class="bi bi-geo-alt-fill pin"></i>
+                                                    }
+                                                    <span>@p.TenPhong</span>
+                                                    <span class="dots">
+                                                        @for (int i = 0; i < p.SucChua; i++)
+                                                        {
+                                                            var dotCls = i < p.SoDangO ? "dot on" : "dot";
+                                                            <i class="@dotCls"></i>
+                                                        }
+                                                    </span>
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <div class="building-base">LỐI VÀO TÒA @toa.TenToa</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div id="info-bar" class="card shadow info-bar mt-3">
+        <div class="card-body py-3">
+            <div id="info-trong" class="text-muted"><i class="bi bi-hand-index"></i> Bấm vào một phòng trên sơ đồ để xem chi tiết.</div>
+
+            <div id="info-co" class="d-none">
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div>
+                        <div class="fs-4 fw-bold lh-1" id="i-ten"></div>
+                        <span id="i-nhan" class="badge mt-1"></span>
+                    </div>
+                    <div class="info-grid flex-grow-1">
+                        <div><span class="k">Loại phòng</span><span id="i-loai"></span></div>
+                        <div><span class="k">Đơn giá</span><span id="i-gia"></span>/tháng</div>
+                        <div><span class="k">Vị trí</span>Tòa <span id="i-toa"></span> · Tầng <span id="i-tang"></span></div>
+                        <div><span class="k">Giới tính phòng</span><span id="i-gt"></span></div>
+                        <div><span class="k">Đang ở / Sức chứa</span><span id="i-dango"></span> / <span id="i-succhua"></span> (còn <strong id="i-chocon"></strong>)</div>
+                    </div>
+                    <div class="d-flex flex-column gap-1">
+                        <a id="btn-dangky" class="btn btn-primary btn-sm d-none" href="#"><i class="bi bi-journal-plus"></i> Đăng ký loại phòng này</a>
+                        <a id="btn-chitiet" class="btn btn-outline-secondary btn-sm d-none" href="#">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div id="i-ghichu" class="small text-muted mt-2"></div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            var laAdmin = @(Model.LaAdmin ? "true" : "false");
+            var urlChiTiet = '@Html.Raw(Url.Action("Details", "PhongKTX", new { id = "__ID__" }))';
+            var urlDangKy = '@Html.Raw(Url.Action("Create", "DangKyKTX", new { maLoaiPhong = "__LP__" }))';
+
+            var nhan = { con: 'Còn chỗ', it: 'Sắp đầy', het: 'Hết chỗ', tamngung: 'Tạm ngừng', khacgioi: 'Không phù hợp giới tính' };
+            var mauNhan = { con: 'bg-success', it: 'bg-warning text-dark', het: 'bg-danger', tamngung: 'bg-secondary', khacgioi: 'bg-light text-dark border' };
+
+            var rooms = Array.prototype.slice.call(document.querySelectorAll('.room'));
+            var bar = document.getElementById('info-bar');
+            if (!bar) return;
+
+            function $(id) { return document.getElementById(id); }
+
+            function chon(el) {
+                rooms.forEach(function (r) { r.classList.remove('active'); });
+                el.classList.add('active');
+                var d = el.dataset, st = d.st;
+
+                $('info-trong').classList.add('d-none');
+                $('info-co').classList.remove('d-none');
+                bar.className = 'card shadow info-bar mt-3 st-' + st;
+
+                $('i-ten').textContent = d.ten;
+                $('i-nhan').textContent = nhan[st];
+                $('i-nhan').className = 'badge mt-1 ' + mauNhan[st];
+                $('i-loai').textContent = d.loai;
+                $('i-gia').textContent = d.gia;
+                $('i-toa').textContent = d.toa;
+                $('i-tang').textContent = d.tang;
+                $('i-gt').textContent = d.gt;
+                $('i-dango').textContent = d.dango;
+                $('i-succhua').textContent = d.succhua;
+                $('i-chocon').textContent = Math.max(parseInt(d.chocon, 10), 0);
+
+                var btnDk = $('btn-dangky'), btnCt = $('btn-chitiet'), ghi = '';
+                var duocDangKy = !laAdmin && (st === 'con' || st === 'it') && d.mine !== '1';
+                btnDk.classList.toggle('d-none', !duocDangKy);
+                btnDk.href = urlDangKy.replace('__LP__', d.loaiid);
+
+                var xemDuoc = laAdmin || st !== 'tamngung';
+                btnCt.classList.toggle('d-none', !xemDuoc);
+                btnCt.href = urlChiTiet.replace('__ID__', d.id);
+
+                if (d.mine === '1') ghi = 'Đây là phòng bạn đang ở.';
+                else if (st === 'khacgioi') ghi = 'Phòng dành cho ' + d.gt + ', không phù hợp với giới tính của bạn.';
+                else if (st === 'het') ghi = 'Phòng đã hết chỗ. Bạn có thể chọn phòng khác còn chỗ.';
+                else if (st === 'tamngung') ghi = 'Phòng đang tạm ngừng, chưa thể xếp người vào.';
+                else if (duocDangKy) ghi = 'Bạn đăng ký theo loại phòng; quản trị viên sẽ xếp phòng cụ thể còn chỗ và phù hợp.';
+                $('i-ghichu').textContent = ghi;
+            }
+
+            rooms.forEach(function (r) { r.addEventListener('click', function () { chon(r); }); });
+
+            var selLoai = $('f-loai'), ckCon = $('f-con'), ckKhac = $('f-khac');
+            function loc() {
+                var lp = selLoai.value, chiCon = ckCon.checked, anKhac = ckKhac ? ckKhac.checked : false;
+                rooms.forEach(function (r) {
+                    var d = r.dataset, ok = true;
+                    if (lp && d.loaiid !== lp) ok = false;
+                    if (chiCon && !(d.st === 'con' || d.st === 'it')) ok = false;
+                    if (anKhac && d.st === 'khacgioi') ok = false;
+                    r.classList.toggle('faded', !ok);
+                });
+            }
+            selLoai.addEventListener('change', loc);
+            ckCon.addEventListener('change', loc);
+            if (ckKhac) ckKhac.addEventListener('change', loc);
+
+            var inp = $('f-tim'), loi = $('tim-loi');
+            function tim() {
+                var k = inp.value.trim().toUpperCase();
+                loi.classList.add('d-none');
+                if (!k) return;
+                var r = rooms.filter(function (x) { return x.dataset.ten.toUpperCase() === k; })[0];
+                if (!r) { loi.classList.remove('d-none'); return; }
+
+                var pane = r.closest('.tab-pane');
+                var tabBtn = document.querySelector('[data-bs-target="#' + pane.id + '"]');
+                if (tabBtn) bootstrap.Tab.getOrCreateInstance(tabBtn).show();
+                setTimeout(function () {
+                    r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    chon(r);
+                    r.classList.add('pulse');
+                    setTimeout(function () { r.classList.remove('pulse'); }, 1900);
+                }, 60);
+            }
+            $('btn-tim').addEventListener('click', tim);
+            inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); tim(); } });
+
+            var mine = document.querySelector('.room.mine');
+            if (mine) chon(mine);
+        })();
+    </script>
+}

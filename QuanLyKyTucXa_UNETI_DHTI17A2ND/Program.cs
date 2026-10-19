@@ -52,6 +52,11 @@ builder.Services.AddScoped<PhongService>();
 builder.Services.AddScoped<PhanPhongService>();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await PhongMauSeeder.SeedAsync(db);
+}
 
 //Tạo CSDL từ Migration (nếu đã có Migration) và nạp dữ liệu mẫu lần đầu
 //using (var scope = app.Services.CreateScope())

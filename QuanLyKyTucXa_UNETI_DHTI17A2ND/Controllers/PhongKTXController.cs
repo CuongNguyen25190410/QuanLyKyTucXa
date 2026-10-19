@@ -216,6 +216,48 @@ public class PhongKTXController : AppControllerBase
         return RedirectToAction(nameof(Index));
     }
 
+    // ===================================================================== SƠ ĐỒ PHÒNG
+    public async Task<IActionResult> SoDo()
+    {
+        var ds = await _phongService.QueryPhong()
+            .OrderBy(p => p.ToaNha).ThenBy(p => p.Tang).ThenBy(p => p.TenPhong)
+            .ToListAsync();
+
+        string gioiTinhSv = null;
+        int? maPhongCuaToi = null;
+        if (!LaAdmin)
+        {
+            var sv = await LaySinhVienHienTaiAsync(_db);
+            if (sv != null)
+            {
+                gioiTinhSv = sv.GioiTinh;
+                maPhongCuaToi = await _db.PhanPhongs
+                    .Where(pp => pp.TrangThai == TrangThaiPhanPhong.DangO && pp.DangKyKTX.MaSinhVien == sv.MaSinhVien)
+                    .Select(pp => (int?)pp.MaPhong)
+                    .FirstOrDefaultAsync();
+            }
+        }
+
+        var loaiPhongs = await _db.LoaiPhongs.AsNoTracking().OrderBy(l => l.SoNguoiToiDa)
+            .Select(l => new { l.MaLoaiPhong, l.TenLoaiPhong }).ToListAsync();
+
+        var vm = new SoDoPhongVM
+        {
+            LaAdmin = LaAdmin,
+            GioiTinhSinhVien = gioiTinhSv,
+            MaPhongCuaToi = maPhongCuaToi,
+            LoaiPhongs = loaiPhongs.Select(l => new SelectListItem(l.TenLoaiPhong, l.MaLoaiPhong.ToString())).ToList(),
+            Toas = ds.GroupBy(p => p.ToaNha).OrderBy(g => g.Key)
+                .Select(g => new SoDoToaVM
+                {
+                    TenToa = g.Key,
+                    Tangs = g.GroupBy(p => p.Tang).OrderByDescending(t => t.Key)
+                        .Select(t => new SoDoTangVM { Tang = t.Key, Phongs = t.OrderBy(p => p.TenPhong).ToList() })
+                        .ToList()
+                }).ToList()
+        };
+        return View(vm);
+    }
     // ===================================================================== ĐỔI TRẠNG THÁI NHANH
     [PhanQuyen(VaiTro.Admin)]
     [HttpPost]

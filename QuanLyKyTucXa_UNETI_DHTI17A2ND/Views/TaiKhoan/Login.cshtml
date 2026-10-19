@@ -4,21 +4,25 @@
     Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
 *@
 @model LoginVM
+
 @{
-    Layout = null; // Trang đăng nhập dùng giao diện riêng, không dùng _Layout
+    Layout = null;
     ViewData["Title"] = "Đăng nhập";
 }
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Quản lý KTX</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
     <style>
             :root {
                 --navy: #071f4d;
@@ -54,7 +58,8 @@
                 background: linear-gradient(135deg, #061a40 0%, #0d47a1 55%, #1e88e5 100%);
             }
 
-            /* ===== Hình nền động ===== */
+            /* ================= HÌNH NỀN ĐỘNG ================= */
+
             .bg-blob {
                 position: fixed;
                 border-radius: 50%;
@@ -62,6 +67,7 @@
                 opacity: .45;
                 z-index: 0;
                 animation: floaty 12s ease-in-out infinite;
+                pointer-events: none;
             }
 
                 .bg-blob.b1 {
@@ -102,7 +108,8 @@
                 }
             }
 
-            /* ===== Khung chính ===== */
+            /* ================= KHUNG CHÍNH ================= */
+
             .login-wrap {
                 position: relative;
                 z-index: 1;
@@ -128,7 +135,8 @@
                 }
             }
 
-            /* ===== Cột trái ===== */
+            /* ================= CỘT TRÁI ================= */
+
             .brand-side {
                 flex: 1 1 52%;
                 position: relative;
@@ -147,6 +155,7 @@
                     position: absolute;
                     border-radius: 50%;
                     border: 2px solid rgba(255,255,255,.14);
+                    pointer-events: none;
                 }
 
                 .brand-side::before {
@@ -167,37 +176,60 @@
             .brand-top {
                 display: flex;
                 align-items: center;
-                gap: .8rem;
+                gap: .9rem;
                 position: relative;
                 z-index: 1;
             }
 
+            /* ================= LOGO UNETI NỀN TRẮNG ================= */
+
             .brand-logo {
-                width: 54px;
-                height: 54px;
-                border-radius: 16px;
-                background: rgba(255,255,255,.2);
-                backdrop-filter: blur(6px);
+                width: 68px;
+                height: 68px;
+                min-width: 68px;
+                border-radius: 20px;
+                /* Nền trắng */
+                background: #ffffff;
+                /* Căn giữa ảnh */
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 1.7rem;
+                /* Khoảng cách giữa ảnh và viền */
+                padding: 6px;
+                /* Bo góc và không cho ảnh tràn */
+                overflow: hidden;
+                flex-shrink: 0;
+                /* Viền trắng và bóng đổ */
+                border: 2px solid rgba(255, 255, 255, .95);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, .16);
             }
+
+                .brand-logo img {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                    object-position: center;
+                    border-radius: 12px;
+                }
 
             .brand-name {
                 font-weight: 800;
                 letter-spacing: .5px;
                 font-size: 1.15rem;
-                line-height: 1.1;
+                line-height: 1.25;
             }
 
                 .brand-name small {
                     display: block;
                     font-weight: 500;
                     font-size: .72rem;
-                    opacity: .8;
+                    opacity: .85;
                     letter-spacing: 1.5px;
+                    margin-top: 2px;
                 }
+
+            /* ================= NỘI DUNG GIỚI THIỆU ================= */
 
             .hero {
                 position: relative;
@@ -289,7 +321,8 @@
                 opacity: .75;
             }
 
-            /* ===== Cột phải ===== */
+            /* ================= CỘT PHẢI: FORM ================= */
+
             .form-side {
                 flex: 1 1 48%;
                 padding: 3rem 2.6rem;
@@ -424,7 +457,7 @@
                     margin-top: .1rem;
                 }
 
-            /* Ẩn khung lỗi rỗng của validation summary */
+            /* Ẩn validation summary rỗng */
             .validation-summary-valid {
                 display: none;
             }
@@ -433,6 +466,8 @@
                 margin: 0;
                 padding-left: 1.1rem;
             }
+
+            /* ================= RESPONSIVE ================= */
 
             @@media (max-width: 860px) {
                 .brand-side {
@@ -443,9 +478,17 @@
                 .hero h1 {
                     font-size: 1.7rem;
                 }
+
+                .form-side {
+                    padding: 2.5rem 1.8rem;
+                }
             }
 
             @@media (max-width: 767.98px) {
+                body {
+                    padding: 1rem;
+                }
+
                 .login-wrap {
                     flex-direction: column;
                     max-width: 460px;
@@ -455,11 +498,19 @@
                     padding: 1.5rem 1.5rem 1.7rem;
                 }
 
+                .brand-logo {
+                    width: 60px;
+                    height: 60px;
+                    min-width: 60px;
+                    border-radius: 17px;
+                }
+
                 .hero, .features, .brand-foot {
                     display: none;
                 }
 
-                .brand-side::before, .brand-side::after {
+                .brand-side::before,
+                .brand-side::after {
                     display: none;
                 }
 
@@ -476,112 +527,207 @@
             }
     </style>
 </head>
+
 <body>
     <div class="bg-blob b1"></div>
     <div class="bg-blob b2"></div>
     <div class="bg-blob b3"></div>
 
     <div class="login-wrap">
-        <!-- ===== Cột trái: giới thiệu ===== -->
+
+        <!-- Cột trái: thương hiệu và giới thiệu -->
         <div class="brand-side">
             <div class="brand-top">
-                <div class="brand-logo"><i class="bi bi-building"></i></div>
-                <div class="brand-name">KTX UNETI<small>KÝ TÚC XÁ SINH VIÊN</small></div>
+
+                <!-- Logo trường UNETI -->
+                <div class="brand-logo">
+                    <img src="@Url.Content("~/images/logo-uneti.png")"
+                         alt="Logo Trường Đại học Kinh tế - Kỹ thuật Công nghiệp"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=&quot;bi bi-building&quot; style=&quot;color:#0d47a1;font-size:2rem&quot;></i>';" />
+                </div>
+
+                <div class="brand-name">
+                    KTX UNETI
+                    <small>KÝ TÚC XÁ SINH VIÊN</small>
+                </div>
             </div>
 
             <div class="hero">
-                <div class="tag"><i class="bi bi-stars"></i> Cổng thông tin sinh viên</div>
-                <h1>Một nơi ở ổn định,<br /><span>một hành trình học tập trọn vẹn.</span></h1>
-                <p>Đăng ký chỗ ở, theo dõi phòng và xem lịch sử lưu trú của bạn, tất cả trên một hệ thống.</p>
+                <div class="tag">
+                    <i class="bi bi-stars"></i>
+                    Cổng thông tin sinh viên
+                </div>
+
+                <h1>
+                    Một nơi ở ổn định,
+                    <br />
+                    <span>một hành trình học tập trọn vẹn.</span>
+                </h1>
+
+                <p>
+                    Đăng ký chỗ ở, theo dõi phòng và xem lịch sử lưu trú của bạn,
+                    tất cả trên một hệ thống.
+                </p>
 
                 <ul class="features">
                     <li>
-                        <span class="ico"><i class="bi bi-journal-check"></i></span>
-                        <div><b>Đăng ký trực tuyến</b><span class="d">Nộp nguyện vọng ở KTX chỉ vài thao tác</span></div>
+                        <span class="ico">
+                            <i class="bi bi-journal-check"></i>
+                        </span>
+                        <div>
+                            <b>Đăng ký trực tuyến</b>
+                            <span class="d">Nộp nguyện vọng ở KTX chỉ vài thao tác</span>
+                        </div>
                     </li>
+
                     <li>
-                        <span class="ico"><i class="bi bi-door-open"></i></span>
-                        <div><b>Xem phòng, loại phòng</b><span class="d">Thông tin phòng và số chỗ còn trống</span></div>
+                        <span class="ico">
+                            <i class="bi bi-door-open"></i>
+                        </span>
+                        <div>
+                            <b>Xem phòng, loại phòng</b>
+                            <span class="d">Thông tin phòng và số chỗ còn trống</span>
+                        </div>
                     </li>
+
                     <li>
-                        <span class="ico"><i class="bi bi-clock-history"></i></span>
-                        <div><b>Theo dõi lịch sử ở</b><span class="d">Mọi thông tin phân phòng của bạn</span></div>
+                        <span class="ico">
+                            <i class="bi bi-clock-history"></i>
+                        </span>
+                        <div>
+                            <b>Theo dõi lịch sử ở</b>
+                            <span class="d">Mọi thông tin phân phòng của bạn</span>
+                        </div>
                     </li>
                 </ul>
             </div>
 
-            <div class="brand-foot">© @DateTime.Now.Year Trường Đại học Kinh tế - Kỹ thuật Công nghiệp</div>
+            <div class="brand-foot">
+                © @DateTime.Now.Year Trường Đại học Kinh tế - Kỹ thuật Công nghiệp
+            </div>
         </div>
 
-        <!-- ===== Cột phải: form ===== -->
+        <!-- Cột phải: form đăng nhập -->
         <div class="form-side">
             <div class="hello">👋</div>
+
             <h2>Chào mừng trở lại!</h2>
             <p class="sub">Đăng nhập để quản lý chỗ ở ký túc xá của bạn.</p>
 
             <form asp-action="Login" method="post" id="frmLogin" novalidate>
                 <input type="hidden" asp-for="ReturnUrl" />
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger py-2 small"></div>
 
                 <div class="mb-3">
                     <label asp-for="TenDangNhap" class="form-label"></label>
+
                     <div class="field">
-                        <span class="lead"><i class="bi bi-person-fill"></i></span>
-                        <input asp-for="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập" autocomplete="username" autofocus />
+                        <span class="lead">
+                            <i class="bi bi-person-fill"></i>
+                        </span>
+
+                        <input asp-for="TenDangNhap"
+                               class="form-control"
+                               placeholder="Nhập tên đăng nhập"
+                               autocomplete="username"
+                               autofocus />
                     </div>
-                    <span asp-validation-for="TenDangNhap" class="text-danger small"></span>
+
+                    <span asp-validation-for="TenDangNhap"
+                          class="text-danger small"></span>
                 </div>
 
                 <div class="mb-4">
                     <label asp-for="MatKhau" class="form-label"></label>
+
                     <div class="field">
-                        <span class="lead"><i class="bi bi-lock-fill"></i></span>
-                        <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu" autocomplete="current-password" />
-                        <button type="button" class="btn-toggle-pw" id="btnTogglePw" tabindex="-1" aria-label="Hiện/ẩn mật khẩu">
+                        <span class="lead">
+                            <i class="bi bi-lock-fill"></i>
+                        </span>
+
+                        <input asp-for="MatKhau"
+                               type="password"
+                               class="form-control"
+                               placeholder="Nhập mật khẩu"
+                               autocomplete="current-password" />
+
+                        <button type="button"
+                                class="btn-toggle-pw"
+                                id="btnTogglePw"
+                                tabindex="-1"
+                                aria-label="Hiện hoặc ẩn mật khẩu">
                             <i class="bi bi-eye" id="iconTogglePw"></i>
                         </button>
                     </div>
-                    <div class="caps-warn" id="capsWarn"><i class="bi bi-exclamation-triangle-fill"></i> Caps Lock đang bật</div>
-                    <span asp-validation-for="MatKhau" class="text-danger small"></span>
+
+                    <div class="caps-warn" id="capsWarn">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Caps Lock đang bật
+                    </div>
+
+                    <span asp-validation-for="MatKhau"
+                          class="text-danger small"></span>
                 </div>
 
                 <button type="submit" class="btn btn-login" id="btnLogin">
-                    <span id="loginText"><i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập</span>
-                    <span id="loginLoading" class="d-none"><span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập...</span>
+                    <span id="loginText">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        Đăng nhập
+                    </span>
+
+                    <span id="loginLoading" class="d-none">
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                        Đang đăng nhập...
+                    </span>
                 </button>
             </form>
 
             <div class="help-note">
                 <i class="bi bi-info-circle-fill"></i>
-                <div>Quên mật khẩu hoặc chưa có tài khoản? Vui lòng liên hệ Ban quản lý KTX để được hỗ trợ.</div>
+                <div>
+                    Quên mật khẩu hoặc chưa có tài khoản?
+                    Vui lòng liên hệ Ban quản lý KTX để được hỗ trợ.
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
+
     <script>
+            // Lấy ô nhập mật khẩu
             var pw = document.getElementById('MatKhau');
 
-            // Hiện/ẩn mật khẩu
+            // Hiện hoặc ẩn mật khẩu
             document.getElementById('btnTogglePw').addEventListener('click', function () {
                 var icon = document.getElementById('iconTogglePw');
                 var an = pw.type === 'password';
+
                 pw.type = an ? 'text' : 'password';
                 icon.className = an ? 'bi bi-eye-slash' : 'bi bi-eye';
             });
 
             // Cảnh báo Caps Lock
             pw.addEventListener('keyup', function (e) {
-                document.getElementById('capsWarn').classList.toggle('show', e.getModifierState && e.getModifierState('CapsLock'));
+                document.getElementById('capsWarn').classList.toggle(
+                    'show',
+                    e.getModifierState && e.getModifierState('CapsLock')
+                );
             });
+
             pw.addEventListener('blur', function () {
                 document.getElementById('capsWarn').classList.remove('show');
             });
 
-            // Hiệu ứng "đang đăng nhập" (chỉ khi form hợp lệ)
+            // Hiệu ứng đang đăng nhập
             $('#frmLogin').on('submit', function () {
-                if (!$(this).valid()) return;
+                if (typeof $(this).valid === 'function' && !$(this).valid()) {
+                    return;
+                }
+
                 $('#btnLogin').prop('disabled', true);
                 $('#loginText').addClass('d-none');
                 $('#loginLoading').removeClass('d-none');

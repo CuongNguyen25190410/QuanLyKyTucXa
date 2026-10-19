@@ -377,3 +377,519 @@ body { background: #f5f7fa; }
     background: #e3f0ff;
     color: #1565c0;
 }
+
+/* ==========================================
+   THANH MENU KTX UNETI - PHIEN BAN CAI TIEN
+   ========================================== */
+
+.app-navbar {
+    background: linear-gradient( 90deg, #0d47a1 0%, #1565c0 55%, #1e88e5 100% );
+    box-shadow: 0 4px 14px rgba(13, 71, 161, .20);
+    padding-top: .4rem;
+    padding-bottom: .4rem;
+}
+
+    /* Logo và tên hệ thống */
+    .app-navbar .navbar-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem !important;
+        flex-shrink: 0;
+        margin-right: .5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: .2px;
+        white-space: nowrap;
+    }
+
+/* Ảnh logo trường */
+.brand-logo {
+    display: block;
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+    padding: 2px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+/* Biểu tượng dự phòng khi ảnh logo lỗi */
+.brand-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+}
+
+/* Menu chính */
+.app-navbar .navbar-nav {
+    align-items: center;
+}
+
+.app-navbar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .32rem;
+    min-height: 38px;
+    padding: .45rem .5rem;
+    border-radius: 999px;
+    color: rgba(255, 255, 255, .92);
+    font-size: .82rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: background .15s ease, color .15s ease;
+}
+
+    .app-navbar .nav-link i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0;
+        font-size: .9rem;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .app-navbar .nav-link:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, .14);
+    }
+
+    .app-navbar .nav-link.active {
+        color: #0d47a1;
+        background: #fff;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+    }
+
+/* Thông tin tài khoản */
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .2rem .6rem .2rem .25rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .14);
+    color: #fff;
+    white-space: nowrap;
+}
+
+.user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    color: #0d47a1;
+    font-size: .82rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.user-name {
+    font-size: .76rem;
+    font-weight: 600;
+}
+
+.user-role {
+    font-size: .66rem;
+    opacity: .85;
+}
+
+/* Nút đổi mật khẩu */
+.btn-nav-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .3rem;
+    min-height: 36px;
+    padding: .35rem .65rem;
+    border: 1px solid rgba(255, 255, 255, .6);
+    border-radius: 999px;
+    color: #fff;
+    font-size: .76rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+    .btn-nav-outline:hover {
+        background: rgba(255, 255, 255, .15);
+        color: #fff;
+        border-color: #fff;
+    }
+
+/* Nút đăng xuất và đăng nhập */
+.btn-nav-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .3rem;
+    min-height: 36px;
+    padding: .35rem .7rem;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+    color: #0d47a1;
+    font-size: .76rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+    .btn-nav-solid:hover {
+        background: #e3f0ff;
+        color: #0d47a1;
+    }
+
+/* Tối ưu cho màn hình laptop */
+@media (min-width: 992px) and (max-width: 1450px) {
+    .app-navbar .container-fluid {
+        padding-left: .65rem !important;
+        padding-right: .65rem !important;
+    }
+
+    .app-navbar .navbar-brand {
+        font-size: .94rem;
+        margin-right: .25rem;
+    }
+
+    .brand-logo,
+    .brand-badge {
+        width: 32px;
+        height: 32px;
+    }
+
+    .app-navbar .navbar-nav.me-auto {
+        margin-left: .25rem !important;
+        gap: 0 !important;
+    }
+
+    .app-navbar .nav-link {
+        gap: .25rem;
+        padding: .4rem .35rem;
+        font-size: .75rem;
+    }
+
+        .app-navbar .nav-link i {
+            font-size: .84rem;
+        }
+
+    .user-chip {
+        gap: .35rem;
+        padding-right: .45rem;
+    }
+
+    .user-avatar {
+        width: 27px;
+        height: 27px;
+    }
+
+    .user-name {
+        font-size: .7rem;
+    }
+
+    .user-role {
+        font-size: .62rem;
+    }
+
+    .btn-nav-outline,
+    .btn-nav-solid {
+        gap: .25rem;
+        padding-left: .5rem;
+        padding-right: .5rem;
+        font-size: .7rem;
+    }
+}
+
+/* Điện thoại và máy tính bảng */
+@media (max-width: 991.98px) {
+    .app-navbar .navbar-collapse {
+        padding-top: .65rem;
+    }
+
+    .app-navbar .navbar-nav {
+        align-items: stretch;
+    }
+
+    .app-navbar .nav-link {
+        justify-content: flex-start;
+        white-space: normal;
+        border-radius: .65rem;
+        padding: .65rem .8rem;
+        font-size: .85rem;
+    }
+
+    .app-navbar .navbar-nav.align-items-lg-center {
+        align-items: stretch !important;
+        gap: .5rem !important;
+        margin-top: .5rem !important;
+    }
+
+    .user-chip {
+        width: fit-content;
+        max-width: 100%;
+    }
+}
+
+/* ==========================================
+   GIAO DIEN THANH MENU KTX UNETI
+   ========================================== */
+
+.app-navbar {
+    background: linear-gradient(90deg, #0d47a1, #1565c0 55%, #1e88e5);
+    box-shadow: 0 4px 14px rgba(13, 71, 161, .20);
+    padding: .4rem 0;
+}
+
+    /* Logo trường */
+    .app-navbar .brand-logo {
+        display: block;
+        width: 38px;
+        height: 38px;
+        object-fit: contain;
+        padding: 2px;
+        background: #fff;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    /* Tên hệ thống */
+    .app-navbar .navbar-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem !important;
+        flex-shrink: 0;
+        margin-right: .45rem;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: .2px;
+        white-space: nowrap;
+    }
+
+    /* Các mục menu */
+    .app-navbar .navbar-nav {
+        align-items: center;
+    }
+
+    .app-navbar .nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .3rem;
+        min-height: 38px;
+        padding: .45rem .48rem;
+        border-radius: 999px;
+        color: rgba(255, 255, 255, .94);
+        font-size: .8rem;
+        font-weight: 500;
+        line-height: 1.2;
+        white-space: nowrap;
+        transition: background .15s ease, color .15s ease;
+    }
+
+        .app-navbar .nav-link i {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            font-size: .9rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .app-navbar .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .14);
+        }
+
+        .app-navbar .nav-link.active {
+            color: #0d47a1;
+            background: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+        }
+
+    /* Thong tin tai khoan */
+    .app-navbar .user-chip {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .2rem .55rem .2rem .25rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, .14);
+        color: #fff;
+        white-space: nowrap;
+    }
+
+    .app-navbar .user-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #fff;
+        color: #0d47a1;
+        font-size: .82rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .app-navbar .user-info {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.15;
+    }
+
+    .app-navbar .user-name {
+        font-size: .74rem;
+        font-weight: 600;
+    }
+
+    .app-navbar .user-role {
+        font-size: .65rem;
+        opacity: .85;
+    }
+
+    /* Nut doi mat khau */
+    .app-navbar .btn-nav-outline,
+    .app-navbar .btn-nav-solid {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .3rem;
+        min-height: 36px;
+        padding: .35rem .6rem;
+        border-radius: 999px;
+        font-size: .74rem;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
+    .app-navbar .btn-nav-outline {
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, .65);
+    }
+
+        .app-navbar .btn-nav-outline:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .15);
+            border-color: #fff;
+        }
+
+    .app-navbar .btn-nav-solid {
+        color: #0d47a1;
+        background: #fff;
+        border: 0;
+        font-weight: 600;
+    }
+
+        .app-navbar .btn-nav-solid:hover {
+            color: #0d47a1;
+            background: #e3f0ff;
+        }
+
+/* Laptop: thu gon menu */
+@media (min-width: 992px) and (max-width: 1450px) {
+    .app-navbar .container-fluid {
+        padding-left: .65rem !important;
+        padding-right: .65rem !important;
+    }
+
+    .app-navbar .navbar-brand {
+        font-size: .92rem;
+        margin-right: .2rem;
+    }
+
+    .app-navbar .brand-logo {
+        width: 32px;
+        height: 32px;
+    }
+
+    .app-navbar .navbar-nav.me-auto {
+        margin-left: .2rem !important;
+        gap: 0 !important;
+    }
+
+    .app-navbar .nav-link {
+        gap: .22rem;
+        padding: .4rem .3rem;
+        font-size: .72rem;
+    }
+
+        .app-navbar .nav-link i {
+            font-size: .82rem;
+        }
+
+    .app-navbar .user-chip {
+        gap: .3rem;
+        padding-right: .4rem;
+    }
+
+    .app-navbar .user-avatar {
+        width: 27px;
+        height: 27px;
+    }
+
+    .app-navbar .user-name {
+        font-size: .68rem;
+    }
+
+    .app-navbar .user-role {
+        font-size: .6rem;
+    }
+
+    .app-navbar .btn-nav-outline,
+    .app-navbar .btn-nav-solid {
+        gap: .2rem;
+        padding-left: .42rem;
+        padding-right: .42rem;
+        font-size: .67rem;
+    }
+}
+
+/* Dien thoai va may tinh bang */
+@media (max-width: 991.98px) {
+    .app-navbar .navbar-collapse {
+        padding-top: .65rem;
+    }
+
+    .app-navbar .navbar-nav {
+        align-items: stretch;
+    }
+
+    .app-navbar .nav-link {
+        justify-content: flex-start;
+        white-space: normal;
+        border-radius: .65rem;
+        padding: .65rem .8rem;
+        font-size: .85rem;
+    }
+
+    .app-navbar .navbar-nav.align-items-lg-center {
+        align-items: stretch !important;
+        gap: .5rem !important;
+        margin-top: .5rem !important;
+    }
+
+    .app-navbar .user-chip {
+        width: fit-content;
+        max-width: 100%;
+    }
+}

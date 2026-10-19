@@ -13,30 +13,90 @@
         ("tang_asc", "Tầng tăng dần"), ("tang_desc", "Tầng giảm dần"),
         ("cho_asc", "Số chỗ còn tăng dần"), ("cho_desc", "Số chỗ còn giảm dần")
     };
+    var kq = Model.KetQua;
+    var tu = kq.TotalItems == 0 ? 0 : (kq.Page - 1) * kq.PageSize + 1;
+    var den = kq.TotalItems == 0 ? 0 : tu + kq.Items.Count - 1;
 }
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">@(Model.LaAdmin ? "Quản lý phòng ký túc xá" : "Danh sách phòng")</h2>
-    <div class="d-flex gap-2">
+
+<style>
+    .ph-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: .75rem; margin-bottom: 1.25rem; }
+    .ph-title { font-weight: 700; color: #0d47a1; margin: 0; }
+    .ph-title i { margin-right: .4rem; }
+    .ph-sub { color: #6c7a8d; font-size: .95rem; margin-top: .15rem; }
+
+    /* Bộ lọc */
+    .ph-filter { border: 0; border-radius: 1rem; border-top: 4px solid #1565c0; }
+    .ph-filter-title { font-weight: 700; color: #0d47a1; margin-bottom: .9rem; }
+    .ph-filter-title i { margin-right: .35rem; }
+    .ph-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .4px; color: #6c7a8d; font-weight: 600; margin-bottom: .25rem; }
+
+    /* Bảng */
+    .ph-card { border: 0; border-radius: 1rem; overflow: hidden; }
+    .ph-table thead th { background: #eaf2fd; color: #0d47a1; font-size: .78rem; text-transform: uppercase; letter-spacing: .4px; font-weight: 700; border-bottom: 0; padding: .9rem .85rem; white-space: nowrap; }
+    .ph-table tbody td { padding: .8rem .85rem; border-color: #eef2f7; }
+    .ph-table tbody tr { transition: background .12s; }
+    .ph-table tbody tr:hover { background: #f5f9ff; }
+    .ph-table tbody tr.is-off { background: #fafafa; }
+    .ph-table tbody tr.is-off td:not(:last-child) { opacity: .6; }
+
+    .ph-room { display: inline-flex; align-items: center; gap: .6rem; font-weight: 700; color: #0d47a1; }
+    .ph-room i { width: 34px; height: 34px; border-radius: .6rem; background: #e3f0ff; display: inline-flex; align-items: center; justify-content: center; }
+    .ph-sub-text { color: #6c7a8d; font-size: .8rem; }
+
+    .ph-gt { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .7rem; border-radius: 999px; font-size: .8rem; font-weight: 600; background: #eef2f7; color: #495057; }
+    .ph-gt.nam { background: #e3f0ff; color: #1565c0; }
+    .ph-gt.nu { background: #fde7f1; color: #c2185b; }
+
+    .ph-cap { min-width: 120px; }
+    .ph-cap .progress { height: .45rem; border-radius: 999px; background: #e9eef5; margin-top: .3rem; }
+    .ph-cap .progress-bar { border-radius: 999px; }
+
+    .ph-pill { display: inline-block; padding: .25rem .75rem; border-radius: 999px; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+    .ph-pill.ok { background: #d9f2e4; color: #157347; }
+    .ph-pill.full { background: #fde2e2; color: #b02a37; }
+
+    .ph-act { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: .6rem; }
+
+    .ph-empty { text-align: center; padding: 3rem 1rem; color: #8a97a8; }
+    .ph-empty i { font-size: 3rem; display: block; margin-bottom: .5rem; }
+</style>
+
+<div class="ph-head">
+    <div>
+        <h2 class="ph-title"><i class="bi bi-building"></i>@(Model.LaAdmin ? "Quản lý phòng ký túc xá" : "Danh sách phòng")</h2>
+        <div class="ph-sub">
+            Tìm thấy <b>@kq.TotalItems</b> phòng
+            @if (kq.TotalItems > 0)
+            {
+                <span>&middot; đang hiển thị @tu–@den</span>
+            }
+        </div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
         <a class="btn btn-outline-primary" asp-action="SoDo">
             <i class="bi bi-grid-3x3-gap"></i> Xem dạng sơ đồ
         </a>
         @if (Model.LaAdmin)
         {
-            <a class="btn btn-primary" asp-action="Create">+ Thêm phòng</a>
+            <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg"></i> Thêm phòng</a>
         }
     </div>
 </div>
 
 @* Một form GET duy nhất: từ khóa + các điều kiện lọc + kiểu sắp xếp. Chuyển trang vẫn giữ các giá trị này. *@
-<form method="get" asp-action="Index" class="card shadow-sm mb-3">
+<form method="get" asp-action="Index" class="card ph-filter shadow-sm mb-4">
     <div class="card-body">
-        <div class="row g-2">
+        <div class="ph-filter-title"><i class="bi bi-funnel"></i> Bộ lọc &amp; sắp xếp</div>
+        <div class="row g-3">
             <div class="col-md-4">
-                <label class="form-label small mb-1">Tìm kiếm (tên phòng / tòa nhà)</label>
-                <input name="tuKhoa" value="@f.TuKhoa" class="form-control" placeholder="VD: A101 hoặc tòa B" />
+                <div class="ph-label">Tìm kiếm (tên phòng / tòa nhà)</div>
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input name="tuKhoa" value="@f.TuKhoa" class="form-control" placeholder="VD: A101 hoặc tòa B" />
+                </div>
             </div>
             <div class="col-md-3">
-                <label class="form-label small mb-1">Loại phòng</label>
+                <div class="ph-label">Loại phòng</div>
                 <select name="maLoaiPhong" class="form-select">
                     <option value="">-- Tất cả --</option>
                     @foreach (var x in Model.LoaiPhongs)
@@ -46,7 +106,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label small mb-1">Tòa nhà</label>
+                <div class="ph-label">Tòa nhà</div>
                 <select name="toaNha" class="form-select">
                     <option value="">-- Tất cả --</option>
                     @foreach (var x in Model.ToaNhas)
@@ -56,7 +116,7 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="form-label small mb-1">Tầng</label>
+                <div class="ph-label">Tầng</div>
                 <select name="tang" class="form-select">
                     <option value="">-- Tất cả --</option>
                     @foreach (var x in Model.Tangs)
@@ -66,7 +126,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label small mb-1">Giới tính phòng</label>
+                <div class="ph-label">Giới tính phòng</div>
                 <select name="gioiTinh" class="form-select">
                     <option value="">-- Tất cả --</option>
                     @foreach (var g in GioiTinh.TatCa)
@@ -78,7 +138,7 @@
             @if (Model.LaAdmin)
             {
                 <div class="col-md-2">
-                    <label class="form-label small mb-1">Trạng thái</label>
+                    <div class="ph-label">Trạng thái</div>
                     <select name="trangThai" class="form-select">
                         <option value="">-- Tất cả --</option>
                         @foreach (var t in TrangThaiPhong.TatCa)
@@ -89,7 +149,7 @@
                 </div>
             }
             <div class="col-md-2">
-                <label class="form-label small mb-1">Còn chỗ / Hết chỗ</label>
+                <div class="ph-label">Còn chỗ / Hết chỗ</div>
                 <select name="conCho" class="form-select">
                     <option value="">-- Tất cả --</option>
                     <option value="con" selected="@(f.ConCho == "con")">Còn chỗ</option>
@@ -97,7 +157,7 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="form-label small mb-1">Sắp xếp</label>
+                <div class="ph-label">Sắp xếp</div>
                 <select name="sapXep" class="form-select">
                     @foreach (var s in sapXeps)
                     {
@@ -106,76 +166,101 @@
                 </select>
             </div>
             <div class="col-md-3 d-flex align-items-end gap-2">
-                <button class="btn btn-primary flex-fill">Áp dụng</button>
-                <a class="btn btn-outline-secondary" asp-action="Index">Xóa lọc</a>
+                <button class="btn btn-primary flex-fill"><i class="bi bi-check2"></i> Áp dụng</button>
+                <a class="btn btn-outline-secondary" asp-action="Index"><i class="bi bi-x-lg"></i> Xóa lọc</a>
             </div>
         </div>
     </div>
 </form>
 
-@if (!Model.KetQua.Items.Any())
+@if (!kq.Items.Any())
 {
-    <div class="alert alert-info">Không tìm thấy phòng nào phù hợp với điều kiện đã chọn.</div>
+    <div class="card ph-card shadow-sm">
+        <div class="ph-empty">
+            <i class="bi bi-search"></i>
+            <div class="fw-semibold">Không tìm thấy phòng nào phù hợp với điều kiện đã chọn.</div>
+            <div class="small mt-1">Hãy thử bỏ bớt điều kiện lọc.</div>
+        </div>
+    </div>
 }
 else
 {
-    <div class="card shadow-sm">
+    <div class="card ph-card shadow-sm">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+            <table class="table ph-table align-middle mb-0">
+                <thead>
                     <tr>
                         <th>Phòng</th>
                         <th>Loại phòng</th>
-                        <th>Tòa</th>
-                        <th>Tầng</th>
+                        <th>Vị trí</th>
                         <th>Giới tính</th>
-                        <th class="text-center">Đang ở / Sức chứa</th>
+                        <th>Đang ở / Sức chứa</th>
                         <th class="text-center">Chỗ còn</th>
                         @if (Model.LaAdmin)
                         {
                             <th>Trạng thái</th>
                         }
-                        <th></th>
+                        <th class="text-end">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var p in Model.KetQua.Items)
+                    @foreach (var p in kq.Items)
                     {
-                        <tr>
-                            <td class="fw-semibold">@p.TenPhong</td>
-                            <td>@p.TenLoaiPhong<br /><span class="text-muted small">@Fmt.Tien(p.DonGiaThang)/tháng</span></td>
-                            <td>@p.ToaNha</td>
-                            <td>@p.Tang</td>
-                            <td>@p.GioiTinhPhong</td>
-                            <td class="text-center">@p.SoDangO / @p.SucChua</td>
+                        var tamNgung = p.TrangThai != TrangThaiPhong.DangSuDung;
+                        var pct = p.SucChua <= 0 ? 0 : Math.Min(100, p.SoDangO * 100 / p.SucChua);
+                        var mauThanh = pct >= 100 ? "#dc3545" : (pct >= 75 ? "#f59f00" : "#1e88e5");
+                        var gtCls = p.GioiTinhPhong == GioiTinh.Nam ? "nam" : (p.GioiTinhPhong == GioiTinh.Nu ? "nu" : "");
+                        var gtIcon = p.GioiTinhPhong == GioiTinh.Nam ? "bi-gender-male" : (p.GioiTinhPhong == GioiTinh.Nu ? "bi-gender-female" : "bi-people");
+
+                        <tr class="@(tamNgung ? "is-off" : "")">
+                            <td>
+                                <span class="ph-room"><i class="bi bi-door-closed"></i>@p.TenPhong</span>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">@p.TenLoaiPhong</div>
+                                <div class="ph-sub-text">@Fmt.Tien(p.DonGiaThang)/tháng</div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">Tòa @p.ToaNha</div>
+                                <div class="ph-sub-text">Tầng @p.Tang</div>
+                            </td>
+                            <td><span class="ph-gt @gtCls"><i class="bi @gtIcon"></i>@p.GioiTinhPhong</span></td>
+                            <td>
+                                <div class="ph-cap">
+                                    <span class="fw-semibold">@p.SoDangO</span><span class="text-muted"> / @p.SucChua người</span>
+                                    <div class="progress"><div class="progress-bar" style="width:@pct%;background:@mauThanh"></div></div>
+                                </div>
+                            </td>
                             <td class="text-center">
                                 @if (p.SoChoCon > 0)
                                 {
-                                    <span class="badge bg-success">Còn @p.SoChoCon chỗ</span>
+                                    <span class="ph-pill ok">Còn @p.SoChoCon chỗ</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-danger">Hết chỗ</span>
+                                    <span class="ph-pill full">Hết chỗ</span>
                                 }
                             </td>
                             @if (Model.LaAdmin)
                             {
-                                <td><span class="badge @Fmt.Badge(p.TrangThai)">@p.TrangThai</span></td>
+                                <td><span class="badge rounded-pill @Fmt.Badge(p.TrangThai)">@p.TrangThai</span></td>
                             }
                             <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@p.MaPhong">Chi tiết</a>
+                                <a class="btn btn-sm btn-outline-secondary ph-act" title="Chi tiết" asp-action="Details" asp-route-id="@p.MaPhong"><i class="bi bi-eye"></i></a>
                                 @if (Model.LaAdmin)
                                 {
-                                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@p.MaPhong">Sửa</a>
+                                    <a class="btn btn-sm btn-outline-primary ph-act" title="Sửa" asp-action="Edit" asp-route-id="@p.MaPhong"><i class="bi bi-pencil-square"></i></a>
                                     <form asp-action="DoiTrangThai" asp-route-id="@p.MaPhong" method="post" class="d-inline">
                                         <input type="hidden" name="returnQuery" value="@Context.Request.QueryString.Value" />
-                                        <button class="btn btn-sm btn-outline-warning">@(p.TrangThai == TrangThaiPhong.DangSuDung ? "Tạm ngừng" : "Mở lại")</button>
+                                        <button class="btn btn-sm btn-outline-warning ph-act" title="@(p.TrangThai == TrangThaiPhong.DangSuDung ? "Tạm ngừng" : "Mở lại")">
+                                            <i class="bi @(p.TrangThai == TrangThaiPhong.DangSuDung ? "bi-pause-circle" : "bi-play-circle")"></i>
+                                        </button>
                                     </form>
-                                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@p.MaPhong">Xóa</a>
+                                    <a class="btn btn-sm btn-outline-danger ph-act" title="Xóa" asp-action="Delete" asp-route-id="@p.MaPhong"><i class="bi bi-trash"></i></a>
                                 }
                                 else if (p.SoChoCon > 0)
                                 {
-                                    <a class="btn btn-sm btn-success" asp-controller="DangKyKTX" asp-action="Create" asp-route-maLoaiPhong="@p.MaLoaiPhong">Đăng ký</a>
+                                    <a class="btn btn-sm btn-success rounded-pill px-3" asp-controller="DangKyKTX" asp-action="Create" asp-route-maLoaiPhong="@p.MaLoaiPhong"><i class="bi bi-journal-plus"></i> Đăng ký</a>
                                 }
                             </td>
                         </tr>

@@ -51,6 +51,7 @@ builder.Services.AddSingleton<IPasswordHasher<TaiKhoan>, PasswordHasher<TaiKhoan
 builder.Services.AddScoped<PhongService>();
 builder.Services.AddScoped<PhanPhongService>();
 
+builder.Services.AddScoped<ImportSinhVienService>();
 // ---- Thanh toán QR (payOS hoặc giả lập) ----
 // ThanhToan:NhaCungCap = "PayOS" (cần khóa trong appsettings.Development.json) hoặc "Mock" (demo, mặc định)
 builder.Services.Configure<PayOsOptions>(builder.Configuration.GetSection("PayOS"));

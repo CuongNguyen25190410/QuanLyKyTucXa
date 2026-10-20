@@ -7,7 +7,9 @@ ASP.NET Core 10 MVC · Entity Framework Core 10 (Code First + Migration) · SQL 
 ## 1. Yêu cầu môi trường
 - .NET 10 SDK
 - SQL Server (LocalDB đi kèm Visual Studio là đủ) hoặc SQL Server Express
-- Công cụ EF: `dotnet tool install --global dotnet-ef` (chạy lại `dotnet tool update --global dotnet-ef` nếu đã có bản cũ)
+- Công cụ EF: `dotnet tool install --global dotnet-ef` 
+- (chạy lại `dotnet tool update --global dotnet-ef` nếu đã có bản cũ)
+- Cài thư viện đọc Excel (MIT):  `dotnet add package ClosedXML`
 - Cần Internet khi chạy để tải Bootstrap/jQuery từ CDN (giao diện + validate phía client)
 
 ## 2. Cài đặt và chạy

@@ -10,7 +10,12 @@
 }
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Quản lý sinh viên</h2>
-    <a class="btn btn-primary" asp-action="Create">+ Thêm sinh viên</a>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-success" asp-controller="ImportSinhVien" asp-action="Index">
+            <i class="bi bi-file-earmark-excel"></i> Nhập từ Excel
+        </a>
+        <a class="btn btn-primary" asp-action="Create">+ Thêm sinh viên</a>
+    </div>
 </div>
 <form method="get" asp-action="Index" class="row g-2 mb-3">
     <div class="col-md-4"><input name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Mã SV, họ tên, lớp..." /></div>

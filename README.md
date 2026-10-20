@@ -80,7 +80,7 @@ Views/          Razor View theo từng Controller
 docs/           Thiết kế CSDL, kịch bản kiểm thử, giải thích LINQ, bảng phân công
 ```
 
-## 5. Phân chia module (đề mục 4)
+## 5. Phân chia module 
 | Module | Nội dung | File chính |
 |---|---|---|
 | 1 | Tài khoản, đăng nhập, phân quyền, loại phòng | `TaiKhoanController`, `LoaiPhongController`, `PhanQuyenAttribute`, `Models/TaiKhoan`, `Models/LoaiPhong` |
@@ -88,9 +88,3 @@ docs/           Thiết kế CSDL, kịch bản kiểm thử, giải thích LINQ
 | 3 | Sinh viên, đăng ký KTX, thông tin/lịch sử ở | `SinhVienController`, `DangKyKTXController`, `CaNhanController` |
 | 4 | Phân phòng, chuyển/trả phòng, Dashboard, thống kê | `PhanPhongController`, `PhanPhongService`, `ThongKeController` |
 
-## 6. Việc cần làm trước khi nộp (đề mục 17, 20, 22)
-1. Điền **Họ và tên / Mã sinh viên** vào phần chú thích đầu mỗi file (đang để `[ĐIỀN ...]`). Chỉ ghi tên người trực tiếp làm phần đó.
-2. Đẩy lên GitHub với **nhiều Commit** theo mẫu `[Mã SV] [Module] Nội dung công việc`; mỗi thành viên dùng tài khoản GitHub cá nhân.
-3. Chạy đủ kịch bản trong `docs/KichBanKiemThu.md` và chụp ảnh/quay video minh chứng.
-4. Hoàn thiện `docs/BangPhanCong.md` và viết báo cáo theo mẫu của giảng viên.
-5. Đọc `docs/GiaiThichLINQ.md` để chuẩn bị bảo vệ.

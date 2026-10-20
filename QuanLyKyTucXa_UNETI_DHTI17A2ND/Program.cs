@@ -50,7 +50,9 @@ builder.Services.AddSingleton<IPasswordHasher<TaiKhoan>, PasswordHasher<TaiKhoan
 // Các service nghiệp vụ
 builder.Services.AddScoped<PhongService>();
 builder.Services.AddScoped<PhanPhongService>();
+
 // ---- Thanh toán QR (payOS hoặc giả lập) ----
+// ThanhToan:NhaCungCap = "PayOS" (cần khóa trong appsettings.Development.json) hoặc "Mock" (demo, mặc định)
 builder.Services.Configure<PayOsOptions>(builder.Configuration.GetSection("PayOS"));
 builder.Services.AddHttpClient<PayOsGateway>(c =>
 {
@@ -65,37 +67,34 @@ builder.Services.AddScoped<ICongThanhToan>(sp =>
 builder.Services.AddScoped<HoaDonService>();
 
 var app = builder.Build();
+
+// Tạo/cập nhật CSDL từ Migration và nạp dữ liệu mẫu (an toàn khi chạy lại nhiều lần)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await PhongMauSeeder.SeedAsync(db);
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<TaiKhoan>>();
+
+    if (db.Database.GetMigrations().Any())
+        await db.Database.MigrateAsync();          // cách chuẩn: Code First + Migration (gồm cả bảng HoaDon)
+    else
+        await db.Database.EnsureCreatedAsync();    // dự phòng khi chưa tạo Migration
+
+    await DbSeeder.SeedAsync(db, hasher);          // tài khoản, sinh viên, phòng mẫu ban đầu
+    await PhongMauSeeder.SeedAsync(db);            // thêm phòng cho đủ ~300 phòng (100 phòng/tòa)
 }
 
-//Tạo CSDL từ Migration (nếu đã có Migration) và nạp dữ liệu mẫu lần đầu
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<TaiKhoan>>();
-
-//    if (db.Database.GetMigrations().Any())
-//        await db.Database.MigrateAsync();          // cách chuẩn: Code First + Migration
-//    else
-//        await db.Database.EnsureCreatedAsync();    // dự phòng khi chưa tạo Migration (xem README)
-
-//    await DbSeeder.SeedAsync(db, hasher);
-//}
-
-//if (!app.Environment.IsDevelopment())
-//{
-//    app.UseExceptionHandler("/Home/Error");
-//    app.UseHsts();
-//}
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();          // phải đứng sau UseRouting và trước các endpoint MVC
-app.MapControllers();
+
+app.MapControllers();      // cho route thuộc tính, ví dụ /payos/webhook
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=TaiKhoan}/{action=Login}/{id?}");

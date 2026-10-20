@@ -125,6 +125,14 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link @Active("ThanhToan")"
+                               asp-controller="ThanhToan" asp-action="Index">
+                                <i class="bi bi-receipt"></i>
+                                <span>Hóa đơn</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link @Active("TaiKhoan", "Index")"
                                asp-controller="TaiKhoan" asp-action="Index">
                                 <i class="bi bi-person-gear"></i>
@@ -163,6 +171,13 @@
                                asp-controller="DangKyKTX" asp-action="CuaToi">
                                 <i class="bi bi-journal-check"></i>
                                 <span>Đăng ký của tôi</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @Active("ThanhToan")"
+                               asp-controller="ThanhToan" asp-action="CuaToi">
+                                <i class="bi bi-qr-code"></i>
+                                <span>Hóa đơn của tôi</span>
                             </a>
                         </li>
 

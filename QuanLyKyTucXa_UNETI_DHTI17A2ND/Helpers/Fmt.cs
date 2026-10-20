@@ -31,6 +31,8 @@ public static class Fmt
         TrangThaiDangKy.DaHuy => "bg-danger",
         TrangThaiPhanPhong.DangO => "bg-success",
         TrangThaiPhanPhong.DaChuyen => "bg-info text-dark",
+        TrangThaiHoaDon.ChuaThanhToan => "bg-warning text-dark",
+        TrangThaiHoaDon.DaThanhToan => "bg-success",
         _ => "bg-secondary"
     };
 }

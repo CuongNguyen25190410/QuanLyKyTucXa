@@ -60,3 +60,10 @@ public static class TrangThaiPhanPhong
     public const string DaTraPhong = "Đã trả phòng";
     public static readonly string[] TatCa = { DangO, DaChuyen, DaTraPhong };
 }
+public static class TrangThaiHoaDon
+{
+    public const string ChuaThanhToan = "Chưa thanh toán";
+    public const string DaThanhToan = "Đã thanh toán";
+    public const string DaHuy = "Đã hủy";
+    public static readonly string[] TatCa = { ChuaThanhToan, DaThanhToan, DaHuy };
+}

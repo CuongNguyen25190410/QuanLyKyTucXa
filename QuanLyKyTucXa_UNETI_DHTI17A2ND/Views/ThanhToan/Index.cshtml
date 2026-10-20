@@ -1,0 +1,131 @@
+﻿@model HoaDonIndexVM
+@{
+    ViewData["Title"] = "Quản lý hóa đơn";
+    var f = Model;
+}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0">Hóa đơn tiền phòng</h2>
+    <form asp-action="TaoHoaDonThang" method="post" class="d-flex gap-2 align-items-center">
+        <select name="thang" class="form-select form-select-sm" style="width:auto">
+            @for (int m = 1; m <= 12; m++)
+            {
+                <option value="@m" selected="@(m == Model.ThangMacDinh)">Tháng @m</option>
+            }
+        </select>
+        <input name="nam" type="number" value="@Model.NamMacDinh" class="form-control form-control-sm" style="width:90px" />
+        <button class="btn btn-primary btn-sm" onclick="return confirm('Tạo hóa đơn cho tất cả sinh viên đang ở KTX trong tháng này?');">+ Tạo hóa đơn tháng</button>
+    </form>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-success">
+            <div class="card-body">
+                <div class="text-muted small">Đã thu (theo bộ lọc)</div><div class="fs-4 fw-bold text-success">@Fmt.Tien(Model.TongDaThu)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm border-warning">
+            <div class="card-body">
+                <div class="text-muted small">Chưa thu (theo bộ lọc)</div><div class="fs-4 fw-bold text-warning">@Fmt.Tien(Model.TongChuaThu)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label class="form-label small mb-1">Tìm kiếm (mã SV / họ tên / phòng)</label>
+                <input name="tuKhoa" value="@f.TuKhoa" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Tháng</label>
+                <select name="thang" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        <option value="@m" selected="@(f.Thang == m)">Tháng @m</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Năm</label>
+                <input name="nam" type="number" value="@f.Nam" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Trạng thái</label>
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    @foreach (var t in TrangThaiHoaDon.TatCa)
+                    {
+                        <option value="@t" selected="@(f.TrangThai == t)">@t</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button class="btn btn-primary flex-fill">Lọc</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Xóa</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (!Model.KetQua.Items.Any())
+{
+    <div class="alert alert-info">Chưa có hóa đơn nào phù hợp. Hãy bấm "Tạo hóa đơn tháng".</div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr><th>Mã HĐ</th><th>Kỳ</th><th>Sinh viên</th><th>Phòng</th><th class="text-end">Số tiền</th><th>Hạn</th><th>Trạng thái</th><th>Thanh toán</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var h in Model.KetQua.Items)
+                    {
+                        var quaHan = h.TrangThai == TrangThaiHoaDon.ChuaThanhToan && h.HanThanhToan.Date < DateTime.Today;
+                        <tr>
+                            <td>#@h.MaHoaDon</td>
+                            <td>@h.Thang.ToString("00")/@h.Nam</td>
+                            <td>@h.DangKyKTX.SinhVien.HoTen<br /><span class="text-muted small">@h.DangKyKTX.MaSinhVien</span></td>
+                            <td>@h.PhongKTX.TenPhong</td>
+                            <td class="text-end fw-semibold">@Fmt.Tien(h.SoTien)</td>
+                            <td>@Fmt.Ngay(h.HanThanhToan)</td>
+                            <td>
+                                <span class="badge @Fmt.Badge(h.TrangThai)">@h.TrangThai</span>
+                                @if (quaHan)
+                                {
+                                    <span class="badge bg-danger">Quá hạn</span>
+                                }
+                            </td>
+                            <td class="small">
+                                @if (h.NgayThanhToan.HasValue)
+                                {
+                                    <span>@Fmt.NgayGio(h.NgayThanhToan)</span><br />
+                                    <span class="text-muted">@h.PhuongThuc @h.MaGiaoDich</span>
+                                }
+                            </td>
+                            <td class="text-end text-nowrap">
+                                @if (h.TrangThai == TrangThaiHoaDon.ChuaThanhToan)
+                                {
+                                    <form asp-action="XacNhan" asp-route-id="@h.MaHoaDon" method="post" class="d-inline" onsubmit="return confirm('Xác nhận đã thu tiền hóa đơn này?');">
+                                        <button class="btn btn-sm btn-outline-success">Đã thu</button>
+                                    </form>
+                                    <form asp-action="Huy" asp-route-id="@h.MaHoaDon" method="post" class="d-inline" onsubmit="return confirm('Hủy hóa đơn này?');">
+                                        <button class="btn btn-sm btn-outline-danger">Hủy</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<partial name="_Pager" model="Model.KetQua" />

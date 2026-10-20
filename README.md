@@ -16,7 +16,11 @@ ASP.NET Core 10 MVC · Entity Framework Core 10 (Code First + Migration) · SQL 
 2. **Tạo Migration (làm một lần, rồi commit thư mục `Migrations/` lên GitHub):**
    ```bash
    cd QuanLyKyTucXa_UNETI_DHTI17A2ND
+
    dotnet ef migrations add KhoiTaoCoSoDuLieu
+
+   dotnet ef migrations add ThemBangHoaDon
+   
    dotnet ef database update
    ```
 3. Chạy: `dotnet run` (hoặc F5 trong Visual Studio) rồi mở địa chỉ hiển thị (mặc định http://localhost:5080).
@@ -40,7 +44,7 @@ Database chưa có tài khoản nào (`Data/DbSeeder.cs`).
                           git pull origin main
       >>>cập nhật từ máy lên git : 
                           git add .
-                          git commit -m "nội dung cập nhật "
+                          git commit -m "nội dung cập nhậ "
                           git pull --rebase origin main
                           git push origin main
    ```

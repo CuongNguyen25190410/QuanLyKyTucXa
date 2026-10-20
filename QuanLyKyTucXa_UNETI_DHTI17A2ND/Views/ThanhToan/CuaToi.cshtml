@@ -1,0 +1,55 @@
+﻿@model List<HoaDon>
+@{
+    ViewData["Title"] = "Hóa đơn của tôi";
+    var conNo = Model.Where(h => h.TrangThai == TrangThaiHoaDon.ChuaThanhToan).Sum(h => h.SoTien);
+}
+<h2 class="mb-3">Hóa đơn tiền phòng của tôi</h2>
+
+@if (conNo > 0)
+{
+    <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Bạn còn <strong>@Fmt.Tien(conNo)</strong> chưa thanh toán.</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Bạn chưa có hóa đơn nào. Hóa đơn được quản trị viên lập hằng tháng khi bạn đang ở KTX.</div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr><th>Mã HĐ</th><th>Kỳ</th><th>Phòng</th><th class="text-end">Số tiền</th><th>Hạn thanh toán</th><th>Trạng thái</th><th>Thanh toán lúc</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var h in Model)
+                    {
+                        var quaHan = h.TrangThai == TrangThaiHoaDon.ChuaThanhToan && h.HanThanhToan.Date < DateTime.Today;
+                        <tr>
+                            <td>#@h.MaHoaDon</td>
+                            <td>Tháng @h.Thang.ToString("00")/@h.Nam</td>
+                            <td>@h.PhongKTX.TenPhong</td>
+                            <td class="text-end fw-semibold">@Fmt.Tien(h.SoTien)</td>
+                            <td>@Fmt.Ngay(h.HanThanhToan)</td>
+                            <td>
+                                <span class="badge @Fmt.Badge(h.TrangThai)">@h.TrangThai</span>
+                                @if (quaHan)
+                                {
+                                    <span class="badge bg-danger">Quá hạn</span>
+                                }
+                            </td>
+                            <td>@Fmt.NgayGio(h.NgayThanhToan)</td>
+                            <td class="text-end">
+                                @if (h.TrangThai == TrangThaiHoaDon.ChuaThanhToan)
+                                {
+                                    <a class="btn btn-sm btn-success" asp-action="QR" asp-route-id="@h.MaHoaDon"><i class="bi bi-qr-code"></i> Thanh toán QR</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

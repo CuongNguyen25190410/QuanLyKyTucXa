@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<SinhVien> SinhViens { get; set; }
     public DbSet<DangKyKTX> DangKyKTXs { get; set; }
     public DbSet<PhanPhong> PhanPhongs { get; set; }
+    public DbSet<HoaDon> HoaDons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,6 +99,18 @@ public class AppDbContext : DbContext
             e.HasIndex(x => x.MaDangKy)
              .IsUnique()
              .HasFilter("[TrangThai] = N'Đang ở'");
+        });
+        // ---- HoaDon: mỗi đăng ký có tối đa 1 hóa đơn mỗi tháng ----
+        modelBuilder.Entity<HoaDon>(e =>
+        {
+            e.ToTable("HoaDon");
+            e.HasOne(x => x.DangKyKTX).WithMany()
+             .HasForeignKey(x => x.MaDangKy).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.PhongKTX).WithMany()
+             .HasForeignKey(x => x.MaPhong).OnDelete(DeleteBehavior.Restrict);
+
+            e.HasIndex(x => new { x.MaDangKy, x.Thang, x.Nam }).IsUnique();
+            e.HasIndex(x => x.OrderCode).IsUnique().HasFilter("[OrderCode] IS NOT NULL");
         });
     }
 }

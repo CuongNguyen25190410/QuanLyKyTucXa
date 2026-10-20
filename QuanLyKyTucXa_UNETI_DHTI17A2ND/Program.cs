@@ -50,6 +50,19 @@ builder.Services.AddSingleton<IPasswordHasher<TaiKhoan>, PasswordHasher<TaiKhoan
 // Các service nghiệp vụ
 builder.Services.AddScoped<PhongService>();
 builder.Services.AddScoped<PhanPhongService>();
+// ---- Thanh toán QR (payOS hoặc giả lập) ----
+builder.Services.Configure<PayOsOptions>(builder.Configuration.GetSection("PayOS"));
+builder.Services.AddHttpClient<PayOsGateway>(c =>
+{
+    c.BaseAddress = new Uri("https://api-merchant.payos.vn/");
+    c.Timeout = TimeSpan.FromSeconds(20);
+});
+builder.Services.AddScoped<MockGateway>();
+builder.Services.AddScoped<ICongThanhToan>(sp =>
+    string.Equals(builder.Configuration["ThanhToan:NhaCungCap"], "PayOS", StringComparison.OrdinalIgnoreCase)
+        ? sp.GetRequiredService<PayOsGateway>()
+        : sp.GetRequiredService<MockGateway>());
+builder.Services.AddScoped<HoaDonService>();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -82,7 +95,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();          // phải đứng sau UseRouting và trước các endpoint MVC
-
+app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=TaiKhoan}/{action=Login}/{id?}");

@@ -44,7 +44,7 @@ Database chưa có tài khoản nào (`Data/DbSeeder.cs`).
                           git pull origin main
       >>>cập nhật từ máy lên git : 
                           git add .
-                          git commit -m "nội dung cập nhậ "
+                          git commit -m "nội dung cập nhật "
                           git pull --rebase origin main
                           git push origin main
    ```

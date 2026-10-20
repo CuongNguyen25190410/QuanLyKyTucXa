@@ -1,6 +1,6 @@
 # Bảng phân công công việc
 
-> Điền thông tin thật của nhóm. Nội dung phải khớp với phần chú thích đầu file mã nguồn và lịch sử Commit trên GitHub (đề mục 17, 20, 22.1).
+> Điền thông tin thật của nhóm. Nội dung phải khớp với phần chú thích đầu file mã nguồn và lịch sử Commit trên GitHub 
 
 | SV | Họ và tên | Mã sinh viên | Module | Controller / View / Model chính | Chức năng thực hiện | Commit tiêu biểu |
 |---|---|---|---|---|---|---|

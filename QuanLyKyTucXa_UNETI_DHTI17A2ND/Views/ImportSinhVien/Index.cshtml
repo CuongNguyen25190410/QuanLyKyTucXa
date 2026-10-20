@@ -1,0 +1,162 @@
+﻿@model ImportSinhVienVM
+@{
+    ViewData["Title"] = "Nhập sinh viên từ Excel";
+    var kq = Model.KetQua;
+}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0"><i class="bi bi-file-earmark-excel"></i> Nhập danh sách sinh viên từ Excel</h2>
+    <a class="btn btn-outline-secondary btn-sm" asp-controller="SinhVien" asp-action="Index">Quay lại danh sách sinh viên</a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ThongBaoLoi))
+{
+    <div class="alert alert-danger">@Model.ThongBaoLoi</div>
+}
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="mb-3">1. Chọn file</h5>
+                <a class="btn btn-outline-success btn-sm mb-3" asp-action="Mau"><i class="bi bi-download"></i> Tải file Excel mẫu</a>
+
+                <form asp-action="Index" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <input type="file" name="file" accept=".xlsx" class="form-control" required />
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="chiKiemTra" name="chiKiemTra" value="true" checked="@Model.ChiKiemTra" />
+                        <label class="form-check-label" for="chiKiemTra">Chỉ kiểm tra, chưa lưu (xem báo cáo lỗi trước)</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="dungNeuCoLoi" name="dungNeuCoLoi" value="true" checked="@Model.DungNeuCoLoi" />
+                        <label class="form-check-label" for="dungNeuCoLoi">Dừng nếu có dòng lỗi (không lưu dòng nào)</label>
+                    </div>
+                    <button class="btn btn-primary w-100"><i class="bi bi-upload"></i> Tải lên và xử lý</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="mb-3">Quy tắc file</h5>
+                <ul class="small mb-0">
+                    <li>Dùng file mẫu, dữ liệu bắt đầu từ <strong>dòng 2</strong>, tối đa 1000 dòng, định dạng <strong>.xlsx</strong>.</li>
+                    <li>Bắt buộc: <strong>Mã sinh viên, Họ tên, Ngày sinh (dd/MM/yyyy), Giới tính (Nam/Nữ), Số điện thoại, Email</strong>.</li>
+                    <li>Tên đăng nhập của sinh viên chính là <strong>Mã sinh viên</strong>.</li>
+                    <li>Cột Mật khẩu để trống thì dùng mật khẩu mặc định: <code>@Model.MatKhauMacDinh</code>. Hãy dặn sinh viên đổi mật khẩu sau khi đăng nhập.</li>
+                    <li>Mã sinh viên trùng với dữ liệu đã có hoặc trùng trong file sẽ bị báo lỗi ở dòng đó.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (kq != null)
+{
+    <hr class="my-4" />
+    <h5>Kết quả: <span class="text-muted">@kq.TenFile</span></h5>
+
+    @if (!string.IsNullOrEmpty(kq.LoiChung))
+    {
+        <div class="alert alert-danger">@kq.LoiChung</div>
+    }
+    else
+    {
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="text-muted small">Tổng số dòng</div><div class="fs-4 fw-bold">@kq.TongDong</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card shadow-sm border-success">
+                    <div class="card-body py-2">
+                        <div class="text-muted small">Hợp lệ</div><div class="fs-4 fw-bold text-success">@kq.SoHopLe</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card shadow-sm border-danger">
+                    <div class="card-body py-2">
+                        <div class="text-muted small">Có lỗi</div><div class="fs-4 fw-bold text-danger">@kq.Loi.Count</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card shadow-sm border-primary">
+                    <div class="card-body py-2">
+                        <div class="text-muted small">Đã tạo tài khoản</div><div class="fs-4 fw-bold text-primary">@kq.SoDaTao</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (kq.DaLuu)
+        {
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle"></i> Đã tạo <strong>@kq.SoDaTao</strong> sinh viên kèm tài khoản đăng nhập.
+                @if (kq.Loi.Any())
+                {
+                    <span> Còn <strong>@kq.Loi.Count</strong> dòng lỗi chưa được nhập (xem bên dưới).</span>
+                }
+            </div>
+        }
+        else if (kq.ChiKiemTra)
+        {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Đây là chế độ <strong>chỉ kiểm tra</strong>, chưa lưu gì vào hệ thống.
+                Khi file đã ổn, bỏ chọn "Chỉ kiểm tra" rồi tải lại file để nhập thật.
+            </div>
+        }
+        else if (kq.Loi.Any() && kq.DungNeuCoLoi)
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> <strong>Chưa lưu dòng nào</strong> vì file còn dòng lỗi (đang bật "Dừng nếu có dòng lỗi").
+                Hãy sửa các dòng lỗi rồi tải lại, hoặc bỏ chọn tùy chọn này để chỉ nhập các dòng hợp lệ.
+            </div>
+        }
+
+        @if (kq.Loi.Any())
+        {
+            <div class="card shadow-sm mb-3 border-danger">
+                <div class="card-header bg-danger text-white">Các dòng lỗi</div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light"><tr><th style="width:70px">Dòng</th><th>Mã SV</th><th>Họ tên</th><th>Lý do</th></tr></thead>
+                        <tbody>
+                            @foreach (var l in kq.Loi)
+                            {
+                                <tr><td>@l.Dong</td><td>@l.MaSinhVien</td><td>@l.HoTen</td><td class="text-danger">@l.LyDo</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @if (kq.HopLe.Any())
+        {
+            <div class="card shadow-sm border-success">
+                <div class="card-header bg-success text-white">
+                    @(kq.DaLuu ? "Sinh viên đã được tạo" : "Các dòng hợp lệ")
+                </div>
+                <div class="table-responsive" style="max-height:360px">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light"><tr><th style="width:70px">Dòng</th><th>Mã SV (tên đăng nhập)</th><th>Họ tên</th><th>Giới tính</th><th>Lớp</th></tr></thead>
+                        <tbody>
+                            @foreach (var h in kq.HopLe)
+                            {
+                                <tr><td>@h.Dong</td><td>@h.MaSinhVien</td><td>@h.HoTen</td><td>@h.GioiTinh</td><td>@h.Lop</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+}

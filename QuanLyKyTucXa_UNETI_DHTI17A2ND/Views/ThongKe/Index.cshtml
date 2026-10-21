@@ -9,276 +9,620 @@
 
     var pct = Model.TyLeSuDung.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
 
-    // Màu và nhận xét theo mức sử dụng (giữ nguyên ngưỡng 60% / 90% như bản cũ)
-    string mauHex, nhanXet, badge;
-    if (Model.TyLeSuDung >= 90) { mauHex = "#dc3545"; nhanXet = "Gần hết chỗ"; badge = "bg-danger"; }
-    else if (Model.TyLeSuDung >= 60) { mauHex = "#f59f00"; nhanXet = "Khá đầy"; badge = "bg-warning text-dark"; }
-    else { mauHex = "#1e88e5"; nhanXet = "Còn nhiều chỗ"; badge = "bg-primary"; }
+    string mauHex, nhanXet, badgeClass, gradientBg;
+    if (Model.TyLeSuDung >= 90)
+    {
+        mauHex = "#ef4444";
+        nhanXet = "Gần hết chỗ";
+        badgeClass = "badge-danger";
+        gradientBg = "linear-gradient(135deg, #fef2f2, #fee2e2)";
+    }
+    else if (Model.TyLeSuDung >= 60)
+    {
+        mauHex = "#f59e0b";
+        nhanXet = "Khá đầy";
+        badgeClass = "badge-warning";
+        gradientBg = "linear-gradient(135deg, #fffbeb, #fef3c7)";
+    }
+    else
+    {
+        mauHex = "#3b82f6";
+        nhanXet = "Còn nhiều chỗ";
+        badgeClass = "badge-primary";
+        gradientBg = "linear-gradient(135deg, #eff6ff, #dbeafe)";
+    }
 }
 
 <style>
-    .tk-title {
-        color: #0d47a1;
-        font-weight: 700;
+    /* ===== HEADER ===== */
+    .dash-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
     }
 
-    /* ===== Thẻ số liệu ===== */
-    .tk-kpi {
+    .dash-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.5px;
+        margin: 0;
+    }
+
+    .dash-subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-top: 0.25rem;
+    }
+
+    .btn-detail {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.65rem 1.4rem;
+        border-radius: 50px;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        transition: all 0.2s ease;
+    }
+
+        .btn-detail:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+            color: #fff;
+        }
+
+    /* ===== KPI CARDS ===== */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .kpi-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .kpi-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .kpi-card {
         background: #fff;
-        border-radius: 16px;
-        padding: 1.1rem 1.2rem;
+        border-radius: 18px;
+        padding: 1.25rem 1.35rem;
         display: flex;
         align-items: center;
         gap: 1rem;
-        box-shadow: 0 4px 14px rgba(13, 71, 161, .08);
-        height: 100%;
-        transition: transform .15s, box-shadow .15s;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+        border: 1px solid #f1f5f9;
+        transition: all 0.22s ease;
+        position: relative;
+        overflow: hidden;
     }
 
-        .tk-kpi:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(13, 71, 161, .15);
+        .kpi-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
         }
 
-    .tk-ico {
-        flex: 0 0 52px;
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+        }
+
+        .kpi-card.blue::before {
+            background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+        }
+
+        .kpi-card.cyan::before {
+            background: linear-gradient(180deg, #06b6d4, #0891b2);
+        }
+
+        .kpi-card.indigo::before {
+            background: linear-gradient(180deg, #6366f1, #4f46e5);
+        }
+
+        .kpi-card.amber::before {
+            background: linear-gradient(180deg, #f59e0b, #d97706);
+        }
+
+        .kpi-card.amber {
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 60%);
+            border-color: #fde68a;
+        }
+
+    .kpi-icon {
+        width: 52px;
         height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.45rem;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+        .kpi-icon.blue {
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
+        }
+
+        .kpi-icon.cyan {
+            background: linear-gradient(135deg, #22d3ee, #0891b2);
+        }
+
+        .kpi-icon.indigo {
+            background: linear-gradient(135deg, #818cf8, #4f46e5);
+        }
+
+        .kpi-icon.amber {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+        }
+
+    .kpi-label {
+        font-size: 0.82rem;
+        color: #64748b;
+        font-weight: 500;
+        margin-bottom: 0.15rem;
+    }
+
+    .kpi-value {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+    }
+
+    .kpi-link {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #d97706;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.35rem;
+    }
+
+        .kpi-link:hover {
+            color: #b45309;
+        }
+
+    /* ===== MAIN SECTION ===== */
+    .main-row {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 1.25rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .main-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Usage Card */
+    .usage-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 1.6rem 1.75rem;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+        border: 1px solid #f1f5f9;
+        height: 100%;
+    }
+
+    .usage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .usage-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .status-badge {
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.35rem 0.9rem;
+        border-radius: 50px;
+    }
+
+    .badge-primary {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .usage-body {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    /* Donut */
+    .donut-wrap {
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    .donut {
+        --size: 180px;
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        background: conic-gradient(var(--col) calc(var(--pct) * 1%), #e2e8f0 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 0 0 0 8px rgba(0,0,0,0.03);
+    }
+
+        .donut::before {
+            content: "";
+            position: absolute;
+            inset: 22px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+    .donut-text {
+        position: relative;
+        text-align: center;
+        z-index: 1;
+    }
+
+        .donut-text .pct {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .donut-text .label {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+        }
+
+    /* Legend */
+    .legend {
+        flex: 1;
+        min-width: 200px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+        .legend li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+            .legend li:last-child {
+                border-bottom: none;
+            }
+
+    .legend-left {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.9rem;
+        color: #475569;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .legend-val {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: #0f172a;
+    }
+
+    .usage-note {
+        margin-top: 1.4rem;
+        font-size: 0.8rem;
+        color: #94a3b8;
+        background: #f8fafc;
+        padding: 0.7rem 1rem;
+        border-radius: 10px;
+        border-left: 3px solid #cbd5e1;
+    }
+
+    /* Side cards */
+    .side-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1.1rem;
+        height: 100%;
+    }
+
+    .side-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 1.3rem 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+        border: 1px solid #f1f5f9;
+        flex: 1;
+        transition: all 0.2s ease;
+    }
+
+        .side-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+        }
+
+    .side-icon {
+        width: 54px;
+        height: 54px;
         border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
         color: #fff;
+        flex-shrink: 0;
     }
 
-    .ico-blue {
-        background: linear-gradient(135deg, #42a5f5, #1565c0);
-    }
-
-    .ico-cyan {
-        background: linear-gradient(135deg, #4dd0e1, #0097a7);
-    }
-
-    .ico-indigo {
-        background: linear-gradient(135deg, #7986cb, #3949ab);
-    }
-
-    .ico-amber {
-        background: linear-gradient(135deg, #ffca28, #f57c00);
-    }
-
-    .ico-green {
-        background: linear-gradient(135deg, #66bb6a, #2e7d32);
-    }
-
-    .ico-red {
-        background: linear-gradient(135deg, #ef5350, #c62828);
-    }
-
-    .tk-lbl {
-        color: #6b7a90;
-        font-size: .85rem;
-    }
-
-    .tk-val {
-        font-size: 1.9rem;
-        font-weight: 700;
-        line-height: 1.15;
-        color: #1b2a41;
-    }
-
-    .tk-kpi.warn {
-        border: 2px solid #ffca28;
-        background: #fffdf3;
-    }
-
-        .tk-kpi.warn .tk-val {
-            color: #e65100;
+        .side-icon.green {
+            background: linear-gradient(135deg, #34d399, #059669);
         }
 
-    .tk-link {
-        font-size: .82rem;
+        .side-icon.red {
+            background: linear-gradient(135deg, #f87171, #dc2626);
+        }
+
+    .side-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .side-value {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+    }
+
+    /* Quick actions */
+    .quick-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .qa-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
         font-weight: 600;
         text-decoration: none;
+        transition: all 0.2s ease;
+        border: 1.5px solid transparent;
     }
 
-    /* ===== Thẻ tỷ lệ sử dụng ===== */
-    .tk-card {
-        background: #fff;
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 14px rgba(13, 71, 161, .08);
-        height: 100%;
-    }
-
-        .tk-card h5 {
-            color: #0d47a1;
-            font-weight: 700;
-        }
-
-    .tk-donut {
-        --size: 190px;
-        width: var(--size);
-        height: var(--size);
-        border-radius: 50%;
-        background: conic-gradient(var(--col) calc(var(--pct) * 1%), #e3f0ff 0);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        flex: 0 0 auto;
-    }
-
-        .tk-donut::before {
-            content: "";
-            position: absolute;
-            inset: 20px;
-            border-radius: 50%;
+        .qa-btn.outline {
             background: #fff;
+            color: #334155;
+            border-color: #e2e8f0;
         }
 
-    .tk-donut-text {
-        position: relative;
-        text-align: center;
-    }
-
-        .tk-donut-text .big {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #1b2a41;
-            line-height: 1;
-        }
-
-        .tk-donut-text .sm {
-            color: #6b7a90;
-            font-size: .8rem;
-        }
-
-    .tk-legend {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
-
-        .tk-legend li {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: .65rem 0;
-            border-bottom: 1px dashed #dbe6f5;
-        }
-
-            .tk-legend li:last-child {
-                border-bottom: 0;
+            .qa-btn.outline:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
+                color: #0f172a;
             }
 
-    .tk-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: .6rem;
-    }
-
-    .tk-legend .v {
-        font-weight: 700;
-        color: #1b2a41;
-    }
-
-    @@media (max-width: 575.98px) {
-        .tk-donut {
-            --size: 160px;
+        .qa-btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
         }
 
-        .tk-val {
-            font-size: 1.6rem;
+            .qa-btn.primary:hover {
+                color: #fff;
+                transform: translateY(-1px);
+                box-shadow: 0 5px 14px rgba(37, 99, 235, 0.4);
+            }
+
+    @@media (max-width: 575.98px) {
+        .donut {
+            --size: 150px;
+        }
+
+        .kpi-value, .side-value {
+            font-size: 1.55rem;
+        }
+
+        .dash-title {
+            font-size: 1.45rem;
         }
     }
 </style>
 
-<!-- ===== Tiêu đề ===== -->
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+<!-- ===== HEADER ===== -->
+<div class="dash-header">
     <div>
-        <h2 class="tk-title mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
-        <div class="text-muted">Tổng quan tình hình ký túc xá</div>
+        <h1 class="dash-title"><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard</h1>
+        <div class="dash-subtitle">Tổng quan tình hình ký túc xá · Cập nhật realtime từ Database</div>
     </div>
-    <a class="btn btn-primary rounded-pill px-4" asp-action="ChiTiet"><i class="bi bi-bar-chart-line me-1"></i> Xem thống kê chi tiết</a>
+    <a class="btn btn-detail" asp-action="ChiTiet">
+        <i class="bi bi-bar-chart-line me-1"></i> Thống kê chi tiết
+    </a>
 </div>
 
-<!-- ===== Thẻ số liệu chính ===== -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="tk-kpi">
-            <div class="tk-ico ico-blue"><i class="bi bi-door-open-fill"></i></div>
-            <div><div class="tk-lbl">Tổng số phòng</div><div class="tk-val">@Model.TongSoPhong</div></div>
+<!-- ===== KPI CARDS ===== -->
+<div class="kpi-grid">
+    <div class="kpi-card blue">
+        <div class="kpi-icon blue"><i class="bi bi-door-open-fill"></i></div>
+        <div>
+            <div class="kpi-label">Tổng số phòng</div>
+            <div class="kpi-value">@Model.TongSoPhong</div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="tk-kpi">
-            <div class="tk-ico ico-cyan"><i class="bi bi-people-fill"></i></div>
-            <div><div class="tk-lbl">Tổng số sinh viên</div><div class="tk-val">@Model.TongSoSinhVien</div></div>
+
+    <div class="kpi-card cyan">
+        <div class="kpi-icon cyan"><i class="bi bi-people-fill"></i></div>
+        <div>
+            <div class="kpi-label">Tổng số sinh viên</div>
+            <div class="kpi-value">@Model.TongSoSinhVien</div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="tk-kpi">
-            <div class="tk-ico ico-indigo"><i class="bi bi-journal-text"></i></div>
-            <div><div class="tk-lbl">Tổng số đăng ký</div><div class="tk-val">@Model.TongSoDangKy</div></div>
+
+    <div class="kpi-card indigo">
+        <div class="kpi-icon indigo"><i class="bi bi-journal-text"></i></div>
+        <div>
+            <div class="kpi-label">Tổng số đăng ký</div>
+            <div class="kpi-value">@Model.TongSoDangKy</div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="tk-kpi warn">
-            <div class="tk-ico ico-amber"><i class="bi bi-hourglass-split"></i></div>
-            <div>
-                <div class="tk-lbl">Đăng ký chờ duyệt</div>
-                <div class="tk-val">@Model.SoDangKyChoDuyet</div>
-                <a class="tk-link" asp-controller="DangKyKTX" asp-action="Index" asp-route-trangThai="@TrangThaiDangKy.ChoDuyet">Duyệt ngay <i class="bi bi-arrow-right"></i></a>
-            </div>
+
+    <div class="kpi-card amber">
+        <div class="kpi-icon amber"><i class="bi bi-hourglass-split"></i></div>
+        <div>
+            <div class="kpi-label">Đăng ký chờ duyệt</div>
+            <div class="kpi-value">@Model.SoDangKyChoDuyet</div>
+            @if (Model.SoDangKyChoDuyet > 0)
+            {
+                <a class="kpi-link" asp-controller="DangKyKTX" asp-action="Index" asp-route-trangThai="@TrangThaiDangKy.ChoDuyet">
+                    Duyệt ngay <i class="bi bi-arrow-right"></i>
+                </a>
+            }
         </div>
     </div>
 </div>
 
-<!-- ===== Tỷ lệ sử dụng + số liệu phụ ===== -->
-<div class="row g-3">
-    <div class="col-lg-8">
-        <div class="tk-card">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h5 class="mb-0">Tỷ lệ sử dụng chỗ</h5>
-                <span class="badge rounded-pill @badge">@nhanXet</span>
-            </div>
+<!-- ===== USAGE + SIDE ===== -->
+<div class="main-row">
+    <!-- Tỷ lệ sử dụng -->
+    <div class="usage-card" style="background: @gradientBg;">
+        <div class="usage-header">
+            <h5 class="usage-title">Tỷ lệ sử dụng chỗ</h5>
+            <span class="status-badge @badgeClass">@nhanXet</span>
+        </div>
 
-            <div class="row align-items-center g-4">
-                <div class="col-md-5 d-flex justify-content-center">
-                    <div class="tk-donut" style="--pct:@pct;--col:@mauHex">
-                        <div class="tk-donut-text">
-                            <div class="big">@pct%</div>
-                            <div class="sm">đã sử dụng</div>
-                        </div>
+        <div class="usage-body">
+            <div class="donut-wrap">
+                <div class="donut" style="--pct:@pct;--col:@mauHex">
+                    <div class="donut-text">
+                        <div class="pct">@pct%</div>
+                        <div class="label">đã sử dụng</div>
                     </div>
                 </div>
-                <div class="col-md-7">
-                    <ul class="tk-legend">
-                        <li><span><span class="tk-dot" style="background:#90a4ae"></span>Tổng số chỗ <small class="text-muted">(phòng đang sử dụng)</small></span><span class="v">@Model.TongSoCho</span></li>
-                        <li><span><span class="tk-dot" style="background:@mauHex"></span>Chỗ đang sử dụng</span><span class="v">@Model.TongSoChoDangSuDung</span></li>
-                        <li><span><span class="tk-dot" style="background:#2e7d32"></span>Chỗ còn trống</span><span class="v text-success">@Model.TongSoChoConTrong</span></li>
-                    </ul>
-                </div>
             </div>
 
-            <p class="text-muted small mb-0 mt-4">Tỷ lệ = chỗ đang sử dụng / tổng số chỗ × 100%. Các con số đều được truy vấn trực tiếp từ Database bằng LINQ mỗi lần mở trang.</p>
+            <ul class="legend">
+                <li>
+                    <span class="legend-left">
+                        <span class="dot" style="background:#94a3b8"></span>
+                        Tổng số chỗ
+                    </span>
+                    <span class="legend-val">@Model.TongSoCho</span>
+                </li>
+                <li>
+                    <span class="legend-left">
+                        <span class="dot" style="background:@mauHex"></span>
+                        Chỗ đang sử dụng
+                    </span>
+                    <span class="legend-val">@Model.TongSoChoDangSuDung</span>
+                </li>
+                <li>
+                    <span class="legend-left">
+                        <span class="dot" style="background:#10b981"></span>
+                        Chỗ còn trống
+                    </span>
+                    <span class="legend-val" style="color:#059669">@Model.TongSoChoConTrong</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="usage-note">
+            <i class="bi bi-info-circle me-1"></i>
+            Tỷ lệ = chỗ đang sử dụng / tổng số chỗ × 100%. Số liệu truy vấn trực tiếp từ Database bằng LINQ mỗi lần mở trang.
         </div>
     </div>
 
-    <div class="col-lg-4">
-        <div class="d-flex flex-column gap-3 h-100">
-            <div class="tk-kpi flex-fill">
-                <div class="tk-ico ico-green"><i class="bi bi-house-heart-fill"></i></div>
-                <div><div class="tk-lbl">Sinh viên đang ở KTX</div><div class="tk-val">@Model.SoSinhVienDangO</div></div>
+    <!-- Side cards -->
+    <div class="side-stack">
+        <div class="side-card">
+            <div class="side-icon green"><i class="bi bi-house-heart-fill"></i></div>
+            <div>
+                <div class="side-label">Sinh viên đang ở KTX</div>
+                <div class="side-value">@Model.SoSinhVienDangO</div>
             </div>
-            <div class="tk-kpi flex-fill">
-                <div class="tk-ico ico-red"><i class="bi bi-person-fill-lock"></i></div>
-                <div><div class="tk-lbl">Phòng đã đủ người</div><div class="tk-val">@Model.SoPhongDaDayNguoi</div></div>
+        </div>
+
+        <div class="side-card">
+            <div class="side-icon red"><i class="bi bi-person-fill-lock"></i></div>
+            <div>
+                <div class="side-label">Phòng đã đủ người</div>
+                <div class="side-value">@Model.SoPhongDaDayNguoi</div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- ===== QUICK ACTIONS ===== -->
+<div class="quick-actions">
+    <a class="qa-btn primary" asp-controller="DangKyKTX" asp-action="Index" asp-route-trangThai="@TrangThaiDangKy.ChoDuyet">
+        <i class="bi bi-check2-circle"></i> Duyệt đăng ký
+    </a>
+    <a class="qa-btn outline" asp-controller="PhanPhong" asp-action="Index">
+        <i class="bi bi-arrow-left-right"></i> Phân / chuyển phòng
+    </a>
+    <a class="qa-btn outline" asp-controller="PhongKTX" asp-action="Index">
+        <i class="bi bi-building"></i> Quản lý phòng
+    </a>
+    <a class="qa-btn outline" asp-controller="SinhVien" asp-action="Index">
+        <i class="bi bi-person-vcard"></i> Danh sách sinh viên
+    </a>
 </div>

@@ -193,20 +193,34 @@ public class ThanhToanController : AppControllerBase
     [PhanQuyen(VaiTro.Admin)]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> XacNhan(int id)
+    public async Task<IActionResult> XacNhan(int id, string returnQuery)
     {
         var kq = await _hoaDon.XacNhanThuCongAsync(id);
         TempData[kq.ThanhCong ? "ThanhCong" : "Loi"] = kq.ThongBao;
-        return RedirectToAction(nameof(Index));
+        return QuayVeDanhSach(returnQuery);
     }
 
     [PhanQuyen(VaiTro.Admin)]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Huy(int id)
+    public async Task<IActionResult> Huy(int id, string returnQuery)
     {
         var kq = await _hoaDon.HuyAsync(id);
         TempData[kq.ThanhCong ? "ThanhCong" : "Loi"] = kq.ThongBao;
-        return RedirectToAction(nameof(Index));
+        return QuayVeDanhSach(returnQuery);
+    }
+    [PhanQuyen(VaiTro.Admin)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> KhoiPhuc(int id, string returnQuery)
+    {
+        var kq = await _hoaDon.KhoiPhucAsync(id);
+        TempData[kq.ThanhCong ? "ThanhCong" : "Loi"] = kq.ThongBao;
+        return QuayVeDanhSach(returnQuery);
+    }
+    private IActionResult QuayVeDanhSach(string returnQuery)
+    {
+        if (string.IsNullOrEmpty(returnQuery) || !returnQuery.StartsWith("?")) returnQuery = "";
+        return Redirect(Url.Action(nameof(Index)) + returnQuery);
     }
 }

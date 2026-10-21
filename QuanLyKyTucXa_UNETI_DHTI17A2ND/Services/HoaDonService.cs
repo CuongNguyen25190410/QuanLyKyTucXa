@@ -36,6 +36,7 @@ public class HoaDonService
             .Select(h => h.MaDangKy).ToListAsync()).ToHashSet();
 
         var han = new DateTime(nam, thang, 10);
+        if (han < DateTime.Today.AddDays(7)) han = DateTime.Today.AddDays(7);   // tạo muộn thì cho thêm 7 ngày
         var dem = 0;
         foreach (var x in dangO)
         {
@@ -146,6 +147,7 @@ public class HoaDonService
     {
         var hd = await _db.HoaDons.FirstOrDefaultAsync(h => h.MaHoaDon == maHoaDon);
         if (hd == null) return KetQuaNghiepVu.Loi("Không tìm thấy hóa đơn.");
+        await DongBoAsync(hd);
         if (hd.TrangThai != TrangThaiHoaDon.ChuaThanhToan) return KetQuaNghiepVu.Loi("Chỉ xác nhận được hóa đơn chưa thanh toán.");
 
         await DanhDauDaThanhToanAsync(hd, "Thu trực tiếp", null);
@@ -163,6 +165,15 @@ public class HoaDonService
         hd.TrangThai = TrangThaiHoaDon.DaHuy;
         await _db.SaveChangesAsync();
         return KetQuaNghiepVu.Ok($"Đã hủy hóa đơn #{hd.MaHoaDon}.");
+    }
+    public async Task<KetQuaNghiepVu> KhoiPhucAsync(int maHoaDon)
+    {
+        var hd = await _db.HoaDons.FirstOrDefaultAsync(h => h.MaHoaDon == maHoaDon);
+        if (hd == null) return KetQuaNghiepVu.Loi("Không tìm thấy hóa đơn.");
+        if (hd.TrangThai != TrangThaiHoaDon.DaHuy) return KetQuaNghiepVu.Loi("Chỉ khôi phục được hóa đơn đã hủy.");
+        hd.TrangThai = TrangThaiHoaDon.ChuaThanhToan;
+        await _db.SaveChangesAsync();
+        return KetQuaNghiepVu.Ok($"Đã khôi phục hóa đơn #{hd.MaHoaDon}.");
     }
 
     // ------------------------------------------------------------------ Hàm hỗ trợ

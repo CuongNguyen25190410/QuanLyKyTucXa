@@ -113,10 +113,16 @@ else
                             <td class="text-end text-nowrap">
                                 @if (h.TrangThai == TrangThaiHoaDon.ChuaThanhToan)
                                 {
+                                    <form asp-action="KhoiPhuc" asp-route-id="@h.MaHoaDon" method="post" class="d-inline" onsubmit="return confirm('Khôi phục hóa đơn này?');">
+                                        <input type="hidden" name="returnQuery" value="@Context.Request.QueryString.Value" />
+                                        <button class="btn btn-sm btn-outline-secondary">Khôi phục</button>
+                                    </form>
                                     <form asp-action="XacNhan" asp-route-id="@h.MaHoaDon" method="post" class="d-inline" onsubmit="return confirm('Xác nhận đã thu tiền hóa đơn này?');">
+                                        <input type="hidden" name="returnQuery" value="@Context.Request.QueryString.Value" />
                                         <button class="btn btn-sm btn-outline-success">Đã thu</button>
                                     </form>
                                     <form asp-action="Huy" asp-route-id="@h.MaHoaDon" method="post" class="d-inline" onsubmit="return confirm('Hủy hóa đơn này?');">
+                                        <input type="hidden" name="returnQuery" value="@Context.Request.QueryString.Value" />
                                         <button class="btn btn-sm btn-outline-danger">Hủy</button>
                                     </form>
                                 }

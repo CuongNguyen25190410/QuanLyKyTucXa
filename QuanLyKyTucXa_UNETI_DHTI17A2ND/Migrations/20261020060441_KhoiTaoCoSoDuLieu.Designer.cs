@@ -12,7 +12,7 @@ using QuanLyKyTucXa_UNETI_DHTI17A2ND.Data;
 namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261016065306_KhoiTaoCoSoDuLieu")]
+    [Migration("20261020060441_KhoiTaoCoSoDuLieu")]
     partial class KhoiTaoCoSoDuLieu
     {
         /// <inheritdoc />
@@ -68,6 +68,83 @@ namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
                     b.HasIndex("NguyenVongLoaiPhong");
 
                     b.ToTable("DangKyKTX", (string)null);
+                });
+
+            modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.HoaDon", b =>
+                {
+                    b.Property<int>("MaHoaDon")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaHoaDon"));
+
+                    b.Property<string>("CheckoutUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("HanThanhToan")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LinkHetHan")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaDangKy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MaGiaoDich")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("MaPhong")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Nam")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NgayTao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayThanhToan")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("OrderCode")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PaymentLinkId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("PhuongThuc")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("QrCode")
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)");
+
+                    b.Property<decimal>("SoTien")
+                        .HasColumnType("decimal(18,0)");
+
+                    b.Property<int>("Thang")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrangThai")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("MaHoaDon");
+
+                    b.HasIndex("MaPhong");
+
+                    b.HasIndex("OrderCode")
+                        .IsUnique()
+                        .HasFilter("[OrderCode] IS NOT NULL");
+
+                    b.HasIndex("MaDangKy", "Thang", "Nam")
+                        .IsUnique();
+
+                    b.ToTable("HoaDon", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.LoaiPhong", b =>
@@ -308,6 +385,25 @@ namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
                     b.Navigation("LoaiPhongNguyenVong");
 
                     b.Navigation("SinhVien");
+                });
+
+            modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.HoaDon", b =>
+                {
+                    b.HasOne("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.DangKyKTX", "DangKyKTX")
+                        .WithMany()
+                        .HasForeignKey("MaDangKy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.PhongKTX", "PhongKTX")
+                        .WithMany()
+                        .HasForeignKey("MaPhong")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DangKyKTX");
+
+                    b.Navigation("PhongKTX");
                 });
 
             modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.PhanPhong", b =>

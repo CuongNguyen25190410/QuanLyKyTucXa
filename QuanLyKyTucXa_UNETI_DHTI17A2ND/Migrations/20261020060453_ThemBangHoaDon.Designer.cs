@@ -12,7 +12,7 @@ using QuanLyKyTucXa_UNETI_DHTI17A2ND.Data;
 namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261020033722_ThemBangHoaDon")]
+    [Migration("20261020060453_ThemBangHoaDon")]
     partial class ThemBangHoaDon
     {
         /// <inheritdoc />

@@ -84,6 +84,23 @@ using (var scope = app.Services.CreateScope())
     await PhongMauSeeder.SeedAsync(db);            // thêm phòng cho đủ ~300 phòng (100 phòng/tòa)
 }
 
+<<<<<<< HEAD
+=======
+//Tạo CSDL từ Migration (nếu đã có Migration) và nạp dữ liệu mẫu lần đầu
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<TaiKhoan>>();
+
+    if (db.Database.GetMigrations().Any())
+        await db.Database.MigrateAsync();          // cách chuẩn: Code First + Migration
+    else
+        await db.Database.EnsureCreatedAsync();    // dự phòng khi chưa tạo Migration (xem README)
+
+    await DbSeeder.SeedAsync(db, hasher);
+}
+
+>>>>>>> c2d0a27 (update)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

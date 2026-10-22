@@ -426,7 +426,7 @@ else
         (function () {
             var laAdmin = @(Model.LaAdmin ? "true" : "false");
             var urlChiTiet = '@Html.Raw(Url.Action("Details", "PhongKTX", new { id = "__ID__" }))';
-            var urlDangKy = '@Html.Raw(Url.Action("Create", "DangKyKTX", new { maLoaiPhong = "__LP__" }))';
+            var urlDangKy = '@Html.Raw(Url.Action("Create", "DangKyKTX", new { maLoaiPhong = "__LP__", maPhong = "__P__" }))';
 
             var nhan = { con: 'Còn chỗ', it: 'Sắp đầy', het: 'Hết chỗ', tamngung: 'Tạm ngừng', khacgioi: 'Không phù hợp giới tính' };
             var mauNhan = { con: 'bg-success', it: 'bg-warning text-dark', het: 'bg-danger', tamngung: 'bg-secondary', khacgioi: 'bg-light text-dark border' };
@@ -461,7 +461,7 @@ else
                 var btnDk = $('btn-dangky'), btnCt = $('btn-chitiet'), ghi = '';
                 var duocDangKy = !laAdmin && (st === 'con' || st === 'it') && d.mine !== '1';
                 btnDk.classList.toggle('d-none', !duocDangKy);
-                btnDk.href = urlDangKy.replace('__LP__', d.loaiid);
+                btnDk.href = urlDangKy.replace('__LP__', d.loaiid).replace('__P__', d.id);
 
                 var xemDuoc = laAdmin || st !== 'tamngung';
                 btnCt.classList.toggle('d-none', !xemDuoc);
@@ -471,7 +471,8 @@ else
                 else if (st === 'khacgioi') ghi = 'Phòng dành cho ' + d.gt + ', không phù hợp với giới tính của bạn.';
                 else if (st === 'het') ghi = 'Phòng đã hết chỗ. Bạn có thể chọn phòng khác còn chỗ.';
                 else if (st === 'tamngung') ghi = 'Phòng đang tạm ngừng, chưa thể xếp người vào.';
-                else if (duocDangKy) ghi = 'Bạn đăng ký theo loại phòng; quản trị viên sẽ xếp phòng cụ thể còn chỗ và phù hợp.';
+  
+                else if (duocDangKy) ghi = 'Bạn đăng ký phòng này làm nguyện vọng; quản trị viên sẽ xem xét và xếp phòng cuối cùng.';
                 $('i-ghichu').textContent = ghi;
             }
 

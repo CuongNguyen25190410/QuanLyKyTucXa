@@ -1,0 +1,69 @@
+﻿@model DonHuyXuLyVM
+@{
+    ViewData["Title"] = "Xử lý đơn hủy phòng";
+    var d = Model.Don;
+    var choDuyet = d.TrangThai == TrangThaiDonHuy.ChoDuyet;
+}
+<h2>Đơn hủy phòng #@d.MaDon</h2>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-3"><div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Sinh viên</dt><dd class="col-sm-8">@d.DangKyKTX.SinhVien.HoTen (@d.DangKyKTX.MaSinhVien)</dd>
+                <dt class="col-sm-4">Phòng đang ở</dt>
+                <dd class="col-sm-8">
+                    @if (Model.HienTai != null)
+                    {
+                        @:@Model.HienTai.PhongKTX.TenPhong (Tòa @Model.HienTai.PhongKTX.ToaNha, tầng @Model.HienTai.PhongKTX.Tang) — vào từ @Fmt.Ngay(Model.HienTai.NgayVao)
+                    }
+                    else { <span class="text-muted">Không còn ở phòng nào</span> }
+                </dd>
+                <dt class="col-sm-4">Ngày gửi</dt><dd class="col-sm-8">@Fmt.NgayGio(d.NgayGui)</dd>
+                <dt class="col-sm-4">Ngày muốn trả phòng</dt><dd class="col-sm-8">@Fmt.Ngay(d.NgayRaDuKien)</dd>
+                <dt class="col-sm-4">Lý do</dt><dd class="col-sm-8" style="white-space:pre-line">@d.LyDo</dd>
+                <dt class="col-sm-4">Trạng thái</dt><dd class="col-sm-8"><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></dd>
+                @if (!choDuyet)
+                {
+                    <dt class="col-sm-4">Xử lý lúc</dt><dd class="col-sm-8">@Fmt.NgayGio(d.NgayXuLy) @(d.TaiKhoanXuLy != null ? "bởi " + d.TaiKhoanXuLy.HoTen : "")</dd>
+                    <dt class="col-sm-4">Phản hồi</dt><dd class="col-sm-8">@(string.IsNullOrEmpty(d.GhiChuAdmin) ? "—" : d.GhiChuAdmin)</dd>
+                }
+            </dl>
+        </div></div>
+
+        @if (Model.SoHoaDonChuaTT > 0)
+        {
+            <div class="alert alert-warning">
+                Sinh viên còn <strong>@Model.SoHoaDonChuaTT</strong> hóa đơn chưa thanh toán (tổng @Fmt.Tien(Model.TongTienChuaTT)).
+                Duyệt đơn sẽ <strong>không</strong> tự hủy hay thu các hóa đơn này.
+            </div>
+        }
+
+        @if (choDuyet)
+        {
+            <form asp-action="Duyet" method="post" class="card shadow-sm"><div class="card-body">
+                <input type="hidden" asp-for="MaDon" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <div class="mb-3" style="max-width:260px">
+                    <label asp-for="NgayRa" class="form-label"></label>
+                    <input asp-for="NgayRa" type="date" class="form-control" />
+                    <span asp-validation-for="NgayRa" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="GhiChuAdmin" class="form-label"></label>
+                    <textarea asp-for="GhiChuAdmin" rows="3" class="form-control"></textarea>
+                    <div class="form-text">Bắt buộc nhập khi từ chối; không bắt buộc khi duyệt.</div>
+                    <span asp-validation-for="GhiChuAdmin" class="text-danger"></span>
+                </div>
+                <p class="text-muted small">Khi duyệt, sinh viên sẽ được trả phòng vào ngày đã chọn: bản ghi phân phòng và đăng ký chuyển sang "Đã trả phòng", chỗ trong phòng được giải phóng.</p>
+                <button type="submit" class="btn btn-success">Duyệt &amp; trả phòng</button>
+                <button type="submit" asp-action="TuChoi" class="btn btn-outline-danger" onclick="return confirm('Từ chối đơn này?');">Từ chối</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+            </div></form>
+        }
+        else
+        {
+            <a class="btn btn-outline-secondary" asp-action="Index" asp-route-trangThai="all">Quay lại</a>
+        }
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

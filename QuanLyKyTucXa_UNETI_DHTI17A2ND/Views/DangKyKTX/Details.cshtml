@@ -14,7 +14,16 @@
         <dt class="col-sm-4">Sinh viên</dt><dd class="col-sm-8">@d.SinhVien.HoTen (@d.MaSinhVien) - @d.SinhVien.GioiTinh</dd>
         <dt class="col-sm-4">Ngày đăng ký</dt><dd class="col-sm-8">@Fmt.NgayGio(d.NgayDangKy)</dd>
         <dt class="col-sm-4">Thời gian ở</dt><dd class="col-sm-8">@Fmt.Ngay(d.NgayBatDau) &rarr; @Fmt.Ngay(d.NgayKetThucDuKien)</dd>
-        <dt class="col-sm-4">Nguyện vọng</dt><dd class="col-sm-8">@(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—")</dd>
+        <dt class="col-sm-4">Nguyện vọng</dt>
+<dd class="col-sm-8">
+    @if (d.PhongNguyenVong != null)
+    {
+        <strong>Phòng @d.PhongNguyenVong.TenPhong</strong>
+        <span class="text-muted">(Tòa @d.PhongNguyenVong.ToaNha, tầng @d.PhongNguyenVong.Tang)</span>
+        @if (d.LoaiPhongNguyenVong != null) { <span class="text-muted small">- @d.LoaiPhongNguyenVong.TenLoaiPhong</span> }
+    }
+    else { @(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—") }
+</dd>
         <dt class="col-sm-4">Ghi chú</dt><dd class="col-sm-8">@d.GhiChu</dd>
         <dt class="col-sm-4">Trạng thái</dt><dd class="col-sm-8"><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></dd>
     </dl>

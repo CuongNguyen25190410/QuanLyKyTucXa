@@ -7,13 +7,38 @@
 @{
     ViewData["Title"] = "Phân phòng";
     var d = Model.DangKy;
+    var toas = Model.PhongCoTheChon.Select(p => p.ToaNha).Distinct().OrderBy(x => x).ToList();
+    var loais = Model.PhongCoTheChon.Select(p => p.TenLoaiPhong).Distinct().OrderBy(x => x).ToList();
 }
+<style>
+    .pp-scroll { max-height: 55vh; overflow-y: auto; position: relative; }
+    .pp-scroll thead th { position: sticky; top: 0; z-index: 2; background: #f8f9fa; box-shadow: 0 1px 0 #dee2e6; }
+    .pp-row { cursor: pointer; }
+    .pp-bar { position: sticky; bottom: 0; z-index: 20; border-top: 3px solid #198754; }
+</style>
+
 <h2>Phân phòng cho đăng ký #@d.MaDangKy</h2>
 <div class="card shadow-sm mb-3"><div class="card-body">
     <dl class="row mb-0">
         <dt class="col-sm-3">Sinh viên</dt><dd class="col-sm-9">@d.SinhVien.HoTen (@d.MaSinhVien) - <strong>@d.SinhVien.GioiTinh</strong></dd>
         <dt class="col-sm-3">Thời gian ở</dt><dd class="col-sm-9">@Fmt.Ngay(d.NgayBatDau) &rarr; @Fmt.Ngay(d.NgayKetThucDuKien)</dd>
-        <dt class="col-sm-3">Nguyện vọng</dt><dd class="col-sm-9">@(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—") <span class="text-muted small">(chỉ để tham khảo)</span></dd>
+        <dt class="col-sm-3">Nguyện vọng</dt>
+        <dd class="col-sm-9">
+            @if (d.PhongNguyenVong != null)
+            {
+                <strong>Phòng @d.PhongNguyenVong.TenPhong</strong>
+                <span class="text-muted">(Tòa @d.PhongNguyenVong.ToaNha, tầng @d.PhongNguyenVong.Tang)</span>
+                @if (!Model.PhongCoTheChon.Any(p => p.MaPhong == d.NguyenVongPhong))
+                {
+                    <span class="badge bg-danger">Hiện hết chỗ hoặc đang tạm ngừng</span>
+                }
+            }
+            else
+            {
+                @(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—")
+            }
+            <span class="text-muted small">(chỉ để tham khảo)</span>
+        </dd>
         <dt class="col-sm-3">Ghi chú</dt><dd class="col-sm-9">@d.GhiChu</dd>
     </dl>
 </div></div>
@@ -23,38 +48,145 @@
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
     <h5>Chọn phòng</h5>
-    <p class="text-muted small">Chỉ hiển thị phòng đang sử dụng và còn chỗ. Phòng đúng giới tính được xếp lên trước.</p>
     @if (!Model.PhongCoTheChon.Any())
     {
         <div class="alert alert-warning">Hiện không có phòng nào còn chỗ để phân.</div>
+        <a class="btn btn-outline-secondary" asp-controller="DangKyKTX" asp-action="Index">Quay lại</a>
     }
     else
     {
-        <div class="card shadow-sm mb-2"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
-            <thead class="table-light"><tr><th></th><th>Phòng</th><th>Loại phòng</th><th>Tòa</th><th>Tầng</th><th>Giới tính</th><th class="text-center">Sức chứa</th><th class="text-center">Chỗ còn</th></tr></thead>
-            <tbody>
-            @foreach (var p in Model.PhongCoTheChon)
-            {
-                var hopGioiTinh = p.GioiTinhPhong == d.SinhVien.GioiTinh;
-                <tr class="@(hopGioiTinh ? "" : "table-light text-muted")">
-                    <td><input class="form-check-input" type="radio" name="MaPhong" value="@p.MaPhong" checked="@(Model.MaPhong == p.MaPhong)" /></td>
-                    <td class="fw-semibold">@p.TenPhong</td><td>@p.TenLoaiPhong</td><td>@p.ToaNha</td><td>@p.Tang</td>
-                    <td>@p.GioiTinhPhong @if (!hopGioiTinh) { <span class="badge bg-warning text-dark">Khác giới tính</span> }</td>
-                    <td class="text-center">@p.SucChua</td><td class="text-center"><span class="badge bg-success">@p.SoChoCon</span></td>
-                </tr>
-            }
-            </tbody>
-        </table></div></div>
-        <span asp-validation-for="MaPhong" class="text-danger d-block mb-2"></span>
+        <div class="card shadow-sm mb-2"><div class="card-body py-2">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small mb-1">Tìm phòng</label>
+                    <input id="pp-tim" class="form-control form-control-sm" placeholder="VD: A101" maxlength="10" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small mb-1">Tòa</label>
+                    <select id="pp-toa" class="form-select form-select-sm">
+                        <option value="">Tất cả</option>
+                        @foreach (var t in toas) { <option value="@t">Tòa @t</option> }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small mb-1">Loại phòng</label>
+                    <select id="pp-loai" class="form-select form-select-sm">
+                        <option value="">Tất cả</option>
+                        @foreach (var l in loais) { <option value="@l">@l</option> }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="pp-gt" checked />
+                        <label class="form-check-label small" for="pp-gt">Chỉ phòng đúng giới tính (@d.SinhVien.GioiTinh)</label>
+                    </div>
+                    <div id="pp-dem" class="text-muted small"></div>
+                </div>
+            </div>
+        </div></div>
+
+        <div class="card shadow-sm mb-2">
+            <div class="pp-scroll">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light"><tr><th></th><th>Phòng</th><th>Loại phòng</th><th>Tòa</th><th>Tầng</th><th>Giới tính</th><th class="text-center">Sức chứa</th><th class="text-center">Chỗ còn</th></tr></thead>
+                    <tbody>
+                    @foreach (var p in Model.PhongCoTheChon)
+                    {
+                        var hopGioiTinh = p.GioiTinhPhong == d.SinhVien.GioiTinh;
+                        <tr class="pp-row @(hopGioiTinh ? "" : "table-light text-muted")"
+                            data-ten="@p.TenPhong.ToUpper()" data-toa="@p.ToaNha" data-loai="@p.TenLoaiPhong" data-gt="@(hopGioiTinh ? "1" : "0")"
+                            data-label="@p.TenPhong - Tòa @p.ToaNha, tầng @p.Tang - còn @p.SoChoCon chỗ">
+                            <td><input class="form-check-input" type="radio" name="MaPhong" value="@p.MaPhong" checked="@(Model.MaPhong == p.MaPhong)" /></td>
+                            <td class="fw-semibold">@p.TenPhong @if (d.NguyenVongPhong == p.MaPhong) { <span class="badge bg-primary">Sinh viên chọn</span> }</td>
+                            <td>@p.TenLoaiPhong</td><td>@p.ToaNha</td><td>@p.Tang</td>
+                            <td>@p.GioiTinhPhong @if (!hopGioiTinh) { <span class="badge bg-warning text-dark">Khác giới tính</span> }</td>
+                            <td class="text-center">@p.SucChua</td><td class="text-center"><span class="badge bg-success">@p.SoChoCon</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <div id="pp-khong" class="text-center text-muted py-4 d-none">Không có phòng phù hợp với bộ lọc.</div>
+            </div>
+        </div>
+
+        <!-- Thanh xác nhận luôn nằm sát đáy màn hình -->
+        <div class="card shadow pp-bar mt-3"><div class="card-body py-2">
+            <div class="row g-2 align-items-center">
+                <div class="col-lg-5">
+                    <div class="small text-muted">Phòng đã chọn</div>
+                    <div id="pp-tomtat" class="fw-semibold">Chưa chọn phòng</div>
+                    <span asp-validation-for="MaPhong" class="text-danger small"></span>
+                </div>
+                <div class="col-lg-3">
+                    <label asp-for="NgayVao" class="form-label small mb-0"></label>
+                    <input asp-for="NgayVao" type="date" class="form-control form-control-sm" />
+                    <span asp-validation-for="NgayVao" class="text-danger small"></span>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <button id="pp-ok" type="submit" class="btn btn-success" disabled>Xác nhận phân phòng</button>
+                    <a class="btn btn-outline-secondary" asp-controller="DangKyKTX" asp-action="Index">Quay lại</a>
+                </div>
+            </div>
+        </div></div>
     }
-
-    <div class="row mt-3"><div class="col-md-4 mb-3">
-        <label asp-for="NgayVao" class="form-label"></label>
-        <input asp-for="NgayVao" type="date" class="form-control" />
-        <span asp-validation-for="NgayVao" class="text-danger"></span>
-    </div></div>
-
-    <button type="submit" class="btn btn-success" disabled="@(!Model.PhongCoTheChon.Any())">Xác nhận phân phòng</button>
-    <a class="btn btn-outline-secondary" asp-controller="DangKyKTX" asp-action="Index">Quay lại</a>
 </form>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var rows = Array.prototype.slice.call(document.querySelectorAll('.pp-row'));
+            if (!rows.length) return;
+
+            var tim = document.getElementById('pp-tim'), selToa = document.getElementById('pp-toa'),
+                selLoai = document.getElementById('pp-loai'), ckGt = document.getElementById('pp-gt'),
+                dem = document.getElementById('pp-dem'), khong = document.getElementById('pp-khong'),
+                tomTat = document.getElementById('pp-tomtat'), btn = document.getElementById('pp-ok'),
+                khung = document.querySelector('.pp-scroll');
+
+            function radioCua(r) { return r.querySelector('input[type=radio]'); }
+
+            function capNhatChon() {
+                var chon = rows.filter(function (r) { return radioCua(r).checked; })[0];
+                tomTat.textContent = chon ? chon.dataset.label : 'Chưa chọn phòng';
+                btn.disabled = !chon;
+                rows.forEach(function (r) { r.classList.toggle('table-primary', r === chon); });
+            }
+
+            function loc() {
+                var k = tim.value.trim().toUpperCase(), toa = selToa.value, loai = selLoai.value, chiGt = ckGt.checked, n = 0;
+                rows.forEach(function (r) {
+                    var x = r.dataset, ok = true;
+                    if (k && x.ten.indexOf(k) < 0) ok = false;
+                    if (toa && x.toa !== toa) ok = false;
+                    if (loai && x.loai !== loai) ok = false;
+                    if (chiGt && x.gt !== '1') ok = false;
+                    if (radioCua(r).checked) ok = true;      // luôn giữ lại phòng đang chọn
+                    r.classList.toggle('d-none', !ok);
+                    if (ok) n++;
+                });
+                dem.textContent = 'Hiển thị ' + n + ' / ' + rows.length + ' phòng';
+                khong.classList.toggle('d-none', n > 0);
+            }
+
+            rows.forEach(function (r) {
+                r.addEventListener('click', function () {
+                    radioCua(r).checked = true;
+                    capNhatChon();
+                });
+            });
+            [tim, selToa, selLoai, ckGt].forEach(function (el) {
+                el.addEventListener('input', loc);
+                el.addEventListener('change', loc);
+            });
+            tim.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+
+            loc();
+            capNhatChon();
+
+            // Có sẵn phòng được chọn (nguyện vọng của sinh viên): cuộn bảng tới phòng đó
+            var chon = rows.filter(function (r) { return radioCua(r).checked; })[0];
+            if (chon && khung) khung.scrollTop = Math.max(0, chon.offsetTop - 60);
+        })();
+    </script>
+}

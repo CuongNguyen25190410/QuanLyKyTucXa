@@ -1,0 +1,58 @@
+﻿@model DonHuyIndexVM
+@{
+    ViewData["Title"] = "Đơn hủy phòng";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Đơn xin hủy phòng</h2>
+    @if (Model.SoChoDuyet > 0)
+    {
+        <span class="badge bg-warning text-dark fs-6">@Model.SoChoDuyet đơn chờ duyệt</span>
+    }
+</div>
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-5"><input name="tuKhoa" value="@Model.TuKhoa" class="form-control" placeholder="Mã SV hoặc họ tên..." /></div>
+    <div class="col-md-3">
+        <select name="trangThai" class="form-select">
+            <option value="all" selected="@(Model.TrangThai == "all")">-- Mọi trạng thái --</option>
+            @foreach (var t in TrangThaiDonHuy.TatCa) { <option value="@t" selected="@(Model.TrangThai == t)">@t</option> }
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100">Lọc</button></div>
+</form>
+
+@if (!Model.KetQua.Items.Any())
+{
+    <div class="alert alert-info">Không có đơn nào phù hợp.</div>
+}
+else
+{
+    <div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+        <thead class="table-light"><tr><th>Mã đơn</th><th>Sinh viên</th><th>Phòng</th><th>Ngày gửi</th><th>Ngày muốn trả</th><th>Lý do</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var d in Model.KetQua.Items)
+        {
+            var pp = d.DangKyKTX.PhanPhongs.OrderByDescending(x => x.NgayVao).ThenByDescending(x => x.MaPhanPhong).FirstOrDefault();
+            <tr>
+                <td>@d.MaDon</td>
+                <td>@d.DangKyKTX.SinhVien.HoTen<br /><span class="text-muted small">@d.DangKyKTX.MaSinhVien</span></td>
+                <td>@(pp != null ? pp.PhongKTX.TenPhong : "—")</td>
+                <td>@Fmt.NgayGio(d.NgayGui)</td>
+                <td>@Fmt.Ngay(d.NgayRaDuKien)</td>
+                <td>@(d.LyDo.Length > 50 ? d.LyDo.Substring(0, 50) + "…" : d.LyDo)</td>
+                <td><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></td>
+                <td class="text-end text-nowrap">
+                    @if (d.TrangThai == TrangThaiDonHuy.ChoDuyet)
+                    {
+                        <a class="btn btn-sm btn-success" asp-action="XuLy" asp-route-id="@d.MaDon">Xử lý</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="XuLy" asp-route-id="@d.MaDon">Xem</a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table></div></div>
+}
+<partial name="_Pager" model="Model.KetQua" />

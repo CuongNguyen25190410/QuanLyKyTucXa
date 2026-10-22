@@ -51,6 +51,9 @@ namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
                     b.Property<int?>("NguyenVongLoaiPhong")
                         .HasColumnType("int");
 
+                    b.Property<int?>("NguyenVongPhong")
+                        .HasColumnType("int");
+
                     b.Property<string>("TrangThai")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -64,7 +67,57 @@ namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
 
                     b.HasIndex("NguyenVongLoaiPhong");
 
+                    b.HasIndex("NguyenVongPhong");
+
                     b.ToTable("DangKyKTX", (string)null);
+                });
+
+            modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.DonHuyPhong", b =>
+                {
+                    b.Property<int>("MaDon")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaDon"));
+
+                    b.Property<string>("GhiChuAdmin")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("LyDo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("MaDangKy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaTaiKhoanXuLy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NgayGui")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NgayRaDuKien")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayXuLy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TrangThai")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("MaDon");
+
+                    b.HasIndex("MaDangKy")
+                        .IsUnique()
+                        .HasFilter("[TrangThai] = N'Chờ duyệt'");
+
+                    b.HasIndex("MaTaiKhoanXuLy");
+
+                    b.ToTable("DonHuyPhong", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.HoaDon", b =>
@@ -379,9 +432,34 @@ namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
                         .HasForeignKey("NguyenVongLoaiPhong")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.PhongKTX", "PhongNguyenVong")
+                        .WithMany()
+                        .HasForeignKey("NguyenVongPhong")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("LoaiPhongNguyenVong");
 
+                    b.Navigation("PhongNguyenVong");
+
                     b.Navigation("SinhVien");
+                });
+
+            modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.DonHuyPhong", b =>
+                {
+                    b.HasOne("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.DangKyKTX", "DangKyKTX")
+                        .WithMany("DonHuyPhongs")
+                        .HasForeignKey("MaDangKy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.TaiKhoan", "TaiKhoanXuLy")
+                        .WithMany()
+                        .HasForeignKey("MaTaiKhoanXuLy")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("DangKyKTX");
+
+                    b.Navigation("TaiKhoanXuLy");
                 });
 
             modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.HoaDon", b =>
@@ -446,6 +524,8 @@ namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Migrations
 
             modelBuilder.Entity("QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.DangKyKTX", b =>
                 {
+                    b.Navigation("DonHuyPhongs");
+
                     b.Navigation("PhanPhongs");
                 });
 

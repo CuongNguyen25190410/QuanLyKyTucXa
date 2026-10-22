@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<DangKyKTX> DangKyKTXs { get; set; }
     public DbSet<PhanPhong> PhanPhongs { get; set; }
     public DbSet<HoaDon> HoaDons { get; set; }
+    public DbSet<DonHuyPhong> DonHuyPhongs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,6 +74,10 @@ public class AppDbContext : DbContext
              .WithMany()
              .HasForeignKey(x => x.NguyenVongLoaiPhong)
              .OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.PhongNguyenVong)
+ .WithMany()
+ .HasForeignKey(x => x.NguyenVongPhong)
+ .OnDelete(DeleteBehavior.SetNull);   // xóa phòng thì chỉ xóa nguyện vọng, không lỗi
 
             // Chốt chặn ở tầng CSDL: mỗi sinh viên chỉ có tối đa 1 đăng ký đang hiệu lực
             // (Chờ duyệt hoặc Đã phân phòng). Đã hủy / Đã trả phòng thì không giới hạn.
@@ -111,6 +116,18 @@ public class AppDbContext : DbContext
 
             e.HasIndex(x => new { x.MaDangKy, x.Thang, x.Nam }).IsUnique();
             e.HasIndex(x => x.OrderCode).IsUnique().HasFilter("[OrderCode] IS NOT NULL");
+        });
+        // ---- DonHuyPhong: DangKyKTX (1) - (n) DonHuyPhong ----
+        modelBuilder.Entity<DonHuyPhong>(e =>
+        {
+            e.ToTable("DonHuyPhong");
+            e.HasOne(x => x.DangKyKTX).WithMany(d => d.DonHuyPhongs)
+             .HasForeignKey(x => x.MaDangKy).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.TaiKhoanXuLy).WithMany()
+             .HasForeignKey(x => x.MaTaiKhoanXuLy).OnDelete(DeleteBehavior.Restrict);
+
+            // Mỗi đăng ký chỉ có tối đa 1 đơn đang chờ duyệt (chốt chặn ở CSDL, chống bấm gửi 2 lần)
+            e.HasIndex(x => x.MaDangKy).IsUnique().HasFilter("[TrangThai] = N'Chờ duyệt'");
         });
     }
 }

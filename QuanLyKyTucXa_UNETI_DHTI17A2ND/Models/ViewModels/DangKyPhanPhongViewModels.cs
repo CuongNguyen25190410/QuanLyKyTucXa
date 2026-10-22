@@ -8,6 +8,8 @@ namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.ViewModels;
 
 public class DangKyCreateVM
 {
+    public int? NguyenVongPhong { get; set; }
+    public PhongKTX PhongNguyenVong { get; set; }   // chỉ để hiển thị
     [Required(ErrorMessage = "Vui lòng chọn ngày bắt đầu ở")]
     [DataType(DataType.Date)]
     [Display(Name = "Ngày bắt đầu")]

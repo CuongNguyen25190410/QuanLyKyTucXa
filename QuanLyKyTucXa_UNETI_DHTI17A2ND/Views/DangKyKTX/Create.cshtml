@@ -17,13 +17,25 @@
             <div class="card-body">
                 <form asp-action="Create" method="post">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" asp-for="NguyenVongPhong" />
+@if (Model.PhongNguyenVong != null)
+{
+    <div class="alert alert-info">
+        <i class="bi bi-geo-alt-fill"></i>
+        Bạn đang chọn <strong>phòng @Model.PhongNguyenVong.TenPhong</strong>
+        (Tòa @Model.PhongNguyenVong.ToaNha, tầng @Model.PhongNguyenVong.Tang
+        @(Model.PhongNguyenVong.LoaiPhong != null ? "- " + Model.PhongNguyenVong.LoaiPhong.TenLoaiPhong : "")).
+        Đây là nguyện vọng của bạn, quản trị viên sẽ quyết định phòng cuối cùng.
+        <a asp-action="Create">Bỏ chọn phòng</a>
+    </div>
+}
                     <div class="row">
                         <div class="col-md-6 mb-3"><label asp-for="NgayBatDau" class="form-label"></label><input asp-for="NgayBatDau" type="date" class="form-control" /><span asp-validation-for="NgayBatDau" class="text-danger"></span></div>
                         <div class="col-md-6 mb-3"><label asp-for="NgayKetThucDuKien" class="form-label"></label><input asp-for="NgayKetThucDuKien" type="date" class="form-control" /><span asp-validation-for="NgayKetThucDuKien" class="text-danger"></span></div>
                     </div>
                     <div class="mb-3">
                         <label asp-for="NguyenVongLoaiPhong" class="form-label"></label>
-                        <select asp-for="NguyenVongLoaiPhong" asp-items="Model.LoaiPhongs" class="form-select"><option value="">-- Không có nguyện vọng --</option></select>
+                        <select asp-for="NguyenVongLoaiPhong" asp-items="Model.LoaiPhongs" class="form-select" disabled="@(Model.PhongNguyenVong != null)"><option value="">-- Không có nguyện vọng --</option></select>
                         <div class="form-text">Chỉ là thông tin tham khảo. Quản trị viên sẽ xếp phòng thực tế còn chỗ và phù hợp.</div>
                         <span asp-validation-for="NguyenVongLoaiPhong" class="text-danger"></span>
                     </div>

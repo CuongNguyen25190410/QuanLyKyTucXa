@@ -1,0 +1,47 @@
+﻿@model DonHuyCreateVM
+@{
+    ViewData["Title"] = "Đơn xin hủy phòng";
+    var h = Model.HienTai;
+}
+<h2>Đơn xin hủy phòng KTX</h2>
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Mã đăng ký</dt>
+                    <dd class="col-sm-8">@h.MaDangKy</dd>
+                    <dt class="col-sm-4">Phòng đang ở</dt>
+                    <dd class="col-sm-8">@h.PhongKTX.TenPhong (Tòa @h.PhongKTX.ToaNha, tầng @h.PhongKTX.Tang)</dd>
+                    <dt class="col-sm-4">Vào phòng từ</dt>
+                    <dd class="col-sm-8">@Fmt.Ngay(h.NgayVao)</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <input type="hidden" asp-for="MaDangKy" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="mb-3" style="max-width:260px">
+                        <label asp-for="NgayRaDuKien" class="form-label"></label>
+                        <input asp-for="NgayRaDuKien" type="date" class="form-control" />
+                        <span asp-validation-for="NgayRaDuKien" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="LyDo" class="form-label"></label>
+                        <textarea asp-for="LyDo" rows="4" class="form-control" placeholder="Nêu rõ lý do bạn muốn hủy phòng..."></textarea>
+                        <span asp-validation-for="LyDo" class="text-danger"></span>
+                    </div>
+                    <p class="text-muted small">Đơn chỉ có hiệu lực sau khi quản trị viên duyệt. Trong lúc chờ duyệt, bạn vẫn được tính là đang ở phòng.</p>
+                    <button type="submit" class="btn btn-danger">Gửi đơn</button>
+                    <a class="btn btn-outline-secondary" asp-controller="DangKyKTX" asp-action="CuaToi">Quay lại</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

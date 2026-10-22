@@ -67,3 +67,11 @@ public static class TrangThaiHoaDon
     public const string DaHuy = "Đã hủy";
     public static readonly string[] TatCa = { ChuaThanhToan, DaThanhToan, DaHuy };
 }
+public static class TrangThaiDonHuy
+{
+    public const string ChoDuyet = "Chờ duyệt";
+    public const string DaDuyet = "Đã duyệt";
+    public const string TuChoi = "Từ chối";
+    public const string DaThuHoi = "Đã thu hồi";
+    public static readonly string[] TatCa = { ChoDuyet, DaDuyet, TuChoi, DaThuHoi };
+}

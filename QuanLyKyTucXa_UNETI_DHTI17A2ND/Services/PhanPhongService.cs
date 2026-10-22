@@ -148,7 +148,12 @@ public class PhanPhongService
     // ------------------------------------------------------------------ TRẢ PHÒNG
     public async Task<KetQuaNghiepVu> TraPhongAsync(int maPhanPhong, DateTime ngayRa)
     {
-        await using var tx = await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        //await using var tx = await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        // Nếu nơi gọi đã mở transaction (ví dụ duyệt đơn hủy phòng) thì dùng tiếp
+        var tuMoTransaction = _db.Database.CurrentTransaction == null;
+        await using var tx = tuMoTransaction
+            ? await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable)
+            : null;
 
         var hienTai = await _db.PhanPhongs
             .Include(pp => pp.PhongKTX)
@@ -166,10 +171,23 @@ public class PhanPhongService
 
         hienTai.TrangThai = TrangThaiPhanPhong.DaTraPhong;
         hienTai.NgayRa = ngayRa.Date;
+        hienTai.TrangThai = TrangThaiPhanPhong.DaTraPhong;
+        hienTai.NgayRa = ngayRa.Date;
         hienTai.DangKyKTX.TrangThai = TrangThaiDangKy.DaTraPhong;
 
+        // Đóng các đơn xin hủy phòng đang chờ của đăng ký này (phòng đã được trả rồi)
+        var donCho = await _db.DonHuyPhongs
+            .Where(d => d.MaDangKy == hienTai.MaDangKy && d.TrangThai == TrangThaiDonHuy.ChoDuyet)
+            .ToListAsync();
+        foreach (var d in donCho)
+        {
+            d.TrangThai = TrangThaiDonHuy.DaDuyet;
+            d.NgayXuLy = DateTime.Now;
+            d.GhiChuAdmin = "Phòng đã được trả.";
+        }
+
         await _db.SaveChangesAsync();
-        await tx.CommitAsync();
+        if (tuMoTransaction) await tx.CommitAsync();
 
         return KetQuaNghiepVu.Ok($"Sinh viên {hienTai.DangKyKTX.SinhVien.HoTen} đã trả phòng {hienTai.PhongKTX.TenPhong}.");
     }

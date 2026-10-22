@@ -33,6 +33,8 @@ public class DangKyKTX
 
     [Display(Name = "Nguyện vọng loại phòng")]
     public int? NguyenVongLoaiPhong { get; set; }
+    [Display(Name = "Phòng nguyện vọng")]
+    public int? NguyenVongPhong { get; set; }
 
     [StringLength(500, ErrorMessage = "Ghi chú tối đa 500 ký tự")]
     [Display(Name = "Ghi chú")]
@@ -42,9 +44,10 @@ public class DangKyKTX
     [StringLength(20)]
     [Display(Name = "Trạng thái")]
     public string TrangThai { get; set; }
-
+    public PhongKTX PhongNguyenVong { get; set; }
     // Navigation
     public SinhVien SinhVien { get; set; }
     public LoaiPhong LoaiPhongNguyenVong { get; set; }
     public ICollection<PhanPhong> PhanPhongs { get; set; } = new List<PhanPhong>();
+    public ICollection<DonHuyPhong> DonHuyPhongs { get; set; } = new List<DonHuyPhong>();
 }

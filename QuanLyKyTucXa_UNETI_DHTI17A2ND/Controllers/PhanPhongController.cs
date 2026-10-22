@@ -193,6 +193,7 @@ public class PhanPhongController : AppControllerBase
     private Task<DangKyKTX> LayDangKyAsync(int maDangKy)
     {
         return _db.DangKyKTXs.AsNoTracking()
+            .Include(d => d.PhongNguyenVong)
             .Include(d => d.SinhVien)
             .Include(d => d.LoaiPhongNguyenVong)
             .FirstOrDefaultAsync(d => d.MaDangKy == maDangKy);
@@ -212,13 +213,20 @@ public class PhanPhongController : AppControllerBase
         var ds = await _phongService.QueryPhongConCho().ToListAsync();
         var gioiTinh = vm.DangKy.SinhVien.GioiTinh;
         var nguyenVong = vm.DangKy.NguyenVongLoaiPhong;
+        var phongNguyenVong = vm.DangKy.NguyenVongPhong;
 
-        // Ưu tiên: phòng đúng giới tính -> đúng nguyện vọng loại phòng -> tên phòng
+        // Ưu tiên: phòng sinh viên chọn -> đúng giới tính -> đúng loại phòng -> tên phòng
         vm.PhongCoTheChon = ds
-            .OrderByDescending(p => p.GioiTinhPhong == gioiTinh)
+            .OrderByDescending(p => phongNguyenVong.HasValue && p.MaPhong == phongNguyenVong.Value)
+            .ThenByDescending(p => p.GioiTinhPhong == gioiTinh)
             .ThenByDescending(p => nguyenVong.HasValue && p.MaLoaiPhong == nguyenVong.Value)
             .ThenBy(p => p.TenPhong)
             .ToList();
+
+        // Chọn sẵn phòng sinh viên đã chọn (nếu phòng vẫn còn chỗ); admin vẫn đổi được
+        if (vm.MaPhong == null && phongNguyenVong.HasValue
+            && vm.PhongCoTheChon.Any(p => p.MaPhong == phongNguyenVong.Value))
+            vm.MaPhong = phongNguyenVong;
     }
 
     private async Task NapPhongMoiAsync(ChuyenPhongVM vm)

@@ -60,5 +60,6 @@
     @if (!Model.LaAdmin && p.SoChoCon > 0)
     {
         <a class="btn btn-success" asp-controller="DangKyKTX" asp-action="Create" asp-route-maLoaiPhong="@p.MaLoaiPhong">Đăng ký ở loại phòng này</a>
+        <a class="btn btn-success" asp-controller="DangKyKTX" asp-action="Create" asp-route-maLoaiPhong="@p.MaLoaiPhong" asp-route-maPhong="@p.MaPhong">Đăng ký phòng này</a>
     }
 </div>

@@ -25,7 +25,7 @@ else
             var phong = d.PhanPhongs.FirstOrDefault(pp => pp.TrangThai == TrangThaiPhanPhong.DangO);
             <tr>
                 <td>@d.MaDangKy</td><td>@Fmt.NgayGio(d.NgayDangKy)</td><td>@Fmt.Ngay(d.NgayBatDau)</td><td>@Fmt.Ngay(d.NgayKetThucDuKien)</td>
-                <td>@(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—")</td>
+                <td>@(d.PhongNguyenVong != null ? "Phòng " + d.PhongNguyenVong.TenPhong : (d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—"))</td>
                 <td>@(phong != null ? phong.PhongKTX.TenPhong : "—")</td>
                 <td><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></td>
                 <td class="text-end text-nowrap">
@@ -35,6 +35,17 @@ else
                         <form asp-action="Huy" asp-route-id="@d.MaDangKy" method="post" class="d-inline" onsubmit="return confirm('Hủy đăng ký này?');">
                             <button class="btn btn-sm btn-outline-danger">Hủy</button>
                         </form>
+                    }
+                    @if (d.TrangThai == TrangThaiDangKy.DaPhanPhong)
+                    {
+                        if (d.DonHuyPhongs.Any(x => x.TrangThai == TrangThaiDonHuy.ChoDuyet))
+                        {
+                            <a class="btn btn-sm btn-warning" asp-controller="DonHuyPhong" asp-action="CuaToi">Đơn hủy đang chờ duyệt</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-outline-danger" asp-controller="DonHuyPhong" asp-action="Create" asp-route-maDangKy="@d.MaDangKy">Xin hủy phòng</a>
+                        }
                     }
                 </td>
             </tr>

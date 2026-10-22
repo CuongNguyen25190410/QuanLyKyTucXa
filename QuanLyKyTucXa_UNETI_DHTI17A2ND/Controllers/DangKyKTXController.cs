@@ -29,11 +29,14 @@ public class DangKyKTXController : AppControllerBase
     [PhanQuyen(VaiTro.SinhVien)]
     public async Task<IActionResult> CuaToi()
     {
+
         var sv = await LaySinhVienHienTaiAsync(_db);
         if (sv == null) return View(new List<DangKyKTX>());
 
         var ds = await _db.DangKyKTXs.AsNoTracking()
+            .Include(d => d.PhongNguyenVong)
             .Include(d => d.LoaiPhongNguyenVong)
+            .Include(d => d.DonHuyPhongs)
             .Include(d => d.PhanPhongs).ThenInclude(pp => pp.PhongKTX)
             .Where(d => d.MaSinhVien == sv.MaSinhVien)          // ràng buộc theo tài khoản đăng nhập
             .OrderByDescending(d => d.NgayDangKy)
@@ -43,7 +46,7 @@ public class DangKyKTXController : AppControllerBase
 
     [PhanQuyen(VaiTro.SinhVien)]
     [HttpGet]
-    public async Task<IActionResult> Create(int? maLoaiPhong)
+    public async Task<IActionResult> Create(int? maLoaiPhong, int? maPhong)
     {
         var vm = new DangKyCreateVM
         {
@@ -51,6 +54,20 @@ public class DangKyKTXController : AppControllerBase
             NgayKetThucDuKien = DateTime.Today.AddMonths(4),
             NguyenVongLoaiPhong = maLoaiPhong
         };
+
+        // Sinh viên chọn một phòng cụ thể trên sơ đồ
+        if (maPhong.HasValue)
+        {
+            var phong = await _db.PhongKTXs.AsNoTracking().Include(p => p.LoaiPhong)
+                .FirstOrDefaultAsync(p => p.MaPhong == maPhong.Value);
+            if (phong != null)
+            {
+                vm.NguyenVongPhong = phong.MaPhong;
+                vm.PhongNguyenVong = phong;
+                vm.NguyenVongLoaiPhong = phong.MaLoaiPhong;   // loại phòng theo đúng phòng đã chọn
+            }
+        }
+
         await NapLoaiPhongAsync(vm);
         return View(vm);
     }
@@ -90,7 +107,27 @@ public class DangKyKTXController : AppControllerBase
         if (vm.NgayBatDau.HasValue && vm.NgayKetThucDuKien.HasValue
             && vm.NgayKetThucDuKien.Value.Date <= vm.NgayBatDau.Value.Date)
             ModelState.AddModelError(nameof(vm.NgayKetThucDuKien), "Ngày kết thúc dự kiến phải sau ngày bắt đầu.");
+        // 4b. Phòng nguyện vọng (chọn từ sơ đồ): phải tồn tại, đang sử dụng, đúng giới tính
+        if (vm.NguyenVongPhong.HasValue)
+        {
+            var phong = await _db.PhongKTXs.AsNoTracking().Include(p => p.LoaiPhong)
+                .FirstOrDefaultAsync(p => p.MaPhong == vm.NguyenVongPhong.Value);
+            if (phong == null)
+            {
+                ModelState.AddModelError(string.Empty, "Phòng bạn chọn không tồn tại.");
+                vm.NguyenVongPhong = null;
+            }
+            else
+            {
+                vm.PhongNguyenVong = phong;
+                if (phong.TrangThai != TrangThaiPhong.DangSuDung)
+                    ModelState.AddModelError(string.Empty, $"Phòng {phong.TenPhong} đang tạm ngừng, không thể chọn.");
+                else if (sv != null && phong.GioiTinhPhong != sv.GioiTinh)
+                    ModelState.AddModelError(string.Empty, $"Phòng {phong.TenPhong} là phòng {phong.GioiTinhPhong}, không phù hợp với giới tính của bạn.");
 
+                vm.NguyenVongLoaiPhong = phong.MaLoaiPhong;   // luôn đồng bộ loại phòng theo phòng đã chọn
+            }
+        }
         // 5. Nguyện vọng loại phòng (nếu chọn) phải tồn tại
         if (vm.NguyenVongLoaiPhong.HasValue
             && !await _db.LoaiPhongs.AnyAsync(l => l.MaLoaiPhong == vm.NguyenVongLoaiPhong))
@@ -104,6 +141,7 @@ public class DangKyKTXController : AppControllerBase
 
         var dangKy = new DangKyKTX
         {
+            NguyenVongPhong = vm.NguyenVongPhong,
             MaSinhVien = sv.MaSinhVien,
             NgayDangKy = DateTime.Now,                    // do hệ thống xác định
             NgayBatDau = vm.NgayBatDau.Value.Date,
@@ -165,6 +203,7 @@ public class DangKyKTXController : AppControllerBase
         if (id == null) return NotFound();
 
         var dangKy = await _db.DangKyKTXs.AsNoTracking()
+            .Include(d => d.PhongNguyenVong)
             .Include(d => d.SinhVien)
             .Include(d => d.LoaiPhongNguyenVong)
             .FirstOrDefaultAsync(d => d.MaDangKy == id);
@@ -194,6 +233,7 @@ public class DangKyKTXController : AppControllerBase
     public async Task<IActionResult> Index(string tuKhoa, string trangThai, int page = 1)
     {
         var q = _db.DangKyKTXs.AsNoTracking()
+            .Include(d => d.PhongNguyenVong)
             .Include(d => d.SinhVien)
             .Include(d => d.LoaiPhongNguyenVong)
             .AsQueryable();

@@ -32,7 +32,17 @@ else
         {
             <tr>
                 <td>@d.MaDangKy</td><td>@d.SinhVien.HoTen<br /><span class="text-muted small">@d.MaSinhVien</span></td><td>@d.SinhVien.GioiTinh</td>
-                <td>@Fmt.Ngay(d.NgayDangKy)</td><td>@Fmt.Ngay(d.NgayBatDau) &rarr; @Fmt.Ngay(d.NgayKetThucDuKien)</td><td>@(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—")</td>
+                <td>@Fmt.Ngay(d.NgayDangKy)</td><td>@Fmt.Ngay(d.NgayBatDau) &rarr; @Fmt.Ngay(d.NgayKetThucDuKien)</td><td>
+    @if (d.PhongNguyenVong != null)
+    {
+        <span class="fw-semibold">Phòng @d.PhongNguyenVong.TenPhong</span><br />
+        <span class="text-muted small">@d.LoaiPhongNguyenVong?.TenLoaiPhong</span>
+    }
+    else
+    {
+        @(d.LoaiPhongNguyenVong?.TenLoaiPhong ?? "—")
+    }
+</td>
                 <td><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></td>
                 <td class="text-end text-nowrap">
                     <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@d.MaDangKy">Chi tiết</a>

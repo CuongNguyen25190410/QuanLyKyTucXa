@@ -1,0 +1,59 @@
+﻿@model List<DonHuyPhong>
+@{
+    ViewData["Title"] = "Đơn hủy phòng của tôi";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Đơn hủy phòng của tôi</h2>
+    <a class="btn btn-outline-secondary" asp-controller="DangKyKTX" asp-action="CuaToi">Đăng ký của tôi</a>
+</div>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Bạn chưa gửi đơn hủy phòng nào. Vào <a asp-controller="DangKyKTX" asp-action="CuaToi">Đăng ký của tôi</a> để gửi đơn.</div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light"><tr><th>Mã đơn</th><th>Phòng</th><th>Ngày gửi</th><th>Ngày muốn trả</th><th>Lý do</th><th>Trạng thái</th><th>Phản hồi</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        var pp = d.DangKyKTX.PhanPhongs.OrderByDescending(x => x.NgayVao).ThenByDescending(x => x.MaPhanPhong).FirstOrDefault();
+                        <tr>
+                            <td>@d.MaDon</td>
+                            <td>@(pp != null ? pp.PhongKTX.TenPhong : "—")</td>
+                            <td>@Fmt.NgayGio(d.NgayGui)</td>
+                            <td>@Fmt.Ngay(d.NgayRaDuKien)</td>
+                            <td style="max-width:260px">@d.LyDo</td>
+                            <td><span class="badge @Fmt.Badge(d.TrangThai)">@d.TrangThai</span></td>
+                            <td style="max-width:220px">
+                                @if (!string.IsNullOrEmpty(d.GhiChuAdmin))
+                                {
+                                    @d.GhiChuAdmin
+                                }
+                                else
+                                {
+
+                                    <span class="text-muted">—</span>
+                                }
+                                @if (d.NgayXuLy != null)
+                                {
+                                    <div class="text-muted small">@Fmt.NgayGio(d.NgayXuLy)</div>
+                                }
+                            </td>
+                            <td class="text-end text-nowrap">
+                                @if (d.TrangThai == TrangThaiDonHuy.ChoDuyet)
+                                {
+                                    <form asp-action="ThuHoi" asp-route-id="@d.MaDon" method="post" class="d-inline" onsubmit="return confirm('Thu hồi đơn này?');">
+                                        <button class="btn btn-sm btn-outline-danger">Thu hồi</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

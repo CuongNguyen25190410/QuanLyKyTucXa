@@ -1,5 +1,5 @@
-// Họ và tên: [ĐIỀN HỌ TÊN SV4]
-// Mã sinh viên: [ĐIỀN MÃ SV4]
+// Họ và tên: [Hà Việt Anh]
+// Mã sinh viên: [23203100046]
 // Nội dung thực hiện: Module 4 - Quản lý đăng ký, phân phòng, chuyển phòng, trả phòng, Dashboard, thống kê
 namespace QuanLyKyTucXa_UNETI_DHTI17A2ND.Models.ViewModels;
 

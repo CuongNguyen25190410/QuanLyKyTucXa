@@ -1,5 +1,5 @@
-// Họ và tên: [ĐIỀN HỌ TÊN CẢ NHÓM]
-// Mã sinh viên: [ĐIỀN MÃ CẢ NHÓM]
+// Họ và tên: [CẢ NHÓM]
+// Mã sinh viên: [CẢ NHÓM]
 // Nội dung thực hiện: Thành phần dùng chung của Project (cấu hình, DbContext, dữ liệu mẫu, layout...)
 using Microsoft.AspNetCore.Mvc;
 using QuanLyKyTucXa_UNETI_DHTI17A2ND.Constants;

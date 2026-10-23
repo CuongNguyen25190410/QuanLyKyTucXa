@@ -1,5 +1,5 @@
-// Họ và tên: [ĐIỀN HỌ TÊN SV2]
-// Mã sinh viên: [ĐIỀN MÃ SV2]
+// Họ và tên: [Trần Hoàng Sơn]
+// Mã sinh viên: [23203100010]
 // Nội dung thực hiện: Module 2 - Quản lý phòng KTX, tìm kiếm, lọc, sắp xếp, phân trang
 using Microsoft.AspNetCore.Mvc.Rendering;
 using QuanLyKyTucXa_UNETI_DHTI17A2ND.Helpers;

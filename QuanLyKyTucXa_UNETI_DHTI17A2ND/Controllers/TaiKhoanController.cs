@@ -1,5 +1,5 @@
-// Họ và tên: [ĐIỀN HỌ TÊN SV1]
-// Mã sinh viên: [ĐIỀN MÃ SV1]
+// Họ và tên: [Nguyễn Văn Cường]
+// Mã sinh viên: [23203100019]
 // Nội dung thực hiện: Module 1 - Tài khoản, đăng nhập, phân quyền, quản lý loại phòng
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

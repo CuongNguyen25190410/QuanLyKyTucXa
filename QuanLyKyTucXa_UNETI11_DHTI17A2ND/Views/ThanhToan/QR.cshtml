@@ -1,0 +1,112 @@
+@using QuanLyKyTucXa_UNETI11_DHTI17A2ND.Services
+@model HoaDon
+@{
+    ViewData["Title"] = "Thanh toán hóa đơn";
+    bool giaLap = ViewBag.GiaLap == true;
+    var hetHanMs = new DateTimeOffset(Model.LinkHetHan ?? DateTime.Now).ToUnixTimeMilliseconds();
+}
+<h2 class="mb-3">Thanh toán tiền phòng KTX</h2>
+
+<div class="row g-3">
+    <div class="col-md-5">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <div id="qr" class="d-inline-block p-2 bg-white border rounded"></div>
+                <div class="mt-2 fw-semibold fs-5">@Fmt.Tien(Model.SoTien)</div>
+                <div id="dem-nguoc" class="text-muted small mt-1"></div>
+                <div id="ket-qua" class="alert alert-success mt-3 d-none"><i class="bi bi-check-circle"></i> Thanh toán thành công! Đang chuyển về danh sách hóa đơn...</div>
+
+                @if (giaLap)
+                {
+                    <div class="alert alert-warning small text-start mt-3">
+                        <strong>Chế độ giả lập:</strong> mã QR này chỉ để demo, không chuyển tiền thật.
+                    </div>
+                    <form asp-action="GiaLap" asp-route-id="@Model.MaHoaDon" method="post">
+                        <button class="btn btn-warning w-100"><i class="bi bi-lightning"></i> Giả lập đã thanh toán</button>
+                    </form>
+                }
+                else if (!string.IsNullOrEmpty(Model.CheckoutUrl))
+                {
+                    <a class="btn btn-outline-primary w-100 mt-3" href="@Model.CheckoutUrl" target="_blank" rel="noopener">Mở trang thanh toán payOS</a>
+                }
+                <a class="btn btn-outline-secondary w-100 mt-2" asp-action="CuaToi">Quay lại</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="mb-3">Thông tin hóa đơn</h5>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Mã hóa đơn</dt>
+                    <dd class="col-sm-8">#@Model.MaHoaDon</dd>
+                    <dt class="col-sm-4">Kỳ thanh toán</dt>
+                    <dd class="col-sm-8">Tháng @Model.Thang.ToString("00")/@Model.Nam</dd>
+                    <dt class="col-sm-4">Phòng</dt>
+                    <dd class="col-sm-8">@Model.PhongKTX.TenPhong</dd>
+                    <dt class="col-sm-4">Sinh viên</dt>
+                    <dd class="col-sm-8">@Model.DangKyKTX.SinhVien.HoTen (@Model.DangKyKTX.MaSinhVien)</dd>
+                    <dt class="col-sm-4">Số tiền</dt>
+                    <dd class="col-sm-8 fw-bold">@Fmt.Tien(Model.SoTien)</dd>
+                    <dt class="col-sm-4">Nội dung CK</dt>
+                    <dd class="col-sm-8"><code>@HoaDonService.NoiDungChuyenKhoan(Model.MaHoaDon)</code> (đã có sẵn trong mã QR)</dd>
+                    <dt class="col-sm-4">Hạn thanh toán</dt>
+                    <dd class="col-sm-8">@Fmt.Ngay(Model.HanThanhToan)</dd>
+                    <dt class="col-sm-4">Trạng thái</dt>
+                    <dd class="col-sm-8"><span class="badge @Fmt.Badge(Model.TrangThai)">@Model.TrangThai</span></dd>
+                </dl>
+                <hr />
+                <h6>Hướng dẫn</h6>
+                <ol class="small mb-0">
+                    <li>Mở ứng dụng ngân hàng hoặc ví điện tử, chọn <strong>Quét mã QR</strong>.</li>
+                    <li>Quét mã bên cạnh, kiểm tra số tiền và nội dung rồi xác nhận.</li>
+                    <li>Giữ nguyên trang này: hệ thống tự cập nhật khi tiền được ghi nhận (thường vài giây).</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        (function () {
+            var qr = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.QrCode));
+            var hetHan = @hetHanMs;
+            var urlTrangThai = '@Url.Action("TrangThai", "ThanhToan", new { id = Model.MaHoaDon })';
+            var urlVeDanhSach = '@Url.Action("CuaToi", "ThanhToan")';
+
+            new QRCode(document.getElementById('qr'), {
+                text: qr, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.M
+            });
+
+            var elDem = document.getElementById('dem-nguoc');
+            function demNguoc() {
+                var con = Math.floor((hetHan - Date.now()) / 1000);
+                if (con <= 0) {
+                    elDem.textContent = 'Mã QR đã hết hạn. Hãy tải lại trang để tạo mã mới.';
+                    return false;
+                }
+                var p = Math.floor(con / 60), g = con % 60;
+                elDem.textContent = 'Mã có hiệu lực thêm ' + p + ':' + (g < 10 ? '0' : '') + g;
+                return true;
+            }
+            demNguoc();
+            var t1 = setInterval(function () { if (!demNguoc()) clearInterval(t1); }, 1000);
+
+            var t2 = setInterval(function () {
+                fetch(urlTrangThai, { credentials: 'same-origin' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d.daThanhToan) {
+                            clearInterval(t1); clearInterval(t2);
+                            document.getElementById('ket-qua').classList.remove('d-none');
+                            setTimeout(function () { location.href = urlVeDanhSach; }, 2500);
+                        }
+                    })
+                    .catch(function () { });
+            }, 4000);
+        })();
+    </script>
+}

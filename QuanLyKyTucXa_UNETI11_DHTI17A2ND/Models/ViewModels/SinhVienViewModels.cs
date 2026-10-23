@@ -1,0 +1,91 @@
+// Họ và tên: [Trần Công Quang Đăng]
+// Mã sinh viên: [23203100040]
+// Nội dung thực hiện: Module 3 - Quản lý sinh viên, đăng ký ở KTX, xem thông tin/lịch sử ở
+using System.ComponentModel.DataAnnotations;
+using QuanLyKyTucXa_UNETI11_DHTI17A2ND.Helpers;
+
+namespace QuanLyKyTucXa_UNETI11_DHTI17A2ND.Models.ViewModels;
+
+/// <summary>Form thêm / sửa sinh viên (kèm thông tin tài khoản khi thêm mới).</summary>
+public class SinhVienFormVM
+{
+    public bool LaSua { get; set; }
+
+    [Required(ErrorMessage = "Mã sinh viên là bắt buộc")]
+    [StringLength(20, ErrorMessage = "Mã sinh viên tối đa 20 ký tự")]
+    [RegularExpression(@"^[A-Za-z0-9]+$", ErrorMessage = "Mã sinh viên chỉ gồm chữ và số")]
+    [Display(Name = "Mã sinh viên")]
+    public string MaSinhVien { get; set; }
+
+    [Required(ErrorMessage = "Họ tên là bắt buộc")]
+    [StringLength(100, ErrorMessage = "Họ tên tối đa 100 ký tự")]
+    [Display(Name = "Họ tên")]
+    public string HoTen { get; set; }
+
+    [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
+    [DataType(DataType.Date)]
+    [NgaySinhHopLe]
+    [Display(Name = "Ngày sinh")]
+    public DateTime? NgaySinh { get; set; }
+
+    [Required(ErrorMessage = "Vui lòng chọn giới tính")]
+    [Display(Name = "Giới tính")]
+    public string GioiTinh { get; set; }
+
+    [StringLength(30, ErrorMessage = "Lớp tối đa 30 ký tự")]
+    [Display(Name = "Lớp")]
+    public string Lop { get; set; }
+
+    [StringLength(100, ErrorMessage = "Khoa tối đa 100 ký tự")]
+    [Display(Name = "Khoa")]
+    public string Khoa { get; set; }
+
+    [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+    [RegularExpression(@"^0\d{9}$", ErrorMessage = "Số điện thoại phải gồm 10 chữ số, bắt đầu bằng 0")]
+    [Display(Name = "Số điện thoại")]
+    public string SoDienThoai { get; set; }
+
+    [Required(ErrorMessage = "Email là bắt buộc")]
+    [EmailAddress(ErrorMessage = "Email không đúng định dạng")]
+    [StringLength(100)]
+    [Display(Name = "Email")]
+    public string Email { get; set; }
+
+    [StringLength(200, ErrorMessage = "Địa chỉ tối đa 200 ký tự")]
+    [Display(Name = "Địa chỉ")]
+    public string DiaChi { get; set; }
+
+    [Required(ErrorMessage = "Vui lòng chọn trạng thái")]
+    [Display(Name = "Trạng thái")]
+    public string TrangThai { get; set; }
+
+    // --- Thông tin tài khoản (chỉ nhập khi thêm mới) ---
+    [StringLength(50, ErrorMessage = "Tên đăng nhập tối đa 50 ký tự")]
+    [Display(Name = "Tên đăng nhập")]
+    public string TenDangNhap { get; set; }
+
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "Mật khẩu phải từ 6 đến 100 ký tự")]
+    [DataType(DataType.Password)]
+    [Display(Name = "Mật khẩu")]
+    public string MatKhau { get; set; }
+}
+
+public class SinhVienDetailsVM
+{
+    public SinhVien SinhVien { get; set; }
+    public TaiKhoan TaiKhoan { get; set; }
+    public List<DangKyKTX> DangKys { get; set; } = new();
+    public List<PhanPhong> LichSuPhanPhong { get; set; } = new();
+    public int SoLanChuyenPhong { get; set; }
+}
+
+/// <summary>Trang cá nhân của sinh viên (đề mục 7.6).</summary>
+public class CaNhanVM
+{
+    public TaiKhoan TaiKhoan { get; set; }
+    public SinhVien SinhVien { get; set; }
+    public DangKyKTX DangKyChoDuyet { get; set; }
+    public DangKyKTX DangKyHienTai { get; set; }       // đăng ký đang ở trạng thái Đã phân phòng
+    public PhanPhong PhongHienTai { get; set; }        // bản ghi PhanPhong Đang ở (Include phòng + loại phòng)
+    public int SoLanDangKy { get; set; }
+}
